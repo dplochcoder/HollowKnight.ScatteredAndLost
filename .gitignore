@@ -362,3 +362,13 @@ MigrationBackup/
 FodyWeavers.xsd
 
 LocalOverrides.targets
+/HK8YPlando/Unity/Assets/Assemblies
+/HK8YPlando/Unity/Assets/AssetBundles
+/HK8YPlando/Unity/Library
+/HK8YPlando/Unity/Temp
+/HK8YPlando/Unity/UserSettings
+*.collabignore
+/HK8YPlando/Unity/.vsconfig
+/HK8YPlando/Unity/Assembly-CSharp-Editor.csproj
+/HK8YPlando/Unity/Assembly-CSharp.csproj
+/HK8YPlando/Unity/Unity.sln
