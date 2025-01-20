@@ -1,2 +1,4 @@
 ItemChanger
 PurenailCore
+RandomizerCore.Json
+SFCore

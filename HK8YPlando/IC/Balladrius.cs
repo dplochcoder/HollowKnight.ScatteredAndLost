@@ -1,4 +1,5 @@
-﻿using HK8YPlando.Util;
+﻿using HK8YPlando.Scripts;
+using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
@@ -30,7 +31,7 @@ internal class Balladrius : ItemChanger.Modules.Module
             if (++numFires[0] == 3) ReallyBuffBaldur(fsm);
         }));
 
-        fsm.GetState("Open").AddFirstAction(new Lambda(() => health.hp = 1000));
+        obj.AddComponent<InfiniteHealth>();
     }
 
     private static void ReallyBuffBaldur(PlayMakerFSM fsm)
