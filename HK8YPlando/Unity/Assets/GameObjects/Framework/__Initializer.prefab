@@ -44,11 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 189551051, guid: 5f4851169f4a65d48b3c16650d83a74c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapZone: 4
+  mapZone: 0
   isWindy: 0
   isTremorZone: 0
   environmentType: 0
-  darknessLevel: 0
+  darknessLevel: -1
   noLantern: 0
   saturation: 0.7
   ignorePlatformSaturationModifiers: 0
@@ -127,15 +127,15 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   defaultIntensity: 0.8
   heroLightColor: {r: 1, g: 1, b: 1, a: 0.48}
-  noParticles: 0
+  noParticles: 1
   overrideParticlesWith: 0
-  AtmosCueSet: 
+  AtmosCueSet: asjhdajkudaaskd
   AtmosCueSnapshotName: at Surface
-  AtmosCueSnapshotIndex: 2
-  AtmosCueIsChannelEnabled: 00010001000101000000000000000000
+  AtmosCueSnapshotIndex: 0
+  AtmosCueIsChannelEnabled: 00000000000000000000000000000000
   MusicCueSet: 
   MusicCueSnapshotName: Silent
-  MusicCueSnapshotIndex: 9
+  MusicCueSnapshotIndex: 0
   MusicCueChannelInfoClips:
   - {fileID: 0}
   - {fileID: 0}
@@ -146,7 +146,7 @@ MonoBehaviour:
   MusicCueChannelInfoSyncs: 000000000000000000000000000000000000000000000000
   InfectedMusicCueSet: 
   InfectedMusicCueSnapshotName: Silent
-  InfectedMusicCueSnapshotIndex: 9
+  InfectedMusicCueSnapshotIndex: 0
   InfectedMusicCueChannelInfoClips:
   - {fileID: 0}
   - {fileID: 0}
@@ -160,9 +160,9 @@ MonoBehaviour:
   musicDelayTime: 0
   musicTransitionTime: 3
   AtsSnapshotName: at Surface
-  AtsSnapshotIndex: 2
+  AtsSnapshotIndex: 3
   EsSnapshotName: en Cliffs
-  EsSnapshotIndex: 2
+  EsSnapshotIndex: 0
   AcsSnapshotName: On
   AcsSnapshotIndex: 0
   SsSnapshotName: Away

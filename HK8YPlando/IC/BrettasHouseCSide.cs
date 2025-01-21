@@ -53,7 +53,7 @@ internal class BrettasHouseCSide : Module
 
         var obj = scene.FindGameObject("bretta_house")!.FindChild("open")!.FindChild("door_bretta")!;
         var vars = obj.LocateMyFSM("Door Control").FsmVariables;
-        vars.FindFsmString("New Scene").Value = "BrettaHouse01";
+        vars.FindFsmString("New Scene").Value = "BrettaHouseEntry";
         vars.FindFsmString("Entry Gate").Value = "right1";
     }
 }

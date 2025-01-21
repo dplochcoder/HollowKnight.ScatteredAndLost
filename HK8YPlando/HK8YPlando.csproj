@@ -51,6 +51,7 @@
     <EmbeddedResource Include="Unity\Assets\AssetBundles\**" />
     <EmbeddedResource Remove="Unity\**\*.manifest" />
     <EmbeddedResource Remove="Unity\**\*.meta" />
+    <EmbeddedResource Include="Resources\**\*.json" />
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>

@@ -65,7 +65,7 @@ public class HK8YPlandoSceneManagerAPI : SceneManagerAPI
             HK8YPlandoMod.Log($"Loading {name} from disk: success!");
             return bundle;
         }
-        catch (Exception e) { Console.WriteLine($"Failed to load {name} from local assets: {e}"); }
+        catch (Exception e) { HK8YPlandoMod.BUG($"Failed to load {name} from local assets: {e}"); }
 #endif
 
         using StreamReader sr = new(typeof(HK8YPlandoSceneManagerAPI).Assembly.GetManifestResourceStream($"{PREFIX}{name}"));

@@ -1,4 +1,5 @@
-﻿using HK8YPlando.Scripts.SharedLib;
+﻿using HK8YPlando.Scripts.Framework;
+using HK8YPlando.Scripts.SharedLib;
 using UnityEngine;
 using SFCore.MonoBehaviours;
 using System.Collections.Generic;
@@ -102,7 +103,7 @@ namespace HK8YPlando.Scripts.Lib
             Update("RemoveObsoleteObjects()", RemoveObsoleteObjects());
             Update("FixScenery()", FixScenery());
             Update("FixAll<BlurPlanePatcher>(FixBPP)", FixAll<BlurPlanePatcher>(FixBPP));
-            // Update("FixAll<CameraLockAreaProxy>(FixCLAP)", FixAll<CameraLockAreaProxy>(FixCLAP)); // FIXME
+            Update("FixAll<CameraLockAreaProxy>(FixCLAP)", FixAll<CameraLockAreaProxy>(FixCLAP));
             // Update("FixAll<HeroDetectorProxy>(FixHDP)", FixAll<HeroDetectorProxy>(FixHDP)); // FIXME
             Update("FixAll<HazardRespawnTrigger>(FixHRT)", FixAll<HazardRespawnTrigger>(FixHRT));
             Update("FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene()))", FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene())));
@@ -267,27 +268,27 @@ namespace HK8YPlando.Scripts.Lib
             return ChangedResult(changed);
         }
 
-        //private static FixResult FixCLAP(CameraLockAreaProxy clap)
-        //{
-        //bool changed = false;
-        //if (MathExt.NeedsSnap(clap.gameObject.transform.position, 0.5f))
-        //{
-        //clap.gameObject.transform.position = MathExt.Snap(clap.gameObject.transform.position, 0.5f);
-        //changed = true;
-        //}
+        private static FixResult FixCLAP(CameraLockAreaProxy clap)
+        {
+            bool changed = false;
+            if (MathExt.NeedsSnap(clap.gameObject.transform.position, 0.5f))
+            {
+                clap.gameObject.transform.position = MathExt.Snap(clap.gameObject.transform.position, 0.5f);
+                changed = true;
+            }
 
-        //foreach (Transform child in clap.gameObject.transform.parent.gameObject.transform)
-        //{
-        //var b2d = child.gameObject.GetComponent<BoxCollider2D>();
-        //if (MathExt.Snap(b2d, 1f))
-        //{
-        //changed = true;
-        //UnityEditorShims.MarkDirty(b2d.gameObject);
-        //}
-        //}
+            foreach (Transform child in clap.gameObject.transform.parent.gameObject.transform)
+            {
+                var b2d = child.gameObject.GetComponent<BoxCollider2D>();
+                if (MathExt.Snap(b2d, 1f))
+                {
+                    changed = true;
+                    UnityEditorShims.MarkDirty(b2d.gameObject);
+                }
+            }
 
-        //return ChangedResult(changed);
-        //}
+            return ChangedResult(changed);
+        }
 
         //private static FixResult FixHDP(HeroDetectorProxy hdp)
         //{

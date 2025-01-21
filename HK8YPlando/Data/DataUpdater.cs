@@ -51,7 +51,7 @@ public static class DataUpdater
     {
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
-        CopyDll(root, "UnityScriptShims/bin/Debug/net8.0/HK8YPlando.dll", "HK8YPlando/Unity/Assets/Assemblies/HK8YPlando.dll");
+        CopyDll(root, "UnityScriptShims/bin/Debug/net472/HK8YPlando.dll", "HK8YPlando/Unity/Assets/Assemblies/HK8YPlando.dll");
     }
 
     private static void CopyDll(string root, string src, string dst)

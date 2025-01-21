@@ -1,6 +1,7 @@
 ﻿using UnityEngine.Tilemaps;
 using UnityEngine;
 using System.Collections.Generic;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.Lib;
 using HK8YPlando.Scripts.SharedLib;
 
@@ -86,8 +87,7 @@ namespace HK8YPlando.Scripts
             if (!changed) return false;
             if (prevCompiled != null) DestroyImmediate(prevCompiled, true);
 
-            // FIXME
-            // if (gameObject.GetComponent<TilemapPatcher>() == null) gameObject.AddComponent<TilemapPatcher>();
+            if (gameObject.GetComponent<TilemapPatcher>() == null) gameObject.AddComponent<TilemapPatcher>();
 
             GameObject compiled = new GameObject("Compiled");
             compiled.transform.SetParent(gameObject.transform);
