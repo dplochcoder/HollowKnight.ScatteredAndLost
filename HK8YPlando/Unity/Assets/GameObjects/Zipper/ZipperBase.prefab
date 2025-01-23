@@ -324,7 +324,7 @@ MonoBehaviour:
   ShakeRadius: 0.15
   ShakeTime: 0.3
   StartSpeed: 40
-  Accel: 10
+  Accel: 40
   PauseTime: 1.25
   RewindSpeed: 9.25
   RewindCooldown: 0.3

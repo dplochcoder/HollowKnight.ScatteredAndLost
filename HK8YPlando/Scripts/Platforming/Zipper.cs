@@ -40,6 +40,7 @@ internal class Zipper : MonoBehaviour
     private Vector3 targetPos;
     private float travelDist;
     private float shootTime;
+    private float rewindTime;
 
     private ZipperState state = ZipperState.Rest;
     private float timeProgress = 0;
@@ -51,7 +52,8 @@ internal class Zipper : MonoBehaviour
         restPos = RestPosition!.position;
         targetPos = TargetPosition!.position;
         travelDist = (targetPos - restPos).magnitude;
-        shootTime = ComputeTime(travelDist);
+        shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
+        rewindTime = travelDist / rewindTime;
     }
 
     private Sprite ComputeLightSprite()
@@ -65,14 +67,6 @@ internal class Zipper : MonoBehaviour
             _ => RedLightSprite!,
         };
     }
-
-    private float ComputeDist()
-    {
-        var pos = Platform!.transform.position;
-        return MathExt.Clamp((pos - restPos).magnitude, 0, travelDist);
-    }
-
-    private float ComputeTime(float dist) => (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
 
     private void Update()
     {
@@ -106,8 +100,11 @@ internal class Zipper : MonoBehaviour
                     if (timeProgress >= ShakeTime)
                     {
                         Platform!.SpriteShaker!.transform.localPosition = Vector3.zero;
+                        var remaining = timeProgress - ShakeTime;
+
                         state = ZipperState.Shoot;
-                        return (timeProgress - ShakeTime);
+                        timeProgress = 0;
+                        return remaining;
                     }
 
                     Platform!.SpriteShaker!.transform.localPosition = MathExt.RandomInCircle(Vector2.zero, ShakeRadius);
@@ -117,19 +114,18 @@ internal class Zipper : MonoBehaviour
                 {
                     // TODO: Update gears
 
-                    // d = v1*t + a*t^2/2
-                    // t = (sqrt(2ad + v1^2) - v1) / a
-                    var t = (Mathf.Sqrt(2 * Accel * ComputeDist() + StartSpeed * StartSpeed) - StartSpeed) / Accel;
-                    t += Time.deltaTime;
-                    if (t >= shootTime)
+                    timeProgress += time;
+                    if (timeProgress >= shootTime)
                     {
-                        state = ZipperState.Wait;
                         Platform!.transform.position = targetPos;
+                        var remaining = timeProgress - shootTime;
+
+                        state = ZipperState.Wait;
                         timeProgress = 0;
-                        return t - shootTime;
+                        return remaining;
                     }
 
-                    var d = t * (StartSpeed + Accel * t / 2);
+                    var d = StartSpeed * timeProgress + Accel * timeProgress * timeProgress / 2;
                     Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
                     return 0;
                 }
@@ -138,8 +134,11 @@ internal class Zipper : MonoBehaviour
                     timeProgress += time;
                     if (timeProgress >= PauseTime)
                     {
+                        var remaining = timeProgress - PauseTime;
+
                         state = ZipperState.Rewind;
-                        return (timeProgress - PauseTime);
+                        timeProgress = 0;
+                        return remaining;
                     }
 
                     return 0;
@@ -147,17 +146,18 @@ internal class Zipper : MonoBehaviour
             case ZipperState.Rewind:
                 {
                     // TODO: Update gears
-
-                    var dist = ComputeDist() - Time.deltaTime * RewindSpeed;
-                    if (dist <= 0)
+                    timeProgress += time;
+                    if (timeProgress >= travelDist / RewindSpeed)
                     {
+                        Platform!.transform.position = restPos;
+                        var remaining = (timeProgress - travelDist / RewindSpeed);
+
                         state = ZipperState.RewindCooldown;
                         timeProgress = 0;
-                        Platform!.transform.position = restPos;
-                        return 0;
+                        return remaining;
                     }
 
-                    Platform!.transform.position = restPos + (targetPos - restPos).normalized * dist;
+                    Platform!.transform.position = targetPos + (restPos - targetPos).normalized * RewindSpeed * timeProgress;
                     return 0;
                 }
             case ZipperState.RewindCooldown:
