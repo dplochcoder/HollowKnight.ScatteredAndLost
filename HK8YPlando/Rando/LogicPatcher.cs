@@ -41,15 +41,15 @@ internal static class LogicPatcher
         {
             name = "BrettaHouse15",
             sceneName = "BrettaHouseEntry",
-            x = 20,  // FIXME
-            y = 5,
+            x = 81,
+            y = 4,
         });
         Finder.DefineCustomLocation(new CoordinateLocation
         {
             name = "BrettaHouse23",
             sceneName = "BrettaHouseEntry",
-            x = 10,  // FIXME
-            y = 5,
+            x = 22,
+            y = 4,
         });
 
         AddSplitItems("Left_Mantis_Claw", lmb);
