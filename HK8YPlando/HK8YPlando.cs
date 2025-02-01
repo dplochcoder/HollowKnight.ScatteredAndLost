@@ -1,4 +1,5 @@
 using HK8YPlando.IC;
+using HK8YPlando.Rando;
 using ItemChanger;
 using Modding;
 using System;
@@ -30,15 +31,19 @@ public class HK8YPlandoMod : Mod
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
+        if (ModHooks.GetMod("DebugMod") is Mod) DebugInterop.DebugInterop.Setup();
+
         HK8YPlandoPreloader.Instance.Initialize(preloadedObjects);
         HK8YPlandoSceneManagerAPI.Load();
 
         // FIXME: Disable, attach to save file.
+        Finder.DefineCustomItem(new BrettaHeart());
+        LogicPatcher.Setup();
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {
             ItemChangerMod.CreateSettingsProfile(false);
             ItemChangerMod.Modules.Add<Balladrius>();
-            ItemChangerMod.Modules.Add<BrettasHouseCSide>();
+            ItemChangerMod.Modules.Add<BrettasHouse>();
 
             orig(self, pd, br);
         };
