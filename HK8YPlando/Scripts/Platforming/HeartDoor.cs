@@ -160,6 +160,8 @@ internal class HeartDoorHeart : MonoBehaviour
 
     private event Action? OnAnimDone;
 
+    private void Awake() => transform.localScale = new(0.85f, 0.85f, 1f);
+
     internal void SetHeartActive(bool active)
     {
         GetComponent<SpriteRenderer>().sprite = active ? FullSprite : EmptySprite;
