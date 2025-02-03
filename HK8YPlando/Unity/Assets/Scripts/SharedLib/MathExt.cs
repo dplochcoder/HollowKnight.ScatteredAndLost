@@ -161,6 +161,10 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public static Vector3Int To3d(this Vector2Int v) => new Vector3Int(v.x, v.y, 0);
 
+        public static Vector2 Interpolate(this Vector2 a, float pct, Vector2 b) => a + (b - a) * pct;
+
+        public static Vector3 Interpolate(this Vector3 a, float pct, Vector3 b) => a + (b - a) * pct;
+
         public static void UpdateAngle(this ref float self, float change) => self = (self + change) % 360;
 
         public static Quaternion RadialToQuat(float x, float y, float degOffset) => (VecToAngle(x, y) + degOffset).AsAngleToQuat();

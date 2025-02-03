@@ -1,6 +1,9 @@
 ﻿using GlobalEnums;
+using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
 using Modding;
+using PurenailCore.GOUtil;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -48,55 +51,210 @@ internal class CoinGroup : MonoBehaviour
 }
 
 [Shim]
-internal class Coin : MonoBehaviour, IHitResponder
+internal class Coin : MonoBehaviour
 {
-    // TODO: Particles
-    private static readonly Color IdleColor = new(0.3f, 0.8f, 1f);
-    private static readonly Color FlashColor = Color.white;
-    private static readonly Color ActiveColor = new(1f, 0.3f, 0.7f);
+    private const string SPEED_MULTIPLIER = "SpeedMultiplier";
 
-    private const float COOLDOWN_TIME = 1f;
+    [ShimField] public List<SpriteRenderer> Renderers = [];
+    [ShimField] public ParticleSystem? ParticleSystem;
+    [ShimField] public Animator? Animator;
+    [ShimField] public HeroDetectorProxy? HeroDetector;
 
-    private float cooldown;
-    private bool activated;
+    [ShimField] public Color IdleColor;
+    [ShimField] public Color FlashColor;
+    [ShimField] public Color ActiveColor;
+    [ShimField] public float CooldownTime;
+
+    [ShimField] public float FlashTransitionTime;
+    [ShimField] public float FlashHangTime;
+    [ShimField] public float FlashAnimationSpeed;
+    [ShimField] public float ActiveTransitionTime;
+
+    private Color _currentColor;
+    private Color currentColor
+    {
+        get { return _currentColor; }
+        set
+        {
+            _currentColor = value;
+            Renderers.ForEach(r => r.color = value);
+        }
+    }
+
+    private bool activated = false;
+    private bool onCooldown = false;
+
+    private void Awake()
+    {
+        currentColor = IdleColor;
+        HeroDetector?.OnDetected(MaybeHit);
+
+        this.StartLibCoroutine(Run());
+    }
 
     internal bool IsActivated() => activated;
 
-    internal void Deactivate()
-    {
-        activated = false;
-        cooldown = COOLDOWN_TIME;
-        // TODO: Animation
-    }
+    internal void Deactivate() => activated = false;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    internal void MaybeHit()
     {
-        if (collision.gameObject.layer == (int)PhysLayers.PLAYER) MaybeHit();
-    }
-
-    public void Hit(HitInstance damageInstance)
-    {
-        if (damageInstance.AttackType == AttackTypes.Nail) MaybeHit();
-    }
-
-    private void MaybeHit()
-    {
-        if (activated || cooldown > 0) return;
-
+        if (activated || onCooldown) return;
         activated = true;
-        // TODO: Animation
+    }
+
+    private IEnumerator<CoroutineElement> Run()
+    {
+        while (true)
+        {
+            yield return Coroutines.SleepUntil(() => activated);
+
+            yield return Coroutines.OneOf(
+                Coroutines.SleepUntil(() => !activated),
+                Coroutines.Sequence(ActivateCoin()));
+            yield return Coroutines.SleepUntil(() => !activated);
+
+            onCooldown = true;
+            var prevColor = currentColor;
+            var prevSpeed = Animator!.GetFloat(SPEED_MULTIPLIER);
+            yield return Coroutines.SleepSecondsUpdatePercent(CooldownTime, pct =>
+            {
+                currentColor = prevColor.Interpolate(pct, IdleColor);
+                Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (prevSpeed - 1) * (1 - pct));
+                return false;
+            });
+            onCooldown = false;
+        }
+    }
+
+    private IEnumerator<CoroutineElement> ActivateCoin()
+    {
+        ParticleSystem?.Play();
+
+        yield return Coroutines.SleepSecondsUpdatePercent(FlashTransitionTime, pct =>
+        {
+            currentColor = IdleColor.Interpolate(pct, FlashColor);
+            Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * pct);
+            return false;
+        });
+
+        yield return Coroutines.SleepSeconds(FlashHangTime);
+
+        yield return Coroutines.SleepSecondsUpdatePercent(ActiveTransitionTime, pct =>
+        {
+            currentColor = FlashColor.Interpolate(pct, ActiveColor);
+            Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * (1 - pct));
+            return false;
+        });
     }
 }
 
+[Shim]
+internal class CoinNailDetector : MonoBehaviour, IHitResponder
+{
+    [ShimField] public Coin? Coin;
+
+    public void Hit(HitInstance damageInstance)
+    {
+        if (damageInstance.AttackType == AttackTypes.Nail) Coin?.MaybeHit();
+    }
+}
+
+[Shim]
 internal class CoinDoor : MonoBehaviour
 {
-    internal void Open()
-    {
+    [ShimField] public GameObject? ShakeBase;
+    [ShimField] public SpriteRenderer? MarkerRenderer;
+    [ShimField] public Animator? MarkerAnimator;
+    [ShimField] public Sprite? InactiveMarkerSprite;
+    [ShimField] public RuntimeAnimatorController? ActiveMarkerController;
+    [ShimField] public Color IdleColor;
+    [ShimField] public Color ActiveColor;
 
+    [ShimField] public float ShakeRadius;
+    [ShimField] public float ShakeTime;
+    [ShimField] public float AfterShakeDelay;
+
+    [ShimField] public float MoveDuration;
+    [ShimField] public Vector3 MoveOffset;
+    [ShimField] public float ResetDelay;
+    [ShimField] public float ResetDuration;
+
+    private Vector3 srcPos;
+    private Vector3 destPos;
+
+    private void Awake()
+    {
+        srcPos = transform.position;
+        destPos = srcPos + MoveOffset;
+        currentColor = IdleColor;
+
+        this.StartLibCoroutine(Run());
     }
 
-    internal void Close()
-    {
+    private bool opened = false;
 
+    private IEnumerator<CoroutineElement> Run()
+    {
+        while (true)
+        {
+            yield return Coroutines.SleepUntil(() => opened);
+
+            yield return Coroutines.OneOf(
+                Coroutines.SleepUntil(() => !opened),
+                Coroutines.Sequence(OpenDoor()));
+            yield return Coroutines.SleepUntil(() => !opened);
+            ShakeBase!.transform.localPosition = Vector2.zero;
+
+            var prevColor = currentColor;
+            var prevPos = transform.position;
+            yield return Coroutines.SleepSecondsUpdatePercent(ResetDelay, pct =>
+            {
+                currentColor = prevColor.Interpolate(pct, IdleColor);
+                return false;
+            });
+
+            MarkerAnimator!.runtimeAnimatorController = null;
+            MarkerRenderer!.sprite = InactiveMarkerSprite!;
+            yield return Coroutines.SleepSecondsUpdatePercent(ResetDuration, pct =>
+            {
+                transform.position = destPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), srcPos);
+                return false;
+            });
+        }
+    }
+
+    internal void Open() => opened = true;
+
+    internal void Close() => opened = false;
+
+    private Color _currentColor;
+    private Color currentColor
+    {
+        get {  return _currentColor; }
+        set
+        {
+            _currentColor = value;
+            MarkerRenderer!.color = value;
+        }
+    }
+
+    private IEnumerator<CoroutineElement> OpenDoor()
+    {
+        MarkerAnimator!.runtimeAnimatorController = ActiveMarkerController;
+        yield return Coroutines.SleepSecondsUpdatePercent(ShakeTime, pct =>
+        {
+            currentColor = IdleColor.Interpolate(pct, ActiveColor);
+            ShakeBase!.transform.localPosition = MathExt.RandomInCircle(Vector2.zero, ShakeRadius);
+            return false;
+        });
+        ShakeBase!.transform.localPosition = Vector2.zero;
+
+        yield return Coroutines.SleepSeconds(AfterShakeDelay);
+
+        yield return Coroutines.SleepSecondsUpdatePercent(MoveDuration, pct =>
+        {
+            transform.position = srcPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), destPos);
+            return false;
+        });
     }
 }

@@ -3,6 +3,7 @@ using HK8YPlando.Scripts.SharedLib;
 using UnityEngine;
 using SFCore.MonoBehaviours;
 using System.Collections.Generic;
+using HK8YPlando.Scripts.Proxy;
 
 namespace HK8YPlando.Scripts.Lib
 {
@@ -104,7 +105,7 @@ namespace HK8YPlando.Scripts.Lib
             Update("FixScenery()", FixScenery());
             Update("FixAll<BlurPlanePatcher>(FixBPP)", FixAll<BlurPlanePatcher>(FixBPP));
             Update("FixAll<CameraLockAreaProxy>(FixCLAP)", FixAll<CameraLockAreaProxy>(FixCLAP));
-            // Update("FixAll<HeroDetectorProxy>(FixHDP)", FixAll<HeroDetectorProxy>(FixHDP)); // FIXME
+            Update("FixAll<HeroDetectorProxy>(FixHDP)", FixAll<HeroDetectorProxy>(FixHDP));
             Update("FixAll<HazardRespawnTrigger>(FixHRT)", FixAll<HazardRespawnTrigger>(FixHRT));
             Update("FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene()))", FixAll<SceneDataOptimizer>(sdo => ChangedResult(sdo.OptimizeScene())));
             // Update("FixAll<SecretMask>(FixSM)", FixAll<SecretMask>(FixSM)); // FIXME
@@ -290,27 +291,27 @@ namespace HK8YPlando.Scripts.Lib
             return ChangedResult(changed);
         }
 
-        //private static FixResult FixHDP(HeroDetectorProxy hdp)
-        //{
-        //bool changed = false;
+        private static FixResult FixHDP(HeroDetectorProxy hdp)
+        {
+            bool changed = false;
 
-        //  if (hdp.gameObject.layer != 13)
-        //{
-        //changed = true;
-        //hdp.gameObject.layer = 13;
-        //}
+            if (hdp.gameObject.layer != 13)
+            {
+                changed = true;
+                hdp.gameObject.layer = 13;
+            }
 
-        //      foreach (var collider in hdp.gameObject.GetComponents<Collider2D>())
-        //    {
-        //      if (!collider.isTrigger)
-        //    {
-        //collider.isTrigger = true;
-        //changed = true;
-        //}
-        //}
-        //
-        //            return ChangedResult(changed);
-        //        }
+            foreach (var collider in hdp.gameObject.GetComponents<Collider2D>())
+            {
+                if (!collider.isTrigger)
+                {
+                    collider.isTrigger = true;
+                    changed = true;
+                }
+            }
+
+            return ChangedResult(changed);
+        }
 
         private static FixResult FixHRT(HazardRespawnTrigger hrt)
         {
