@@ -21,6 +21,12 @@ namespace HK8YPlando.Scripts.SharedLib
             self.velocity = v;
         }
 
+        public static GameObject FindChild(this GameObject self, string name)
+        {
+            foreach (var child in self.Children()) if (child.name == name) return child;
+            return null;
+        }
+
         public static void SetParent(this GameObject self, GameObject parent) => self.transform.SetParent(parent.transform);
 
         public static void Unparent(this GameObject self) => self.transform.parent = null;
