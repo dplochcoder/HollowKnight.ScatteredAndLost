@@ -1,12 +1,24 @@
 ﻿using DebugMod;
 using HK8YPlando.IC;
 using System;
+using System.Linq.Expressions;
 
 namespace HK8YPlando.DebugInterop;
 
 internal static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
+
+    [BindableMethod(name = "Gear Up", category ="HK8YPlando")]
+    public static void GearUp()
+    {
+        BindableFunctions.GiveAllSkills();
+        BindableFunctions.GiveAllCharms();
+        BindableFunctions.ToggleInfiniteHP();
+        BindableFunctions.ToggleInfiniteSoul();
+        PlayerData.instance.SetBool("brettaRescued", true);
+        BrettasHouse.Get().Hearts = 23;
+    }
 
     [BindableMethod(name = "Give Heart", category = "HK8YPlando")]
     public static void GiveHeart() => ++BrettasHouse.Get().Hearts;
