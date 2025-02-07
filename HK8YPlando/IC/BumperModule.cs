@@ -124,12 +124,20 @@ internal class BumperModule : ItemChanger.Modules.Module
     private static FieldInfo doubleJumpedField = typeof(HeroController).GetField("doubleJumped", BindingFlags.NonPublic | BindingFlags.Instance);
     private static FieldInfo airDashed = typeof(HeroController).GetField("airDashed", BindingFlags.NonPublic | BindingFlags.Instance);
 
-    internal void BumpHorizontal(float velocity, float decel)
+    internal void BumpHorizontal(float velocity, float decel, float yBump, float yMax)
     {
         var hc = HeroController.instance;
         doubleJumpedField.SetValue(hc, false);
         airDashed.SetValue(hc, false);
 
+        if (yBump > 0)
+        {
+            var rb2d = hc.gameObject.GetComponent<Rigidbody2D>();
+            var origY = rb2d.velocity.y;
+
+            hc.ShroomBounce();
+            rb2d.SetVelocityY(Mathf.Max(origY, yBump, Mathf.Min(origY + yBump, yMax)));
+        }
         behaviour?.BumpHorizontal(velocity, decel);
     }
 
