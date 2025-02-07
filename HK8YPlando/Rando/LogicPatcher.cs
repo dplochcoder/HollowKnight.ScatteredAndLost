@@ -7,6 +7,7 @@ using RandomizerCore.LogicItems;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
+using System;
 
 namespace HK8YPlando.Rando;
 
@@ -31,7 +32,9 @@ internal static class LogicPatcher
     {
         // Add hearts
         var term = lmb.GetOrAddTerm(BrettaHeart.TermName);
-        lmb.AddItem(new CappedItem(BrettaHeart.ItemName, [new(term, 1)], new(term, 23)));
+        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Blue).name, [new(term, 1)], new(term, 23)));
+        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Red).name, [new(term, 1)], new(term, 23)));
+        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Yellow).name, [new(term, 1)], new(term, 23)));
 
         // Add bretta locations
         lmb.AddLogicDef(new("BrettaHouse15", $"Rescued_Bretta + {BrettaHeart.TermName} > 14"));
@@ -54,6 +57,9 @@ internal static class LogicPatcher
 
         AddSplitItems("Left_Mantis_Claw", lmb);
         AddSplitItems("Right_Mantis_Claw", lmb);
+        AddSplitItems("Tram_Pass", lmb);
+        AddSplitItems("Swim", lmb);
+        AddSplitItems("Isma's_Tear", lmb);
 
         foreach (var e in MoreDoors.Data.DoorData.All())
         {
@@ -64,32 +70,44 @@ internal static class LogicPatcher
 
     private static void AddSplitItems(string name, RequestBuilder rb)
     {
+        var orig = Finder.GetItem(name)!;
+        if (orig == null) throw new ArgumentException($"Bad item: '{name}'");
+
         for (int i = 0; i < 2; i++)
         {
             var sName = $"Scatternest{i}-{name}";
+
             Finder.DefineCustomItem(new ScatternestRestrictedItem()
             {
                 name = sName,
-                Wrapped = Finder.GetItem(name),
+                Wrapped = orig,
                 ScatternestIndex = i,
             });
             rb.AddItemByName(sName);
         }
     }
 
-    private static void ModifyRequest(RequestBuilder rb)
+    private static void AddHearts(HeartType heartType, RequestBuilder rb)
     {
-        rb.EditItemRequest(BrettaHeart.ItemName, info =>
+        var heart = new BrettaHeart(heartType);
+        Finder.DefineCustomItem(heart);
+
+        rb.EditItemRequest(heart.name, info =>
         {
             info.getItemDef = () => new()
             {
-                Name = BrettaHeart.ItemName,
+                Name = heart.name,
                 Pool = PoolNames.Key,
                 MajorItem = false,
                 PriceCap = 1000,
             };
         });
 
+        for (int i = 0; i < 8; i++) rb.AddItemByName(heart.name);
+    }
+
+    private static void ModifyRequest(RequestBuilder rb)
+    {
         rb.EditLocationRequest("BrettaHouse15", info =>
         {
             info.getLocationDef = () => new()
@@ -110,10 +128,15 @@ internal static class LogicPatcher
         });
         rb.AddLocationByName("BrettaHouse23");
 
-        for (int i = 0; i < 24; i++) rb.AddItemByName(BrettaHeart.ItemName);
+        AddHearts(HeartType.Blue, rb);
+        AddHearts(HeartType.Red, rb);
+        AddHearts(HeartType.Yellow, rb);
 
         AddSplitItems("Left_Mantis_Claw", rb);
         AddSplitItems("Right_Mantis_Claw", rb);
+        AddSplitItems("Tram_Pass", rb);
+        AddSplitItems("Swim", rb);
+        AddSplitItems("Isma's_Tear", rb);
 
         foreach (var e in MoreDoors.Data.DoorData.All())
         {

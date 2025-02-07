@@ -4,46 +4,78 @@ using UnityEngine;
 
 namespace HK8YPlando.IC;
 
+internal enum HeartType
+{
+    Blue,
+    Red,
+    Yellow,
+}
+
+internal static class HeartTypeExtensions
+{
+    internal static string ItemName(this HeartType type) => type switch { HeartType.Blue => "BrettaHeart-Blue", HeartType.Red => "BrettaHeart-Red", HeartType.Yellow => "BrettaHeart-Yellow", _ => "" };
+}
+
 internal class BrettaHeart : AbstractItem
 {
-    public const int MAX_HEARTS = 23;
-
-    public const string ItemName = "BrettaHeart";
+    public const int MAX_HEARTS = 24;
 
     public const string TermName = "BRETTA_HEART";
 
-    public BrettaHeart()
+    public HeartType HeartType;
+    public string FlavorName = "";
+
+    public BrettaHeart(HeartType heartType, string flavorName = "")
     {
-        name = ItemName;
-        UIDef = new HeartUIDef();
+        name = heartType.ItemName();
+        HeartType = heartType;
+        FlavorName = flavorName;
+        UIDef = new HeartUIDef(heartType, FlavorName);
     }
+
+    public BrettaHeart() { }
 
     public override void GiveImmediate(GiveInfo info) => ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts++;
 
     public override bool Redundant() => ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts >= MAX_HEARTS;
 
-    public override AbstractItem Clone() => new BrettaHeart();
+    public override AbstractItem Clone() => new BrettaHeart(HeartType, FlavorName);
 }
 
 internal class HeartUIDef : UIDef
 {
-    private static EmbeddedSprite Sprite = new("heart");
+    private static EmbeddedSprite BlueSprite = new("heart_blue");
+    private static EmbeddedSprite RedSprite = new("heart_red");
+    private static EmbeddedSprite YellowSprite = new("heart_yellow");
+
+    public HeartType HeartType;
+    public string FlavorName = "";
+
+    public HeartUIDef(HeartType heartType, string flavorName = "")
+    {
+        HeartType = heartType;
+        FlavorName = flavorName;
+    }
+
+    public HeartUIDef() { }
 
     public override string GetPreviewName()
     {
         var mod = ItemChangerMod.Modules.Get<BrettasHouse>()!;
-        return $"Heart #{mod.Hearts + 1}";
+        if (FlavorName.Length == 0) return $"Heart #{mod.Hearts + 1}";
+        else return $"{FlavorName} #{mod.Hearts + 1}";
     }
 
     public override string GetPostviewName()
     {
         var mod = ItemChangerMod.Modules.Get<BrettasHouse>()!;
-        return $"Heart #{mod.Hearts}";
+        if (FlavorName.Length == 0) return $"Heart #{mod.Hearts}";
+        else return $"{FlavorName} #{mod.Hearts}";
     }
 
     public override string? GetShopDesc() => "A relic of challenge and dedication. I think Bretta collects these?";
 
-    public override Sprite GetSprite() => Sprite.Value;
+    public override Sprite GetSprite() => HeartType switch { HeartType.Blue => BlueSprite.Value, HeartType.Red => RedSprite.Value, HeartType.Yellow => YellowSprite.Value, _ => BlueSprite.Value };
 
     public override void SendMessage(MessageType type, Action? callback)
     {
@@ -55,5 +87,5 @@ internal class HeartUIDef : UIDef
         callback?.Invoke();
     }
 
-    public override UIDef Clone() => new HeartUIDef();
+    public override UIDef Clone() => new HeartUIDef(HeartType, FlavorName);
 }
