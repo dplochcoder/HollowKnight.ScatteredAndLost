@@ -20,19 +20,11 @@ public class HK8YPlandoMod : Mod
     public HK8YPlandoMod() : base("HK8YPlando")
     {
         Instance = this;
+
+        AddMinerDoor();
     }
 
-    public static new void Log(string msg) => ((ILogger)Instance!).Log(msg);
-
-    public static void BUG(string msg) => Log($"BUG: {msg}");
-
-    public static new void LogError(string msg) => ((ILogger)Instance!).LogError(msg);
-
-    public override List<(string, string)> GetPreloadNames() => HK8YPlandoPreloader.Instance.GetPreloadNames();
-
-    public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => HK8YPlandoPreloader.Instance.PreloadSceneHooks();
-
-    private static void AddMylaDoor()
+    private static void AddMinerDoor()
     {
         var crownDoor = DoorData.GetDoor("Crown")!;
 
@@ -119,6 +111,18 @@ public class HK8YPlandoMod : Mod
         DoorData.AddExtensionDoor("Miner", minersDoor);
     }
 
+    public static new void Log(string msg) => ((ILogger)Instance!).Log(msg);
+
+    public static void BUG(string msg) => Log($"BUG: {msg}");
+
+    public static new void LogError(string msg) => ((ILogger)Instance!).LogError(msg);
+
+    public override List<(string, string)> GetPreloadNames() => HK8YPlandoPreloader.Instance.GetPreloadNames();
+
+    public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => HK8YPlandoPreloader.Instance.PreloadSceneHooks();
+
+    private static bool CreatePlando = false;
+
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
         if (ModHooks.GetMod("DebugMod") is Mod) DebugInterop.DebugInterop.Setup();
@@ -127,16 +131,18 @@ public class HK8YPlandoMod : Mod
         HK8YPlandoSceneManagerAPI.Load();
 
         // FIXME: Disable, attach to save file.
-        LogicPatcher.Setup();
-        AddMylaDoor();
-        On.UIManager.StartNewGame += (orig, self, pd, br) =>
+        if (CreatePlando)
         {
-            ItemChangerMod.CreateSettingsProfile(false);
-            ItemChangerMod.Modules.Add<Balladrius>();
-            ItemChangerMod.Modules.Add<BrettasHouse>();
-            ItemChangerMod.Modules.Add<BumperModule>();
+            LogicPatcher.Setup();
+            On.UIManager.StartNewGame += (orig, self, pd, br) =>
+            {
+                ItemChangerMod.CreateSettingsProfile(false);
+                ItemChangerMod.Modules.Add<Balladrius>();
+                ItemChangerMod.Modules.Add<BrettasHouse>();
+                ItemChangerMod.Modules.Add<BumperModule>();
 
-            orig(self, pd, br);
-        };
+                orig(self, pd, br);
+            };
+        }
     }
 }
