@@ -121,7 +121,7 @@ public class HK8YPlandoMod : Mod
 
     public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => HK8YPlandoPreloader.Instance.PreloadSceneHooks();
 
-    private static bool CreatePlando = false;
+    private static bool CreatePlando = true;
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
@@ -140,6 +140,7 @@ public class HK8YPlandoMod : Mod
                 ItemChangerMod.Modules.Add<Balladrius>();
                 ItemChangerMod.Modules.Add<BrettasHouse>();
                 ItemChangerMod.Modules.Add<BumperModule>();
+                ItemChangerMod.Modules.Add<Pyromaniac>();
 
                 orig(self, pd, br);
             };
