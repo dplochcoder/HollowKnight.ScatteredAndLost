@@ -139,6 +139,7 @@ public class HK8YPlandoMod : Mod
                 ItemChangerMod.CreateSettingsProfile(false);
                 ItemChangerMod.Modules.Add<Balladrius>();
                 ItemChangerMod.Modules.Add<BlockFungalDrop>();
+                ItemChangerMod.Modules.Add<BlockPeaksToll>();
                 ItemChangerMod.Modules.Add<BrettasHouse>();
                 ItemChangerMod.Modules.Add<BumperModule>();
                 ItemChangerMod.Modules.Add<Pyromaniac>();
