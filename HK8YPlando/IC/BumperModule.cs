@@ -84,7 +84,7 @@ internal class BumperModule : ItemChanger.Modules.Module
         ModHooks.TakeDamageHook -= OnTakeDamage;
 
         Events.RemoveFsmEdit(KnightFsmID, ModifyVelocity);
-        Object.Destroy(HeroController.instance.gameObject.GetComponent<BumperSpeedBehaviour>());
+        Object.Destroy(HeroController.instance?.gameObject?.GetComponent<BumperSpeedBehaviour>());
         behaviour = null;
     }
 
@@ -121,14 +121,11 @@ internal class BumperModule : ItemChanger.Modules.Module
         rb2d.SetVelocityY(-hc.MAX_FALL_VELOCITY);
     }
 
-    private static FieldInfo doubleJumpedField = typeof(HeroController).GetField("doubleJumped", BindingFlags.NonPublic | BindingFlags.Instance);
-    private static FieldInfo airDashed = typeof(HeroController).GetField("airDashed", BindingFlags.NonPublic | BindingFlags.Instance);
-
     internal void BumpHorizontal(float velocity, float decel, float yBump, float yMax)
     {
         var hc = HeroController.instance;
-        doubleJumpedField.SetValue(hc, false);
-        airDashed.SetValue(hc, false);
+        hc.SetDoubleJumped(false);
+        hc.SetAirDashed(false);
 
         if (yBump > 0)
         {

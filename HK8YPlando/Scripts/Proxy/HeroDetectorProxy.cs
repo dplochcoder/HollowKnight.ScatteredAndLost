@@ -15,9 +15,15 @@ internal class HeroDetectorProxy : MonoBehaviour
 
     public bool Detected() => detections > 0;
 
-    private void OnTriggerEnter2D(Collider2D collider) => ++detections;
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.name == "Knight") ++detections;
+    }
 
-    private void OnTriggerExit2D(Collider2D collider) => --detections;
+    private void OnTriggerExit2D(Collider2D collider)
+    {
+        if (collider.gameObject.name == "Knight") --detections;
+    }
 
     public void OnDetected(Action action)
     {

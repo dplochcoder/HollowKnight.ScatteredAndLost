@@ -224,7 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1695773291915555328}
   - component: {fileID: 1426813534121453340}
-  - component: {fileID: 7553478304309381178}
+  - component: {fileID: 6386844119128666923}
   m_Layer: 8
   m_Name: Terrain
   m_TagString: Untagged
@@ -272,7 +272,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4, y: 2}
   m_EdgeRadius: 0
---- !u!114 &7553478304309381178
+--- !u!114 &6386844119128666923
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -281,7 +281,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2552015345963362207}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1791238451, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
+  m_Script: {fileID: 1540900821, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3164827259588416274

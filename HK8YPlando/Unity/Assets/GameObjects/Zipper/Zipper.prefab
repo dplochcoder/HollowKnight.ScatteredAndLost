@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 9094131932939074182}
   - component: {fileID: 2266852463777586362}
   m_Layer: 0
-  m_Name: ZipperBase
+  m_Name: Zipper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1006,7 +1006,7 @@ GameObject:
   - component: {fileID: 553395466770310677}
   - component: {fileID: 4320390657762474550}
   - component: {fileID: 8978783085545065232}
-  - component: {fileID: 2919944802858425665}
+  - component: {fileID: 3137449019862194110}
   m_Layer: 8
   m_Name: Platform
   m_TagString: Untagged
@@ -1073,7 +1073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpriteShaker: {fileID: 46542894090161183}
   Light: {fileID: 3469980287300270387}
---- !u!114 &2919944802858425665
+--- !u!114 &3137449019862194110
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1082,7 +1082,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7153647104747791561}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1791238451, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
+  m_Script: {fileID: 1540900821, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7500023008016939524

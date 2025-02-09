@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DarknestDungeon.Scripts.Environment;
+namespace HK8YPlando.Scripts.Environment;
 
 // HeroPlatformStick does bad things if deleted while Knight is still on it. This fixes that
 [Shim]

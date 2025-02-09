@@ -95,8 +95,8 @@ public static class DataUpdater
     {
         string ns = type.Namespace;
         string origNs = ns;
-        if (ns == "DarknestDungeon.Scripts") ns = "";
-        else if (ns.ConsumePrefix("DarknestDungeon.Scripts.", out var trimmed)) ns = trimmed;
+        if (ns == "HK8YPlando.Scripts") ns = "";
+        else if (ns.ConsumePrefix("HK8YPlando.Scripts.", out var trimmed)) ns = trimmed;
 
         string pathDir = ns.Length == 0 ? $"{dir}" : $"{dir}/{ns.Replace('.', '/')}";
         string path = $"{pathDir}/{type.Name}.cs";
