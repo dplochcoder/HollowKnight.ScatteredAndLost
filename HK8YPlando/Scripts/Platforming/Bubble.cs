@@ -126,7 +126,7 @@ internal class BubbleController : MonoBehaviour
 
                 if (finishedMoving) return true;
 
-                knight.transform.position = Bubble!.transform.position;
+                knight.transform.position = Bubble!.transform.position + KnightOffset;
                 return false;
             });
 
@@ -144,6 +144,7 @@ internal class BubbleController : MonoBehaviour
             }
 
             finishedMoving = false;
+            damageHero = null;
             RigidBody.velocity = Vector2.zero;
             BubbleAnimator!.runtimeAnimatorController = DissolveController;
             yield return Coroutines.SleepSeconds(RespawnDelay);
@@ -189,18 +190,19 @@ internal class Bubble : MonoBehaviour
 }
 
 [Shim]
-[RequireComponent(typeof(DamageHero))]
-internal class BubbleHazard : MonoBehaviour
+internal class BubbleHeroProxy : MonoBehaviour
 {
-    private DamageHero? damageHero;
+    [ShimField] public BubbleController? BubbleController;
 
-    private void Awake() => damageHero = GetComponent<DamageHero>();
+    private void OnTriggerEnter2D(Collider2D collider) => HandleTrigger(collider);
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void OnTriggerStay2D(Collider2D collider) => HandleTrigger(collider);
+
+    private void HandleTrigger(Collider2D collider)
     {
-        var bubble = collider.gameObject.GetComponent<Bubble>();
-        if (bubble == null) return;
+        var damageHero = collider.gameObject.GetComponent<DamageHero>();
+        if (damageHero == null) return;
 
-        bubble.BubbleController!.FinishMoving(transform.position, false, damageHero);
+        BubbleController!.FinishMoving(transform.position, false, damageHero);
     }
 }

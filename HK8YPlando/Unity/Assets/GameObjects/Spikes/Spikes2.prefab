@@ -302,7 +302,6 @@ GameObject:
   - component: {fileID: 8522404923611478594}
   - component: {fileID: 3292582432179397552}
   - component: {fileID: 1230352192751834125}
-  - component: {fileID: 8212327462745673258}
   - component: {fileID: 6182218210593348753}
   m_Layer: 11
   m_Name: Spikes2
@@ -370,18 +369,6 @@ MonoBehaviour:
   hazardType: 2
   shadowDashHazard: 0
   resetOnEnable: 0
---- !u!114 &8212327462745673258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8852672162007608192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 201979341, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6182218210593348753
 MonoBehaviour:
   m_ObjectHideFlags: 0

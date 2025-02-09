@@ -175,7 +175,6 @@ GameObject:
   - component: {fileID: 937236402494343771}
   - component: {fileID: 4399107289881522546}
   - component: {fileID: 5798915989218119021}
-  - component: {fileID: 7849635127790593580}
   - component: {fileID: 5919981691600251295}
   m_Layer: 11
   m_Name: WhiteCrystals
@@ -255,18 +254,6 @@ MonoBehaviour:
   hazardType: 2
   shadowDashHazard: 0
   resetOnEnable: 0
---- !u!114 &7849635127790593580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937236402494343770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 201979341, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5919981691600251295
 MonoBehaviour:
   m_ObjectHideFlags: 0
