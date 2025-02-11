@@ -1,5 +1,6 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Proxy;
@@ -10,20 +11,24 @@ internal class HeroDetectorProxy : MonoBehaviour
     private event Action? OnDetectedEvent;
     private event Action? OnUndetectedEvent;
 
-    private int detections = 0;
+    private HashSet<Collider2D> detected = [];
+    private HashSet<Collider2D> ignored = [];
     private bool prevDetected = false;
 
-    public bool Detected() => detections > 0;
+    public void Ignore(Collider2D collider)
+    {
+        detected.Remove(collider);
+        ignored.Add(collider);
+    }
+
+    public bool Detected() => detected.Count > 0;
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.name == "Knight") ++detections;
+        if (!ignored.Contains(collider)) detected.Add(collider);
     }
 
-    private void OnTriggerExit2D(Collider2D collider)
-    {
-        if (collider.gameObject.name == "Knight") --detections;
-    }
+    private void OnTriggerExit2D(Collider2D collider) => detected.Remove(collider);
 
     public void OnDetected(Action action)
     {

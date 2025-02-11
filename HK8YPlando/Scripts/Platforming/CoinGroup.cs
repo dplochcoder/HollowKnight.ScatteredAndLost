@@ -217,7 +217,7 @@ internal class CoinDoor : MonoBehaviour
             MarkerRenderer!.sprite = InactiveMarkerSprite!;
             yield return Coroutines.SleepSecondsUpdatePercent(ResetDuration, pct =>
             {
-                transform.position = destPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), srcPos);
+                transform.position = prevPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), srcPos);
                 return false;
             });
         }

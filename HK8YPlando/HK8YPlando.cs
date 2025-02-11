@@ -121,7 +121,7 @@ public class HK8YPlandoMod : Mod
 
     public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => HK8YPlandoPreloader.Instance.PreloadSceneHooks();
 
-    private static bool CreatePlando = true;
+    private static bool CreatePlando = false;
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {

@@ -1,10 +1,11 @@
 ﻿using GlobalEnums;
+using HK8YPlando.IC;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using Modding;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -29,19 +30,24 @@ internal class BubbleController : MonoBehaviour
     [ShimField] public float RespawnCooldown;
     [ShimField] public Vector3 KnightOffset;
 
-    private void Awake() => this.StartLibCoroutine(Run());
+    private void Awake()
+    {
+        ModHooks.TakeDamageHook += OnTakeDamage;
+
+        Trigger!.Ignore(Bubble!.GetComponent<Collider2D>());
+        this.StartLibCoroutine(Run());
+    }
 
     private bool finishedMoving;
     private Vector3 targetPos;
     private bool wallCling;
-    private DamageHero? damageHero;
+    private bool damageHeroEvent;
 
-    internal void FinishMoving(Vector3 targetPos, bool wallCling, DamageHero? damageHero)
+    internal void FinishMoving(Vector3 targetPos, bool wallCling)
     {
         finishedMoving = true;
         this.targetPos = targetPos;
         this.wallCling = wallCling;
-        this.damageHero = damageHero;
     }
 
     private Vector2 ComputeVelocity(bool facingRight)
@@ -54,48 +60,76 @@ internal class BubbleController : MonoBehaviour
         return new(Mathf.Cos(angle) * Speed, Mathf.Sin(angle) * Speed);
     }
 
-    private CollisionSide ComputeCollisionSide(Vector2 velocity)
+    private int OnTakeDamage(ref int hazardType, int damage)
     {
-        if (velocity.x > 0.1f) return CollisionSide.right;
-        else if (velocity.x < -0.1f) return CollisionSide.left;
-        else if (velocity.y > 0.1f) return CollisionSide.top;
-        else return CollisionSide.bottom;
+        if (hazardType > 1 && damage > 0 && owningBubbleController == this) damageHeroEvent = true;
+        return damage;
     }
 
-    private bool tookControl = false;
+    private static BubbleController? owningBubbleController;
 
     private void OnDestroy()
     {
-        if (tookControl)
+        ModHooks.TakeDamageHook -= OnTakeDamage;
+
+        if (owningBubbleController == this)
         {
+            owningBubbleController = null;
+
             var hc = HeroController.instance;
             var knight = hc.gameObject;
             var renderer = knight.GetComponent<MeshRenderer>();
 
-            knight.SetActive(true);
+            hc.AffectedByGravity(true);
+            renderer.enabled = true;
+
             hc.RegainControl();
         }
     }
     
     private IEnumerator<CoroutineElement> Run()
     {
+        bool first = true;
         var origPos = transform.position;
-        Trigger!.gameObject.SetActive(true);
 
         var hc = HeroController.instance;
         var knight = hc.gameObject;
         var renderer = knight.GetComponent<MeshRenderer>();
+        var rb2d = knight.GetComponent<Rigidbody2D>();
         var input = InputHandler.Instance;
 
         while (true)
         {
             BubbleAnimator!.runtimeAnimatorController = IdleController;
+            if (first)
+            {
+                // Avoid room-load shenanigans.
+                yield return Coroutines.SleepFrames(10);
+                yield return Coroutines.SleepSeconds(1.5f);
+                first = false;
+            }
+
             yield return Coroutines.SleepUntil(() => Trigger!.Detected());
 
             var facingRight = hc.cState.facingRight;
-            hc.RelinquishControl();
-            knight.SetActive(false);
-            tookControl = true;
+            if (owningBubbleController == null)
+            {
+                hc.CancelAttack();
+                hc.CancelRecoilHorizontal();
+                hc.CancelBounce();
+                hc.CancelFallEffects();
+                hc.cState.nailCharging = false;
+                hc.SetNailChargeTimer(0);
+
+                rb2d.velocity = Vector2.zero;
+                hc.AffectedByGravity(false);
+                BumperModule.Get().CancelBump();
+
+                renderer.enabled = false;
+
+                hc.RelinquishControl();
+            }
+            owningBubbleController = this;
 
             BubbleAnimator!.runtimeAnimatorController = FillController;
             yield return Coroutines.SleepSeconds(StallTime);
@@ -105,46 +139,50 @@ internal class BubbleController : MonoBehaviour
             Wrapped<bool> dashReleased = new(false);
 
             BubbleAnimator!.runtimeAnimatorController = ActiveController;
+            finishedMoving = false;
+            damageHeroEvent = false;
+            bool dashed = false;
             yield return Coroutines.SleepUntil(() =>
             {
+                if (damageHeroEvent || owningBubbleController != this || finishedMoving) return true;
+
                 if (!dashReleased.Value)
                 {
                     if (!input.inputActions.dash) dashReleased.Value = true;
                 }
                 else if (input.inputActions.dash)
                 {
-                    knight.transform.position = Bubble!.transform.position + KnightOffset;
-                    knight.SetActive(true);
-                    hc.SetStartWithDash();
-                    hc.RegainControl();
-                    hc.SetAirDashed(true);
-                    hc.SetDoubleJumped(false);
-                    tookControl = false;
-
+                    dashed = true;
                     return true;
                 }
-
-                if (finishedMoving) return true;
 
                 knight.transform.position = Bubble!.transform.position + KnightOffset;
                 return false;
             });
 
-            if (finishedMoving)
+            if (owningBubbleController == this)
             {
-                knight.transform.position = targetPos + KnightOffset;
-                knight.SetActive(true);
-                if (wallCling) hc.SetStartWithWallslide();
-                hc.RegainControl();
-                hc.SetAirDashed(false);
-                hc.SetDoubleJumped(false);
-                tookControl = false;
+                hc.AffectedByGravity(true);
+                rb2d.velocity = Vector2.zero;
 
-                if (damageHero != null) hc.TakeDamage(damageHero.gameObject, ComputeCollisionSide(RigidBody.velocity), damageHero.damageDealt, damageHero.hazardType);
+                if (!damageHeroEvent)
+                {
+                    var basePos = finishedMoving ? targetPos : Bubble!.transform.position;
+                    knight.transform.position = basePos + KnightOffset;
+
+                    renderer.enabled = true;
+                    if (dashed) hc.SetStartWithDash();
+                    else if (wallCling) hc.SetStartWithWallslide();
+                    hc.RegainControl();
+                    hc.SetAirDashed(dashed);
+                    hc.SetDoubleJumped(false);
+                }
+
+                owningBubbleController = null;
             }
 
             finishedMoving = false;
-            damageHero = null;
+            damageHeroEvent = false;
             RigidBody.velocity = Vector2.zero;
             BubbleAnimator!.runtimeAnimatorController = DissolveController;
             yield return Coroutines.SleepSeconds(RespawnDelay);
@@ -155,9 +193,19 @@ internal class BubbleController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (owningBubbleController == this)
+        {
+            var hc = HeroController.instance;
+            hc.ResetHardLandingTimer();
+            hc.AffectedByGravity(false);
+        }
+    }
+
     private void FixedUpdate()
     {
-        if (tookControl) HeroController.instance.gameObject.transform.position = Bubble!.transform.position;
+        if (owningBubbleController == this) HeroController.instance.gameObject.transform.position = Bubble!.transform.position + KnightOffset;
     }
 }
 
@@ -185,24 +233,6 @@ internal class Bubble : MonoBehaviour
         else if (normal.y > 0) pos = new(transform.position.x, box.max.y + KnightUtil.HEIGHT / 2);
         else pos = new(transform.position.x, box.min.y - KnightUtil.HEIGHT / 2);
 
-        BubbleController!.FinishMoving(pos, wallCling, null);
-    }
-}
-
-[Shim]
-internal class BubbleHeroProxy : MonoBehaviour
-{
-    [ShimField] public BubbleController? BubbleController;
-
-    private void OnTriggerEnter2D(Collider2D collider) => HandleTrigger(collider);
-
-    private void OnTriggerStay2D(Collider2D collider) => HandleTrigger(collider);
-
-    private void HandleTrigger(Collider2D collider)
-    {
-        var damageHero = collider.gameObject.GetComponent<DamageHero>();
-        if (damageHero == null) return;
-
-        BubbleController!.FinishMoving(transform.position, false, damageHero);
+        BubbleController!.FinishMoving(pos, wallCling);
     }
 }

@@ -57,6 +57,9 @@ internal static class LogicPatcher
 
         AddSplitItems("Left_Mantis_Claw", lmb);
         AddSplitItems("Right_Mantis_Claw", lmb);
+        AddSplitItems("Mothwing_Cloak", lmb);
+        AddSplitItems("Queen's_Gardens_Stag", lmb);
+        AddSplitItems("Distant_Village_Stag", lmb);
         AddSplitItems("Tram_Pass", lmb);
         AddSplitItems("Swim", lmb);
         AddSplitItems("Isma's_Tear", lmb);
@@ -134,6 +137,9 @@ internal static class LogicPatcher
 
         AddSplitItems("Left_Mantis_Claw", rb);
         AddSplitItems("Right_Mantis_Claw", rb);
+        AddSplitItems("Mothwing_Cloak", rb);
+        AddSplitItems("Queen's_Gardens_Stag", rb);
+        AddSplitItems("Distant_Village_Stag", rb);
         AddSplitItems("Tram_Pass", rb);
         AddSplitItems("Swim", rb);
         AddSplitItems("Isma's_Tear", rb);

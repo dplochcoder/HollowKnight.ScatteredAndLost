@@ -62,6 +62,8 @@ internal class BumperModule : ItemChanger.Modules.Module
 
     public static BumperModule Get() => ItemChangerMod.Modules.Get<BumperModule>()!;
 
+    public void CancelBump() => behaviour?.Reset();
+
     private static readonly FsmID KnightFsmID = new("Knight", "ProxyFSM");
 
     private List<ILHook>? hooks;

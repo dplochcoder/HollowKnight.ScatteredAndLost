@@ -1,4 +1,5 @@
 ﻿using GlobalEnums;
+using HK8YPlando.Scripts.Platforming;
 using HK8YPlando.Scripts.SharedLib;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ internal class HeroPlatformStickImproved : MonoBehaviour
         if (cooldown > 0) return;
 
         GameObject collider = collision.gameObject;
-        if (collider.layer == (int)PhysLayers.PLAYER)
+        if (collider.name == "Knight")
         {
             collider.transform.SetParent(transform, true);
             children.Add(collider);
