@@ -10,10 +10,27 @@ namespace HK8YPlando.Scripts
     internal class TilemapGrid : SharedLib.Grid
     {
         private readonly Tilemap tilemap;
+        private readonly bool[,] noTerrain;
 
-        public TilemapGrid(Tilemap tilemap) => this.tilemap = tilemap;
+        public TilemapGrid(Tilemap tilemap)
+        {
+            this.tilemap = tilemap;
 
-        public bool Filled(int x, int y) => tilemap.GetTile(new Vector3Int(x, y, 0)) != null;
+            noTerrain = new bool[Width(), Height()];
+            foreach (var zone in Object.FindObjectsOfType<NoTerrainZone>())
+            {
+                var rect = zone.GetComponent<BoxCollider2D>().ToRect();
+                for (int i = 0; i < rect.W; i++)
+                    for (int j = 0; j < rect.H; j++)
+                    {
+                        var x = i + rect.X;
+                        var y = j + rect.Y;
+                        if (x >= 0 && x <= Width() && y >= 0 && y <= Height()) noTerrain[x, y] = true;
+                    }
+            }
+        }
+
+        public bool Filled(int x, int y) => tilemap.GetTile(new Vector3Int(x, y, 0)) != null && !noTerrain[x, y];
 
         public int Height() => tilemap.size.y;
 
@@ -37,6 +54,17 @@ namespace HK8YPlando.Scripts
         public static List<Vector2> Points(this SharedLib.Rect r) => new List<Vector2>() { new Vector2(-r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, -r.H / 2f) };
 
         public static Vector3 Center(this SharedLib.Rect r) => new Vector3(r.X + r.W / 2.0f, r.Y + r.H / 2.0f);
+
+        public static SharedLib.Rect ToRect(this BoxCollider2D self)
+        {
+            var b = self.bounds;
+            var x1 = Mathf.RoundToInt(b.min.x);
+            var x2 = Mathf.RoundToInt(b.max.x);
+            var y1 = Mathf.RoundToInt(b.min.y);
+            var y2 = Mathf.RoundToInt(b.max.y);
+
+            return new SharedLib.Rect(x1, y1, x2 - x1, y2 - y1);
+        }
     }
 
     [RequireComponent(typeof(Tilemap))]
