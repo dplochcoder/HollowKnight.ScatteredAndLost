@@ -1,4 +1,5 @@
-﻿using ItemChanger;
+﻿using HK8YPlando.Util;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using UnityEngine;
@@ -30,16 +31,7 @@ internal class BlockFungalDrop : ItemChanger.Modules.Module
         GameObject deleter = new("Deleter");
         deleter.AddComponent<FungalActivatorDeleter>();
 
-        var mender = Object.Instantiate(HK8YPlandoPreloader.Instance.MenderBug,
-            new Vector3(33.5f, 19, 0),
-            Quaternion.identity);
-
-        var fsm = mender.LocateMyFSM("Mender Bug Ctrl");
-        var init = fsm.GetState("Init");
-        init.ClearActions();
-        init.AddLastAction(new Lambda(() => fsm.SetState("Idle")));
-
-        mender.SetActive(true);
+        MenderbugSpawner.SpawnMenderbug(new(33.5f, 19), false);
     }
 
     private void Deactivator(PlayMakerFSM fsm) => Object.Destroy(fsm.gameObject);

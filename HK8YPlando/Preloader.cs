@@ -10,6 +10,9 @@ internal class HK8YPlandoPreloader : Preloader
     [PrefabPreload("Waterways_08", "Gas Explosion M2")]
     public GameObject BelflyExplosion { get; private set; }
 
+    [Preload("Tutorial_01", "_Props/Hallownest_Main_Gate/Door")]
+    public GameObject GreatDoor { get; private set; }
+
     [Preload("Crossroads_13", "_Enemies/Worm")]
     public GameObject Goam { get; private set; }
 
