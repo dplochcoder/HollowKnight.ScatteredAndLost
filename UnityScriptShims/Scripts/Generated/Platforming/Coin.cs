@@ -6,6 +6,7 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.ParticleSystem ParticleSystem;
         public UnityEngine.Animator Animator;
         public HK8YPlando.Scripts.Proxy.HeroDetectorProxy HeroDetector;
+        public UnityEngine.AudioClip ObtainedClip;
         public UnityEngine.Color IdleColor;
         public UnityEngine.Color FlashColor;
         public UnityEngine.Color ActiveColor;

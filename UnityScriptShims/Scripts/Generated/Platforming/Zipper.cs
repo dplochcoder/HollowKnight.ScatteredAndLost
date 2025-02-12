@@ -8,6 +8,11 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.Sprite RedLightSprite;
         public UnityEngine.Sprite YellowLightSprite;
         public UnityEngine.Sprite GreenLightSprite;
+        public System.Collections.Generic.List<UnityEngine.AudioClip> TouchClips;
+        public System.Collections.Generic.List<UnityEngine.AudioClip> ImpactClips;
+        public UnityEngine.AudioClip RewindIntro;
+        public UnityEngine.AudioClip RewindLoop;
+        public System.Collections.Generic.List<UnityEngine.AudioClip> ResetClips;
         public ZipperPlatform Platform;
         public UnityEngine.Transform RestPosition;
         public UnityEngine.Transform TargetPosition;

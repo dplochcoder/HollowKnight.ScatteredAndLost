@@ -18,6 +18,7 @@ internal record HeartDoorData
 
 internal class BrettasHouse : Module
 {
+    private static readonly FsmID shadeId = new("Hero Death", "Hero Death Anim");
     private static readonly FsmID dreamNailId = new("Dream Nail");
 
     public int Hearts = 0;
@@ -48,6 +49,7 @@ internal class BrettasHouse : Module
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
+        Events.AddFsmEdit(shadeId, ForceShadeSpawn);
     }
 
     public override void Unload()
@@ -55,6 +57,7 @@ internal class BrettasHouse : Module
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
+        Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -94,4 +97,19 @@ internal class BrettasHouse : Module
         {
             if (activeCheckpoints.Count > 0) fsm.SendEvent("FAIL");
         }));
+
+    internal void ForceShadeSpawn(PlayMakerFSM fsm)
+    {
+        fsm.GetState("Set Shade").AddFirstAction(new Lambda(() =>
+        {
+            if (activeCheckpoints.Count > 0)
+            {
+                PlayerData.instance.SetString("shadeScene", "Town");
+                PlayerData.instance.SetFloat("shadePositionX", 165);
+                PlayerData.instance.SetFloat("shadePositionY", 18);
+
+                fsm.SetState("Check MP");
+            }
+        }));
+    }
 }

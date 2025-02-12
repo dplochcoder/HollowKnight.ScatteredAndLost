@@ -20,6 +20,12 @@ internal class BubbleController : MonoBehaviour
     [ShimField] public RuntimeAnimatorController? DissolveController;
     [ShimField] public RuntimeAnimatorController? RespawnController;
 
+    [ShimField] public AudioClip? EntryClip;
+    [ShimField] public AudioClip? LoopClip;
+    [ShimField] public AudioClip? WallClip;
+    [ShimField] public AudioClip? DashClip;
+    [ShimField] public AudioClip? RespawnClip;
+
     [ShimField] public GameObject? Bubble;
     [ShimField] public Rigidbody2D? RigidBody;
     [ShimField] public HeroDetectorProxy? Trigger;
@@ -89,27 +95,19 @@ internal class BubbleController : MonoBehaviour
     
     private IEnumerator<CoroutineElement> Run()
     {
-        bool first = true;
         var origPos = transform.position;
 
         var hc = HeroController.instance;
         var knight = hc.gameObject;
         var renderer = knight.GetComponent<MeshRenderer>();
-        var rb2d = knight.GetComponent<Rigidbody2D>();
+        var heroRb2d = knight.GetComponent<Rigidbody2D>();
         var input = InputHandler.Instance;
 
         while (true)
         {
             BubbleAnimator!.runtimeAnimatorController = IdleController;
-            if (first)
-            {
-                // Avoid room-load shenanigans.
-                yield return Coroutines.SleepFrames(10);
-                yield return Coroutines.SleepSeconds(1.5f);
-                first = false;
-            }
-
             yield return Coroutines.SleepUntil(() => Trigger!.Detected());
+            Bubble!.gameObject.PlaySound(EntryClip!);
 
             var facingRight = hc.cState.facingRight;
             if (owningBubbleController == null)
@@ -121,7 +119,7 @@ internal class BubbleController : MonoBehaviour
                 hc.cState.nailCharging = false;
                 hc.SetNailChargeTimer(0);
 
-                rb2d.velocity = Vector2.zero;
+                heroRb2d.velocity = Vector2.zero;
                 hc.AffectedByGravity(false);
                 BumperModule.Get().CancelBump();
 
@@ -134,6 +132,7 @@ internal class BubbleController : MonoBehaviour
             BubbleAnimator!.runtimeAnimatorController = FillController;
             yield return Coroutines.SleepSeconds(StallTime);
 
+            RigidBody.simulated = true;
             RigidBody!.velocity = ComputeVelocity(facingRight);
 
             Wrapped<bool> dashReleased = new(false);
@@ -142,6 +141,7 @@ internal class BubbleController : MonoBehaviour
             finishedMoving = false;
             damageHeroEvent = false;
             bool dashed = false;
+            Bubble.gameObject.LoopSound(LoopClip!);
             yield return Coroutines.SleepUntil(() =>
             {
                 if (damageHeroEvent || owningBubbleController != this || finishedMoving) return true;
@@ -162,8 +162,10 @@ internal class BubbleController : MonoBehaviour
 
             if (owningBubbleController == this)
             {
+                Bubble.gameObject.PlaySound((!damageHeroEvent && dashed) ? DashClip! : WallClip!);
+
                 hc.AffectedByGravity(true);
-                rb2d.velocity = Vector2.zero;
+                heroRb2d.velocity = Vector2.zero;
 
                 if (!damageHeroEvent)
                 {
@@ -184,9 +186,11 @@ internal class BubbleController : MonoBehaviour
             finishedMoving = false;
             damageHeroEvent = false;
             RigidBody.velocity = Vector2.zero;
+            RigidBody.simulated = false;
             BubbleAnimator!.runtimeAnimatorController = DissolveController;
             yield return Coroutines.SleepSeconds(RespawnDelay);
 
+            Bubble.gameObject.PlaySound(RespawnClip!);
             Bubble!.transform.position = origPos;
             BubbleAnimator!.runtimeAnimatorController = RespawnController;
             yield return Coroutines.SleepSeconds(RespawnCooldown);

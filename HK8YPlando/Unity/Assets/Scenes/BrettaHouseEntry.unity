@@ -11955,6 +11955,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: mapZone
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: EsSnapshotName
+      value: en Room
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: MsSnapshotName
+      value: Normal Soft
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: AtsSnapshotName
+      value: at Surface Interior
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: EsSnapshotIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: MsSnapshotIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: AtmosCueSnapshotName
+      value: at None
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: MusicCueSnapshotName
+      value: Normal
+      objectReference: {fileID: 0}
+    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
+      propertyPath: InfectedMusicCueSnapshotName
+      value: Normal
+      objectReference: {fileID: 0}
     - target: {fileID: 2293310922033627781, guid: 8239f550a484dc842ab69656852491cd, type: 3}
       propertyPath: m_Name
       value: __Initializer

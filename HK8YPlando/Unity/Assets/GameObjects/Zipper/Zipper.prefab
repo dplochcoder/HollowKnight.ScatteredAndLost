@@ -319,6 +319,22 @@ MonoBehaviour:
   RedLightSprite: {fileID: 21300000, guid: 058a93c61b65b4a47b41e66e5a89a6d4, type: 3}
   YellowLightSprite: {fileID: 21300000, guid: d88cbb6b191bd424f8ca4ae4523b7f33, type: 3}
   GreenLightSprite: {fileID: 21300000, guid: 5fa7ee2be3832c641a0c3f4c97f50da2, type: 3}
+  TouchClips:
+  - {fileID: 8300000, guid: 5e60a200ae5342a41bf687668e606323, type: 3}
+  - {fileID: 8300000, guid: 1ee07860490b2584b955ccb6eb797af3, type: 3}
+  - {fileID: 8300000, guid: 2d2193cd2cf8b4d4cabaaec885bb9343, type: 3}
+  ImpactClips:
+  - {fileID: 8300000, guid: edc7bdb95ea77c649a47865e16e2bbd5, type: 3}
+  - {fileID: 8300000, guid: 07b9ed0e1b4af7042b9ae9475cec363a, type: 3}
+  - {fileID: 8300000, guid: 78d60c4b467fc5248b35bb0f0bc8f56c, type: 3}
+  - {fileID: 8300000, guid: 2a773403d92cd2945a8e501dd62356fe, type: 3}
+  RewindIntro: {fileID: 8300000, guid: 34f7c4674ad44a448b2380ba5ea2d098, type: 3}
+  RewindLoop: {fileID: 8300000, guid: bd4b723fda19a24459d6ac0893cfccd4, type: 3}
+  ResetClips:
+  - {fileID: 8300000, guid: fd15676346013584c806502c3d26cfe4, type: 3}
+  - {fileID: 8300000, guid: a4b74fb3c1058bd4b84c3e9674a38f00, type: 3}
+  - {fileID: 8300000, guid: 15a3339f4fb9e6b4b8e783b35dc12ac0, type: 3}
+  - {fileID: 8300000, guid: 565e8cf535205d747af56a65537e25a0, type: 3}
   Platform: {fileID: 8978783085545065232}
   RestPosition: {fileID: 1680270584225353228}
   TargetPosition: {fileID: 0}

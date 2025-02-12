@@ -51,6 +51,11 @@ MonoBehaviour:
   ActiveController: {fileID: 9100000, guid: db6ba8cbbe79d4a428b36ebfdba9a2ad, type: 2}
   DissolveController: {fileID: 9100000, guid: c624111c5d18fe446b257037f2e76bda, type: 2}
   RespawnController: {fileID: 9100000, guid: 45027f32565586b46812897fddbe1a2a, type: 2}
+  EntryClip: {fileID: 8300000, guid: acc3a0b546c4ed2499acb83444261c37, type: 3}
+  LoopClip: {fileID: 8300000, guid: 9552c759a369bfd42a781216b1411dac, type: 3}
+  WallClip: {fileID: 8300000, guid: b3630195b7b343f4ea13a8dd8ad3c508, type: 3}
+  DashClip: {fileID: 8300000, guid: 17b154281a2911b4089a305c4dd9f129, type: 3}
+  RespawnClip: {fileID: 8300000, guid: 97d9a1797d706984da9d2bb33926c086, type: 3}
   Bubble: {fileID: 8297201077536604970}
   RigidBody: {fileID: 3991681249155830919}
   Trigger: {fileID: 2506565704407434135}

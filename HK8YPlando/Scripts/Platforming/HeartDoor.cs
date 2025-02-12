@@ -19,7 +19,6 @@ internal class HeartDoor : MonoBehaviour
     [ShimField] public float HSpace;
     [ShimField] public float VSpace;
 
-    // TODO: Sounds
     [ShimField] public float FallHeight;
     [ShimField] public float FallSpeed;
     [ShimField] public float FallBuffer;
@@ -28,6 +27,9 @@ internal class HeartDoor : MonoBehaviour
     [ShimField] public RuntimeAnimatorController? OpenController;
     [ShimField] public List<ParticleSystem> ClosedParticleSystems = [];
     [ShimField] public List<ParticleSystem> OpenParticleSystems = [];
+
+    [ShimField] public List<AudioClip> HeartSounds = [];
+    [ShimField] public AudioClip? OpenSound;
 
     [ShimField] public GameObject? Terrain;
     [ShimField] public GameObject? MainRender;
@@ -103,10 +105,12 @@ internal class HeartDoor : MonoBehaviour
             yield return Coroutines.SleepUntil(() => done.Value);
             data.NumUnlocked++;
 
+            gameObject.PlaySound(HeartSounds.Random());
             yield return Coroutines.SleepSeconds(HeartActivationDelay);
         }
 
         GetComponent<Animator>().runtimeAnimatorController = OpenController;
+        gameObject.PlaySound(OpenSound!);
         yield return Coroutines.SleepUntil(() => doorAnimFinished);
 
         data.Opened = true;

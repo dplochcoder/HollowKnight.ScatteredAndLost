@@ -250,6 +250,11 @@ MonoBehaviour:
   YForgiveness: 0.15
   HorizontalDecel: 52
   VerticalScale: 1.2
+  HitClips:
+  - {fileID: 8300000, guid: 8232a5edfc1379a4b9202a75aa795175, type: 3}
+  - {fileID: 8300000, guid: 4c675d2786d3a9446be6961f93dcc158, type: 3}
+  - {fileID: 8300000, guid: 39de2e51f6e20fb4badafc2648ed0f2a, type: 3}
+  ResetClip: {fileID: 8300000, guid: 855a35d993e3eaa43a4dce34349c9514, type: 3}
   OscillateRadius: 0.15
   OscillatePeriod: 3.25
 --- !u!58 &2273136656079002766

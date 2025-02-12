@@ -1,19 +1,12 @@
 ﻿using HK8YPlando.Scripts.Environment;
+using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
-
-internal enum ZipperState
-{
-    Rest,
-    Shake,
-    Shoot,
-    Wait,
-    Rewind,
-    RewindCooldown,
-}
 
 [Shim]
 internal class Zipper : MonoBehaviour
@@ -24,6 +17,12 @@ internal class Zipper : MonoBehaviour
     [ShimField] public Sprite? RedLightSprite;
     [ShimField] public Sprite? YellowLightSprite;
     [ShimField] public Sprite? GreenLightSprite;
+
+    [ShimField] public List<AudioClip> TouchClips = [];
+    [ShimField] public List<AudioClip> ImpactClips = [];
+    [ShimField] public AudioClip? RewindIntro;
+    [ShimField] public AudioClip? RewindLoop;
+    [ShimField] public List<AudioClip> ResetClips = [];
 
     [ShimField] public ZipperPlatform? Platform;
 
@@ -37,144 +36,64 @@ internal class Zipper : MonoBehaviour
     [ShimField] public float RewindSpeed;
     [ShimField] public float RewindCooldown;
 
-    private Vector3 restPos;
-    private Vector3 targetPos;
-    private float travelDist;
-    private float shootTime;
-    private float rewindTime;
+    private void Awake() => this.StartLibCoroutine(Run());
+    // stick = Platform!.GetComponent<HeroPlatformStickImproved>()!;
+    // rewindTime = travelDist / rewindTime;
 
-    private ZipperState state = ZipperState.Rest;
-    private float timeProgress = 0;
-    private HeroPlatformStickImproved? stick;
-
-    private void Awake()
+    private IEnumerator<CoroutineElement> Run()
     {
-        stick = Platform!.GetComponent<HeroPlatformStickImproved>()!;
-        restPos = RestPosition!.position;
-        targetPos = TargetPosition!.position;
-        travelDist = (targetPos - restPos).magnitude;
-        shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
-        rewindTime = travelDist / rewindTime;
-    }
+        var stick = Platform!.GetComponent<HeroPlatformStickImproved>();
+        var audio = Platform.gameObject.AddComponent<AudioSource>();
+        audio.outputAudioMixerGroup = AudioMixerGroups.Actors();
 
-    private Sprite ComputeLightSprite()
-    {
-        return state switch
+        var restPos = RestPosition!.position;
+        var targetPos = TargetPosition!.position;
+        var travelDist = (targetPos - restPos).magnitude;
+        var rewindTime = travelDist / RewindSpeed;
+        var shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
+
+        Platform.Light!.sprite = RedLightSprite!;
+
+        while (true)
         {
-            ZipperState.Rest => RedLightSprite!,
-            ZipperState.Shake or ZipperState.Shoot or ZipperState.Wait => GreenLightSprite!,
-            ZipperState.Rewind => YellowLightSprite!,
-            ZipperState.RewindCooldown => RedLightSprite!,
-            _ => RedLightSprite!,
-        };
-    }
+            yield return Coroutines.SleepUntil(() => stick.PlayerAttached);
+            audio.PlayOneShot(TouchClips.Random());
 
-    private void Update()
-    {
-        UpdateTime(Time.deltaTime);
-        Platform!.Light!.sprite = ComputeLightSprite();
-    }
+            Platform.Light.sprite = GreenLightSprite;
+            yield return Coroutines.SleepSecondsUpdateDelta(ShakeTime, _ =>
+            {
+                Platform!.SpriteShaker!.transform.localPosition = MathExt.RandomInCircle(Vector2.zero, ShakeRadius);
+                return false;
+            });
+            Platform!.SpriteShaker!.transform.localPosition = Vector3.zero;
 
-    private void UpdateTime(float time)
-    {
-        while (time > 0) time = UpdateTimeForState(time);
-    }
+            Wrapped<float> launchTime = new(0);
+            yield return Coroutines.SleepSecondsUpdateDelta(shootTime, time =>
+            {
+                launchTime.Value += time;
 
-    private float UpdateTimeForState(float time)
-    {
-        switch (state)
-        {
-            case ZipperState.Rest:
-                {
-                    if (stick!.PlayerAttached)
-                    {
-                        state = ZipperState.Shake;
-                        timeProgress = 0;
-                        return time;
-                    }
+                var d = StartSpeed * launchTime.Value + Accel * launchTime.Value * launchTime.Value / 2;
+                Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
+                return false;
+            });
+            audio.PlayOneShot(ImpactClips.Random());
 
-                    return 0;
-                }
-            case ZipperState.Shake:
-                {
-                    timeProgress += time;
-                    if (timeProgress >= ShakeTime)
-                    {
-                        Platform!.SpriteShaker!.transform.localPosition = Vector3.zero;
-                        var remaining = timeProgress - ShakeTime;
+            yield return Coroutines.SleepSeconds(PauseTime);
 
-                        state = ZipperState.Shoot;
-                        timeProgress = 0;
-                        return remaining;
-                    }
+            audio.PlayOneShot(RewindIntro!);
+            Platform.Light.sprite = YellowLightSprite;
+            yield return Coroutines.SleepSecondsUpdatePercent(rewindTime, pct =>
+            {
+                if (!audio.isPlaying) gameObject.LoopSound(RewindLoop!);
 
-                    Platform!.SpriteShaker!.transform.localPosition = MathExt.RandomInCircle(Vector2.zero, ShakeRadius);
-                    return 0;
-                }
-            case ZipperState.Shoot:
-                {
-                    // TODO: Update gears
+                Platform!.transform.position = targetPos.Interpolate(pct, restPos);
+                return false;
+            });
 
-                    timeProgress += time;
-                    if (timeProgress >= shootTime)
-                    {
-                        Platform!.transform.position = targetPos;
-                        var remaining = timeProgress - shootTime;
+            gameObject.PlaySound(ResetClips.Random());
 
-                        state = ZipperState.Wait;
-                        timeProgress = 0;
-                        return remaining;
-                    }
-
-                    var d = StartSpeed * timeProgress + Accel * timeProgress * timeProgress / 2;
-                    Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
-                    return 0;
-                }
-            case ZipperState.Wait:
-                {
-                    timeProgress += time;
-                    if (timeProgress >= PauseTime)
-                    {
-                        var remaining = timeProgress - PauseTime;
-
-                        state = ZipperState.Rewind;
-                        timeProgress = 0;
-                        return remaining;
-                    }
-
-                    return 0;
-                }
-            case ZipperState.Rewind:
-                {
-                    // TODO: Update gears
-                    timeProgress += time;
-                    if (timeProgress >= travelDist / RewindSpeed)
-                    {
-                        Platform!.transform.position = restPos;
-                        var remaining = (timeProgress - travelDist / RewindSpeed);
-
-                        state = ZipperState.RewindCooldown;
-                        timeProgress = 0;
-                        return remaining;
-                    }
-
-                    Platform!.transform.position = targetPos + (restPos - targetPos).normalized * RewindSpeed * timeProgress;
-                    return 0;
-                }
-            case ZipperState.RewindCooldown:
-                {
-                    timeProgress += time;
-                    if (timeProgress >= RewindCooldown)
-                    {
-                        state = ZipperState.Rest;
-                        return (timeProgress - RewindCooldown);
-                    }
-
-                    return 0;
-                }
-            default:
-                HK8YPlandoMod.BUG($"Unknown state: {state}");
-                return 0;
+            Platform.Light.sprite = RedLightSprite;
+            yield return Coroutines.SleepSeconds(RewindCooldown);
         }
     }
 }

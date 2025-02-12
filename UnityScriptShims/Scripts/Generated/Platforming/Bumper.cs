@@ -10,6 +10,7 @@ namespace HK8YPlando.Scripts.Platforming
         public float YForgiveness;
         public float HorizontalDecel;
         public float VerticalScale;
+        public System.Collections.Generic.List<UnityEngine.AudioClip> HitClips;
         public float OscillateRadius;
         public float OscillatePeriod;
         

@@ -988,6 +988,12 @@ MonoBehaviour:
   OpenParticleSystems:
   - {fileID: 5655851189888671533}
   - {fileID: 548644325027571568}
+  HeartSounds:
+  - {fileID: 8300000, guid: ba5520d79be676145bfbb8527feb66b1, type: 3}
+  - {fileID: 8300000, guid: 5934ddea769ee2c4287ea26cfcc8a045, type: 3}
+  - {fileID: 8300000, guid: fb30232221a36f24ca49032f98419c7a, type: 3}
+  - {fileID: 8300000, guid: c03c8c19531ac534fbc427564e85b0c1, type: 3}
+  OpenSound: {fileID: 8300000, guid: 4f799f947d5440746bfb9218653a7929, type: 3}
   Terrain: {fileID: 8390136008543441358}
   MainRender: {fileID: 6217716929913361465}
   ActivationTrigger: {fileID: 5673854608617547697}

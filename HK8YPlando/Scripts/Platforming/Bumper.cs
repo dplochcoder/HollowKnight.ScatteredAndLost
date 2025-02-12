@@ -1,6 +1,7 @@
 ﻿using HK8YPlando.IC;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -17,6 +18,8 @@ internal class Bumper : MonoBehaviour, IHitResponder
     [ShimField] public float YForgiveness;
     [ShimField] public float HorizontalDecel;
     [ShimField] public float VerticalScale;
+
+    [ShimField] public List<AudioClip> HitClips = [];
 
     [ShimField] public float OscillateRadius;
     [ShimField] public float OscillatePeriod;
@@ -38,7 +41,7 @@ internal class Bumper : MonoBehaviour, IHitResponder
         if (cooldown > 0) return;
         if (damageInstance.AttackType != AttackTypes.Nail) return;
 
-        // TODO: Sound
+        gameObject.PlaySound(HitClips.Random());
         cooldown = CooldownDuration;
         SpriteAnimator?.SetTrigger("Burst");
 
@@ -57,10 +60,11 @@ internal class Bumper : MonoBehaviour, IHitResponder
 
     private void Update()
     {
-        if (cooldown <= Time.deltaTime) cooldown = 0;
-        else
+        if (cooldown > 0)
         {
             cooldown -= Time.deltaTime;
+            if (cooldown <= 0) cooldown = 0;
+
             return;
         }
 

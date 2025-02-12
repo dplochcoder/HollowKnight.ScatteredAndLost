@@ -13,6 +13,8 @@ namespace HK8YPlando.Scripts.Platforming;
 [Shim]
 internal class CoinGroup : MonoBehaviour
 {
+    [ShimField] public AudioClip? FinishedClip;
+
     private List<CoinDoor> doors = [];
     private List<Coin> coins = [];
 
@@ -46,6 +48,7 @@ internal class CoinGroup : MonoBehaviour
         if (coins.Any(c => !c.IsActivated())) return;
 
         doors.ForEach(d => d.Open());
+        doors.FirstOrDefault()?.gameObject.PlaySound(FinishedClip!);
         doorsOpened = true;
     }
 }
@@ -59,6 +62,8 @@ internal class Coin : MonoBehaviour
     [ShimField] public ParticleSystem? ParticleSystem;
     [ShimField] public Animator? Animator;
     [ShimField] public HeroDetectorProxy? HeroDetector;
+
+    [ShimField] public AudioClip? ObtainedClip;
 
     [ShimField] public Color IdleColor;
     [ShimField] public Color FlashColor;
@@ -128,6 +133,7 @@ internal class Coin : MonoBehaviour
 
     private IEnumerator<CoroutineElement> ActivateCoin()
     {
+        gameObject.PlaySound(ObtainedClip!);
         ParticleSystem?.Play();
 
         yield return Coroutines.SleepSecondsUpdatePercent(FlashTransitionTime, pct =>

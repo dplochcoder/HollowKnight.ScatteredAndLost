@@ -8,6 +8,11 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.RuntimeAnimatorController ActiveController;
         public UnityEngine.RuntimeAnimatorController DissolveController;
         public UnityEngine.RuntimeAnimatorController RespawnController;
+        public UnityEngine.AudioClip EntryClip;
+        public UnityEngine.AudioClip LoopClip;
+        public UnityEngine.AudioClip WallClip;
+        public UnityEngine.AudioClip DashClip;
+        public UnityEngine.AudioClip RespawnClip;
         public UnityEngine.GameObject Bubble;
         public UnityEngine.Rigidbody2D RigidBody;
         public HK8YPlando.Scripts.Proxy.HeroDetectorProxy Trigger;

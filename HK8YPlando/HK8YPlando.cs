@@ -130,7 +130,6 @@ public class HK8YPlandoMod : Mod
         HK8YPlandoPreloader.Instance.Initialize(preloadedObjects);
         HK8YPlandoSceneManagerAPI.Load();
 
-        // FIXME: Disable, attach to save file.
         if (CreatePlando)
         {
             LogicPatcher.Setup();

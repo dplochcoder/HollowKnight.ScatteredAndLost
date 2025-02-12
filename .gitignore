@@ -372,8 +372,5 @@ LocalOverrides.targets
 /HK8YPlando/Unity/Assembly-CSharp-Editor.csproj
 /HK8YPlando/Unity/Assembly-CSharp.csproj
 /HK8YPlando/Unity/Unity.sln
-/HK8YPlando/Unity/Assets/GameObjects/HeartDoor/game_09_frontdoor_heartfill_1.ogg
-/HK8YPlando/Unity/Assets/GameObjects/HeartDoor/game_09_frontdoor_heartfill_2.ogg
-/HK8YPlando/Unity/Assets/GameObjects/HeartDoor/game_09_frontdoor_heartfill_3.ogg
-/HK8YPlando/Unity/Assets/GameObjects/HeartDoor/game_09_frontdoor_heartfill_4.ogg
-/HK8YPlando/Unity/Assets/GameObjects/HeartDoor/game_09_frontdoor_unlock.ogg
+/HK8YPlando/Unity/Assets/**/*.ogg
+/HK8YPlando/Unity/Assets/**/*.wav
