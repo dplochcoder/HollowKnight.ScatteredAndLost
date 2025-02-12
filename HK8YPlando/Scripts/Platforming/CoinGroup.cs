@@ -48,7 +48,7 @@ internal class CoinGroup : MonoBehaviour
         if (coins.Any(c => !c.IsActivated())) return;
 
         doors.ForEach(d => d.Open());
-        doors.FirstOrDefault()?.gameObject.PlaySound(FinishedClip!);
+        doors.FirstOrDefault()?.gameObject.PlaySound(FinishedClip!, 0.7f);
         doorsOpened = true;
     }
 }
@@ -133,7 +133,7 @@ internal class Coin : MonoBehaviour
 
     private IEnumerator<CoroutineElement> ActivateCoin()
     {
-        gameObject.PlaySound(ObtainedClip!);
+        gameObject.PlaySound(ObtainedClip!, 0.7f);
         ParticleSystem?.Play();
 
         yield return Coroutines.SleepSecondsUpdatePercent(FlashTransitionTime, pct =>

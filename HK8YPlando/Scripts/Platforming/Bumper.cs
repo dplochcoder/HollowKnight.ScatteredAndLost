@@ -41,7 +41,7 @@ internal class Bumper : MonoBehaviour, IHitResponder
         if (cooldown > 0) return;
         if (damageInstance.AttackType != AttackTypes.Nail) return;
 
-        gameObject.PlaySound(HitClips.Random());
+        gameObject.PlaySound(HitClips.Random(), 0.9f);
         cooldown = CooldownDuration;
         SpriteAnimator?.SetTrigger("Burst");
 

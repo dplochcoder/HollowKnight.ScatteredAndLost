@@ -99,18 +99,19 @@ internal class HeartDoor : MonoBehaviour
         {
             yield return Coroutines.SleepUntil(() => mod.Hearts > data.NumUnlocked);
 
+            gameObject.PlaySound(HeartSounds.Random(), 0.8f);
+
             Wrapped<bool> done = new(false);
             hearts[data.NumUnlocked].StartAnim(() => done.Value = true);
 
             yield return Coroutines.SleepUntil(() => done.Value);
             data.NumUnlocked++;
 
-            gameObject.PlaySound(HeartSounds.Random());
             yield return Coroutines.SleepSeconds(HeartActivationDelay);
         }
 
         GetComponent<Animator>().runtimeAnimatorController = OpenController;
-        gameObject.PlaySound(OpenSound!);
+        gameObject.PlaySound(OpenSound!, 0.9f);
         yield return Coroutines.SleepUntil(() => doorAnimFinished);
 
         data.Opened = true;

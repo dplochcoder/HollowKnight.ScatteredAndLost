@@ -37,8 +37,6 @@ internal class Zipper : MonoBehaviour
     [ShimField] public float RewindCooldown;
 
     private void Awake() => this.StartLibCoroutine(Run());
-    // stick = Platform!.GetComponent<HeroPlatformStickImproved>()!;
-    // rewindTime = travelDist / rewindTime;
 
     private IEnumerator<CoroutineElement> Run()
     {
@@ -57,7 +55,7 @@ internal class Zipper : MonoBehaviour
         while (true)
         {
             yield return Coroutines.SleepUntil(() => stick.PlayerAttached);
-            audio.PlayOneShot(TouchClips.Random());
+            Platform.gameObject.PlaySound(TouchClips.Random(), 0.7f);
 
             Platform.Light.sprite = GreenLightSprite;
             yield return Coroutines.SleepSecondsUpdateDelta(ShakeTime, _ =>
@@ -76,21 +74,21 @@ internal class Zipper : MonoBehaviour
                 Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
                 return false;
             });
-            audio.PlayOneShot(ImpactClips.Random());
+            Platform.gameObject.PlaySound(ImpactClips.Random(), 0.7f);
 
             yield return Coroutines.SleepSeconds(PauseTime);
 
-            audio.PlayOneShot(RewindIntro!);
+            Platform.gameObject.PlaySound(RewindIntro!, 1f, false);
             Platform.Light.sprite = YellowLightSprite;
             yield return Coroutines.SleepSecondsUpdatePercent(rewindTime, pct =>
             {
-                if (!audio.isPlaying) gameObject.LoopSound(RewindLoop!);
+                if (!audio.isPlaying) Platform.gameObject.LoopSound(RewindLoop!, 1f, false);
 
                 Platform!.transform.position = targetPos.Interpolate(pct, restPos);
                 return false;
             });
 
-            gameObject.PlaySound(ResetClips.Random());
+            Platform.gameObject.PlaySound(ResetClips.Random(), 1f, false);
 
             Platform.Light.sprite = RedLightSprite;
             yield return Coroutines.SleepSeconds(RewindCooldown);

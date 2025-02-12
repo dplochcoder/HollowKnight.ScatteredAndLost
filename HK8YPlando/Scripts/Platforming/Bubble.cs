@@ -102,6 +102,7 @@ internal class BubbleController : MonoBehaviour
         var renderer = knight.GetComponent<MeshRenderer>();
         var heroRb2d = knight.GetComponent<Rigidbody2D>();
         var input = InputHandler.Instance;
+        var particleSystem = Bubble!.GetComponent<ParticleSystem>();
 
         while (true)
         {
@@ -132,8 +133,9 @@ internal class BubbleController : MonoBehaviour
             BubbleAnimator!.runtimeAnimatorController = FillController;
             yield return Coroutines.SleepSeconds(StallTime);
 
-            RigidBody.simulated = true;
-            RigidBody!.velocity = ComputeVelocity(facingRight);
+            RigidBody!.simulated = true;
+            RigidBody.velocity = ComputeVelocity(facingRight);
+            particleSystem.Play();
 
             Wrapped<bool> dashReleased = new(false);
 
@@ -187,10 +189,11 @@ internal class BubbleController : MonoBehaviour
             damageHeroEvent = false;
             RigidBody.velocity = Vector2.zero;
             RigidBody.simulated = false;
+            particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             BubbleAnimator!.runtimeAnimatorController = DissolveController;
             yield return Coroutines.SleepSeconds(RespawnDelay);
 
-            Bubble.gameObject.PlaySound(RespawnClip!);
+            Bubble.gameObject.PlaySound(RespawnClip!, 1, false);
             Bubble!.transform.position = origPos;
             BubbleAnimator!.runtimeAnimatorController = RespawnController;
             yield return Coroutines.SleepSeconds(RespawnCooldown);

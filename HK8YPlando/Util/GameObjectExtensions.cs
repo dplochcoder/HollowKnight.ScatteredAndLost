@@ -17,25 +17,24 @@ internal static class GameObjectExtensions
         while (!co.Update(Time.deltaTime).done) yield return 0;
     }
 
-    public static void PlaySound(this GameObject self, AudioClip clip) => PlaySoundImpl(self, clip, false);
+    public static void PlaySound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, false);
 
-    public static void LoopSound(this GameObject self, AudioClip clip) => PlaySoundImpl(self, clip, true);
+    public static void LoopSound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, true);
 
-    private static void PlaySoundImpl(this GameObject self, AudioClip clip, bool loop)
+    private static void PlaySoundImpl(this GameObject self, AudioClip clip, float volume, bool global, bool loop)
     {
         var source = self.GetOrAddComponent<AudioSource>();
         source.outputAudioMixerGroup = AudioMixerGroups.Actors();
+        source.minDistance = global ? 1 : 39;
+        source.maxDistance = global ? 500 : 50;
+        source.rolloffMode = global ? AudioRolloffMode.Logarithmic : AudioRolloffMode.Custom;
+        source.reverbZoneMix = global ? 0 : 1;
+        source.spatialBlend = global ? 0 : 1;
+        source.Stop();
 
-        if (loop)
-        {
-            source.loop = true;
-            source.clip = clip;
-            source.Play();
-        }
-        else
-        {
-            source.loop = false;
-            source.PlayOneShot(clip);
-        }
+        source.loop = loop;
+        source.clip = clip;
+        source.volume = volume;
+        source.Play();
     }
 }
