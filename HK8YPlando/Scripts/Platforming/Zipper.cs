@@ -55,7 +55,7 @@ internal class Zipper : MonoBehaviour
         while (true)
         {
             yield return Coroutines.SleepUntil(() => stick.PlayerAttached);
-            Platform.gameObject.PlaySound(TouchClips.Random(), 0.7f);
+            Platform.gameObject.PlaySound(TouchClips.Random(), 0.6f);
 
             Platform.Light.sprite = GreenLightSprite;
             yield return Coroutines.SleepSecondsUpdateDelta(ShakeTime, _ =>
@@ -74,7 +74,7 @@ internal class Zipper : MonoBehaviour
                 Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
                 return false;
             });
-            Platform.gameObject.PlaySound(ImpactClips.Random(), 0.7f);
+            Platform.gameObject.PlaySound(ImpactClips.Random(), 0.6f);
 
             yield return Coroutines.SleepSeconds(PauseTime);
 

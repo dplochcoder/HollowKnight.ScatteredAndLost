@@ -3,6 +3,7 @@ using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
+using Modding;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine.SceneManagement;
@@ -50,6 +51,7 @@ internal class BrettasHouse : Module
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
+        ModHooks.LanguageGetHook += TraitorLordsHook;
     }
 
     public override void Unload()
@@ -58,6 +60,7 @@ internal class BrettasHouse : Module
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
+        ModHooks.LanguageGetHook -= TraitorLordsHook;
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -111,5 +114,16 @@ internal class BrettasHouse : Module
                 fsm.SetState("Check MP");
             }
         }));
+    }
+
+    private string TraitorLordsHook(string key, string sheetTitle, string orig)
+    {
+        return key switch
+        {
+            "BRETTOR_LORD2_SUPER" => "Revenge of the",
+            "BRETTOR_LORD2_MAIN" => "Brettor Lords",
+            "BRETTOR_LORD2_SUB" => "Now there are two of them",
+            _ => orig
+        };
     }
 }

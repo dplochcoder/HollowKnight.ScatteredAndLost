@@ -143,7 +143,7 @@ internal class BubbleController : MonoBehaviour
             finishedMoving = false;
             damageHeroEvent = false;
             bool dashed = false;
-            Bubble.gameObject.LoopSound(LoopClip!);
+            Bubble.gameObject.LoopSound(LoopClip!, 0.6f);
             yield return Coroutines.SleepUntil(() =>
             {
                 if (damageHeroEvent || owningBubbleController != this || finishedMoving) return true;

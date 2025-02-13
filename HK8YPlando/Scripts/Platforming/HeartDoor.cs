@@ -99,7 +99,7 @@ internal class HeartDoor : MonoBehaviour
         {
             yield return Coroutines.SleepUntil(() => mod.Hearts > data.NumUnlocked);
 
-            gameObject.PlaySound(HeartSounds.Random(), 0.8f);
+            gameObject.PlayOneShot(HeartSounds.Random(), 0.8f);
 
             Wrapped<bool> done = new(false);
             hearts[data.NumUnlocked].StartAnim(() => done.Value = true);

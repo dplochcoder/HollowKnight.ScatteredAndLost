@@ -133,7 +133,7 @@ internal class Coin : MonoBehaviour
 
     private IEnumerator<CoroutineElement> ActivateCoin()
     {
-        gameObject.PlaySound(ObtainedClip!, 0.7f);
+        gameObject.PlaySound(ObtainedClip!, 0.45f);
         ParticleSystem?.Play();
 
         yield return Coroutines.SleepSecondsUpdatePercent(FlashTransitionTime, pct =>
