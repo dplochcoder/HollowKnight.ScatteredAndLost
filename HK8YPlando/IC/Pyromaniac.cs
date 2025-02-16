@@ -16,26 +16,13 @@ internal class Pyromaniac : ItemChanger.Modules.Module
 
     private void AlterShade(PlayMakerFSM fsm)
     {
-        var pos = fsm.GetState("Position");
-        pos.RemoveTransitionsOn("QUAKE");
-        pos.RemoveTransitionsOn("SCREAM");
-
-        fsm.AlwaysFinishState("Quake?");
-        fsm.AlwaysFinishState("Scream?");
-        fsm.AlwaysFinishState("Q Other?");
-
         var attackChoice = fsm.GetState("Attack Choice");
         attackChoice.ClearActions();
 
-        Wrapped<int> consecutiveSlashes = new(0);
+        Wrapped<int> consecutiveAttacks = new(0);
         attackChoice.AddFirstAction(new Lambda(() =>
         {
-            if (fsm.FsmVariables.GetFsmInt("SP").Value > 0 && ++consecutiveSlashes.Value == 3)
-            {
-                consecutiveSlashes.Value = 0;
-                fsm.SendEvent("FIREBALL");
-            }
-            else fsm.SendEvent("SLASH");
+            if (consecutiveAttacks.Value < 3) fsm.SendEvent(++consecutiveAttacks.Value == 3 ? "FIREBALL" : "SLASH");
         }));
     }
 }
