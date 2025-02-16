@@ -52,18 +52,18 @@ internal class Balladrius : ItemChanger.Modules.Module
         List<int> numFires = [0];
         fsm.GetFsmState("Fire").AddFirstAction(new Lambda(() =>
         {
-            if (++numFires[0] == 3) ReallyBuffBaldur(fsm);
+            if (++numFires[0] == 2) ReallyBuffBaldur(fsm);
         }));
 
         obj.AddComponent<InfiniteHealth>();
+
+        var healthManager = obj.GetComponent<HealthManager>();
+        baldurs.Add(healthManager);
+        obj.AddComponent<OnDestroyHook>().Action = () => baldurs.Remove(healthManager);
     }
 
     private void ReallyBuffBaldur(PlayMakerFSM fsm)
     {
-        var healthManager = fsm.gameObject.GetComponent<HealthManager>();
-        baldurs.Add(healthManager);
-        fsm.gameObject.AddComponent<OnDestroyHook>().Action = () => baldurs.Remove(healthManager);
-
         fsm.FsmVariables.GetFsmFloat("X Speed Min").Value = 1.25f;
 
         var accel = fsm.gameObject.AddComponent<AnimationAccelerator>();
