@@ -359,7 +359,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="LocalOverrides.targets" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Data\" />
