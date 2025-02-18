@@ -24,6 +24,7 @@ internal class BrettasHouse : Module
 
     public int Hearts = 0;
     public Dictionary<string, HeartDoorData> DoorData = [];
+    public bool AreaTitle = false;
 
     public string CheckpointScene = "BrettaHouseEntry";
     public string CheckpointGate = "right1";
@@ -52,6 +53,7 @@ internal class BrettasHouse : Module
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
         ModHooks.LanguageGetHook += TraitorLordsHook;
+        ModHooks.GetPlayerBoolHook += GetPlayerBoolHook;
     }
 
     public override void Unload()
@@ -61,6 +63,7 @@ internal class BrettasHouse : Module
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
         ModHooks.LanguageGetHook -= TraitorLordsHook;
+        ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)

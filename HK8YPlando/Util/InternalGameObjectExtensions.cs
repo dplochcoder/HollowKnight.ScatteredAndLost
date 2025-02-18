@@ -1,4 +1,5 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,14 @@ internal static class InternalGameObjectExtensions
     private static IEnumerator EvaluateLibCoroutine(CoroutineElement co)
     {
         while (!co.Update(Time.deltaTime).done) yield return 0;
+    }
+
+    public static void DoAfter(this MonoBehaviour self, float seconds, Action action) => self.StartLibCoroutine(DoAfterImpl(seconds, action));
+
+    private static IEnumerator<CoroutineElement> DoAfterImpl(float seconds, Action action)
+    {
+        yield return Coroutines.SleepSeconds(seconds);
+        action();
     }
 
     public static void PlaySound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, false);
