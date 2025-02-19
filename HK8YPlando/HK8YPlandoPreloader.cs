@@ -21,6 +21,9 @@ internal class HK8YPlandoPreloader : Preloader
     [Preload("Crossroads_13", "_Enemies/Worm")]
     public GameObject Goam { get; private set; }
 
+    [Preload("GG_Workshop", "GG_Statue_Gorb")]
+    public GameObject GorbStatue { get; private set; }
+
     [Preload("Crossroads_01", "_Scenery/Mender Bug")]
     public GameObject MenderBug { get; private set; }
 

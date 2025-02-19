@@ -5,6 +5,7 @@ using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using SFCore.Utils;
@@ -31,6 +32,7 @@ internal class TraitorLords : MonoBehaviour
     [ShimField] public float AttackCooldown;
     [ShimField] public float SickleCooldown;
     [ShimField] public float SlamCooldown;
+    [ShimField] public float PostDeathWait;
 
     private void Awake() => this.StartLibCoroutine(Run());
 
@@ -70,11 +72,38 @@ internal class TraitorLords : MonoBehaviour
         });
 
         // Debug
-        // this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
+        this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
 
-        // FIXME: Door
+        // TODO: Cut music
+        mod.CheckpointScene = "Room_Bretta";
+        mod.CheckpointGate = "right1";
+        mod.CheckpointPriority = 6;
+        BrettasHouse.godhomeTransition = true;
+
+        yield return Coroutines.SleepSeconds(PostDeathWait);
+
+        var ggBattleTransitions = GameObjectExtensions.FindChild(HK8YPlandoPreloader.Instance.GorbStatue, "Inspect")
+            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
+
+        var transitions = Instantiate(ggBattleTransitions);
+        transitions.SetActive(true);
+        transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION OUT");
+
+        yield return Coroutines.SleepSeconds(1.5f);
+
+        var unsafeInstance = GameManager.UnsafeInstance;
+        unsafeInstance.BeginSceneTransition(new GameManager.SceneLoadInfo
+        {
+            SceneName = "Room_Bretta",
+            EntryGateName = "right1",
+            EntryDelay = 0f,
+            Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
+            PreventCameraFadeOut = true,
+            WaitForSceneTransitionCameraFade = false,
+            AlwaysUnloadUnusedAssets = false
+        });
     }
 
     private IEnumerator<CoroutineElement> DelayedKill(GameObject victim)
@@ -126,10 +155,6 @@ internal class TraitorLords : MonoBehaviour
 
         var fsm = obj.LocateMyFSM("Mantis");
         fsm.FsmVariables.GetFsmGameObject("Self").Value = obj;
-
-        List<string> sensors = ["Back Range", "Front Range", "Walk Range"];
-        foreach (var sensor in sensors) GameObjectExtensions.FindChild(obj, sensor).SetActive(false);
-        obj.AddComponent<TraitorLordExpandedVision>();
 
         fsm.GetFsmState("Check L").GetFirstActionOfType<FloatCompare>().float2.Value = mid + 1.5f;
         fsm.GetFsmState("Check R").GetFirstActionOfType<FloatCompare>().float2.Value = mid - 1.5f;
@@ -185,11 +210,7 @@ internal class TraitorLords : MonoBehaviour
         // Shorten death anim.
         this.StartLibCoroutine(ModifyCorpseFsm(fsm));
 
-        // Reduce health.
-        var health = fsm.gameObject.GetComponent<HealthManager>();
-        health.hp = 700;
         fsm.gameObject.GetComponent<HealthManager>().OnDeath += () => onDeath();
-        fsm.GetFsmState("Slam?").GetFirstActionOfType<IntCompare>().integer2 = 400;
         return fsm;
     }
 
@@ -320,7 +341,7 @@ internal class TraitorLords : MonoBehaviour
 
         var cooldown = fsm.GetFsmState("Cooldown");
         cooldown.GetFirstActionOfType<Wait>().time = 0.25f / RageCooldownSpeedup;
-        cooldown.AccelerateAnimation(accel, RageCooldownSpeedup);
+        cooldown.AccelerateAnimation(accel, RageLandSpeedup);
 
         var feint = fsm.GetFsmState("Feint");
         feint.GetFirstActionOfType<Wait>().time = 0.2f / RageFeintSpeedup;
@@ -340,8 +361,8 @@ internal class TraitorLords : MonoBehaviour
         }));
 
         var sickleThrowCooldown = fsm.GetFsmState("Sick Throw CD");
-        sickleThrowCooldown.GetFirstActionOfType<Wait>().time = RageSickleThrowCooldownSpeedup / RageSickleThrowCooldownSpeedup;
-        sickleThrowCooldown.AccelerateAnimation(accel, RageSlammingSpeedup);
+        sickleThrowCooldown.GetFirstActionOfType<Wait>().time = 0.9f / RageSickleThrowCooldownSpeedup;
+        sickleThrowCooldown.AccelerateAnimation(accel, RageSickleThrowRecoverSpeedup);
 
         var slamming = fsm.GetFsmState("Slamming");
         slamming.GetFirstActionOfType<Wait>().time = 0.3f / RageSlammingSpeedup;
@@ -349,7 +370,7 @@ internal class TraitorLords : MonoBehaviour
 
         var slamEnd = fsm.GetFsmState("Slam End");
         slamEnd.GetFirstActionOfType<Wait>().time = 1.2f / RageSlamEndSpeedup;
-        slamEnd.AccelerateAnimation(accel, RageSlamEndSpeedup);
+        slamEnd.AccelerateAnimation(accel, RageSlammingSpeedup);
 
         var walk = fsm.GetFsmState("Walk");
         walk.GetFirstActionOfType<ChaseObjectGround>().speedMax.Value = RageWalkSpeed;
@@ -358,46 +379,5 @@ internal class TraitorLords : MonoBehaviour
         var waves = fsm.GetFsmState("Waves");
         waves.GetFirstActionOfType<Wait>().time = 1f / RageWavesSpeedup;
         foreach (var action in waves.GetActionsOfType<SetVelocity2d>()) action.x.Value = Mathf.Sign(action.x.Value) * RageWaveSpeed;
-    }
-}
-
-internal class TraitorLordExpandedVision : MonoBehaviour
-{
-    private GameObject? knight;
-    private FsmBool? frontCheck;
-    private FsmBool? backCheck;
-    private FsmBool? walkCheck;
-
-    private void Awake()
-    {
-        knight = HeroController.instance.gameObject;
-
-        var fsm = gameObject.LocateMyFSM("Mantis");
-        var vars = fsm.FsmVariables;
-        frontCheck = vars.GetFsmBool("Front Range");
-        backCheck = vars.GetFsmBool("Back Range");
-        walkCheck = vars.GetFsmBool("Walk Range");
-    }
-
-    private const float TRAITOR_RANGE = 12;
-
-    private void Update()
-    {
-        walkCheck!.Value = true;
-
-        var x = gameObject.transform.position.x;
-        var kx = knight!.transform.position.x;
-        float dx = kx - x;
-
-        if (gameObject.transform.localScale.x > 0)
-        {
-            frontCheck!.Value = dx >= 0 && dx <= TRAITOR_RANGE;
-            backCheck!.Value = dx >= -TRAITOR_RANGE && dx <= 0;
-        }
-        else
-        {
-            frontCheck!.Value = dx >= -TRAITOR_RANGE && dx <= 0;
-            backCheck!.Value = dx >= 0 && dx <= TRAITOR_RANGE;
-        }
     }
 }

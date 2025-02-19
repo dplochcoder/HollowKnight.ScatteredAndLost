@@ -15,6 +15,7 @@ namespace HK8YPlando.Scripts.Platforming
         public float AttackCooldown;
         public float SickleCooldown;
         public float SlamCooldown;
+        public float PostDeathWait;
         public int RageHPBoost;
         public float RageRoarTime;
         public float RageRoarSpeedup;

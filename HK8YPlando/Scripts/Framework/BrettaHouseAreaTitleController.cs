@@ -26,13 +26,13 @@ internal class BrettaHouseAreaTitleController : MonoBehaviour, IPersistentBehavi
         vars.GetFsmGameObject("Area Title").Value = GameObject.Find("Area Title");
 
         // Define private Area object
-        var areaType = typeof(BrettaHouseAreaTitleController).GetNestedType("Area", System.Reflection.BindingFlags.NonPublic);
+        var areaType = typeof(AreaTitleController).GetNestedType("Area", System.Reflection.BindingFlags.NonPublic);
         var con = areaType.GetConstructor([typeof(string), typeof(int), typeof(bool), typeof(string)]);
         var areaObj = con.Invoke([AREA_NAME, AREA_ID, false, nameof(BrettasHouse.SeenBrettasHouseAreaTitle)]);
 
         // Add new areas
-        var atc = obj.GetComponent<BrettaHouseAreaTitleController>();
-        var atcList = atc.GetAttr<BrettaHouseAreaTitleController, object>("areaList");
+        var atc = obj.GetComponent<AreaTitleController>();
+        var atcList = atc.GetAttr<AreaTitleController, object>("areaList");
         var addMethod = atcList.GetType().GetMethods().Where(mi => mi.Name == "Add" && mi.GetParameters().Length == 1).FirstOrDefault();
         addMethod.Invoke(atcList, [areaObj]);
 

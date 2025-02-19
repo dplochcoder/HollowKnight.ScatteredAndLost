@@ -1,11 +1,15 @@
 ﻿using HK8YPlando.Scripts.Framework;
+using HK8YPlando.Scripts.SharedLib;
+using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
+using SFCore.Utils;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace HK8YPlando.IC;
@@ -50,6 +54,7 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
+        Events.AddSceneChangeEdit("Room_Bretta", GodhomeTransition);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
         ModHooks.LanguageGetHook += LanguageGetHook;
@@ -61,6 +66,7 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
+        Events.RemoveSceneChangeEdit("Room_Bretta", GodhomeTransition);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
         ModHooks.LanguageGetHook -= LanguageGetHook;
@@ -79,10 +85,25 @@ internal class BrettasHouse : Module
 
     private void RedirectBrettaDoor(Scene scene)
     {
-        var obj = scene.FindGameObject("bretta_house")!.FindChild("open")!.FindChild("door_bretta")!;
+        var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
         var vars = obj.LocateMyFSM("Door Control").FsmVariables;
         vars.FindFsmString("New Scene").Value = CheckpointScene;
         vars.FindFsmString("Entry Gate").Value = CheckpointGate;
+    }
+
+    internal static bool godhomeTransition = false;
+
+    private void GodhomeTransition(Scene scene)
+    {
+        if (!godhomeTransition) return;
+        godhomeTransition = false;
+
+        var ggBattleTransitions = GameObjectExtensions.FindChild(HK8YPlandoPreloader.Instance.GorbStatue, "Inspect")
+            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
+
+        var transitions = Object.Instantiate(ggBattleTransitions);
+        transitions.SetActive(true);
+        transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION IN");
     }
 
     private HashSet<BrettaCheckpoint> activeCheckpoints = [];
@@ -101,14 +122,14 @@ internal class BrettasHouse : Module
 
     internal void UnloadCheckpoint(BrettaCheckpoint checkpoint) => activeCheckpoints.Remove(checkpoint);
 
-    internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetState("Can Set?")?.AddFirstAction(new Lambda(() =>
+    internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetFsmState("Can Set?")?.AddFirstAction(new Lambda(() =>
         {
             if (activeCheckpoints.Count > 0) fsm.SendEvent("FAIL");
         }));
 
     internal void ForceShadeSpawn(PlayMakerFSM fsm)
     {
-        fsm.GetState("Set Shade").AddFirstAction(new Lambda(() =>
+        fsm.GetFsmState("Set Shade").AddFirstAction(new Lambda(() =>
         {
             if (activeCheckpoints.Count > 0)
             {
