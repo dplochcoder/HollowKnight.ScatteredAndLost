@@ -2,7 +2,6 @@
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,6 +24,7 @@ internal class Zipper : MonoBehaviour
     [ShimField] public List<AudioClip> ResetClips = [];
 
     [ShimField] public ZipperPlatform? Platform;
+    [ShimField] public DamageHero? BottomHurtBox;
 
     [ShimField] public Transform? RestPosition;
     [ShimField] public Transform? TargetPosition;
@@ -50,6 +50,7 @@ internal class Zipper : MonoBehaviour
         var rewindTime = travelDist / RewindSpeed;
         var shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
 
+        bool disableBottomSpikes = BottomHurtBox!.gameObject.activeSelf && (targetPos.y - restPos.y) >= 0.1f;
         Platform.Light!.sprite = RedLightSprite!;
 
         while (true)
@@ -65,6 +66,7 @@ internal class Zipper : MonoBehaviour
             });
             Platform!.SpriteShaker!.transform.localPosition = Vector3.zero;
 
+            if (disableBottomSpikes) BottomHurtBox!.gameObject.SetActive(false);
             Wrapped<float> launchTime = new(0);
             yield return Coroutines.SleepSecondsUpdateDelta(shootTime, time =>
             {
@@ -74,6 +76,8 @@ internal class Zipper : MonoBehaviour
                 Platform!.transform.position = restPos + (targetPos - restPos).normalized * d;
                 return false;
             });
+
+            if (disableBottomSpikes) BottomHurtBox!.gameObject.SetActive(true);
             Platform.gameObject.PlaySound(ImpactClips.Random(), 0.6f);
 
             yield return Coroutines.SleepSeconds(PauseTime);

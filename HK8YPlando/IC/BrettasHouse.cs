@@ -24,7 +24,7 @@ internal class BrettasHouse : Module
 
     public int Hearts = 0;
     public Dictionary<string, HeartDoorData> DoorData = [];
-    public bool AreaTitle = false;
+    public bool SeenBrettasHouseAreaTitle = false;
 
     public string CheckpointScene = "BrettaHouseEntry";
     public string CheckpointGate = "right1";
@@ -52,8 +52,9 @@ internal class BrettasHouse : Module
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
-        ModHooks.LanguageGetHook += TraitorLordsHook;
+        ModHooks.LanguageGetHook += LanguageGetHook;
         ModHooks.GetPlayerBoolHook += GetPlayerBoolHook;
+        ModHooks.SetPlayerBoolHook += SetPlayerBoolHook;
     }
 
     public override void Unload()
@@ -62,8 +63,9 @@ internal class BrettasHouse : Module
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
-        ModHooks.LanguageGetHook -= TraitorLordsHook;
+        ModHooks.LanguageGetHook -= LanguageGetHook;
         ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
+        ModHooks.SetPlayerBoolHook -= SetPlayerBoolHook;
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -119,14 +121,35 @@ internal class BrettasHouse : Module
         }));
     }
 
-    private string TraitorLordsHook(string key, string sheetTitle, string orig)
+    private string LanguageGetHook(string key, string sheetTitle, string orig)
     {
         return key switch
         {
             "BRETTOR_LORD2_SUPER" => "Revenge of the",
             "BRETTOR_LORD2_MAIN" => "Brettor Lords",
-            "BRETTOR_LORD2_SUB" => "Now there are two of them",
+            "BRETTOR_LORD2_SUB" => "",
+            $"{BrettaHouseAreaTitleController.AREA_NAME}_SUPER" => "",
+            $"{BrettaHouseAreaTitleController.AREA_NAME}_MAIN" => "Bretta's House",
+            $"{BrettaHouseAreaTitleController.AREA_NAME}_SUB" => "C-Side",
             _ => orig
+        };
+    }
+
+    private bool GetPlayerBoolHook(string name, bool orig)
+    {
+        return name switch
+        {
+            nameof(SeenBrettasHouseAreaTitle) => SeenBrettasHouseAreaTitle,
+            _ => orig
+        };
+    }
+
+    private bool SetPlayerBoolHook(string name, bool value)
+    {
+        return name switch
+        {
+            nameof(SeenBrettasHouseAreaTitle) => (SeenBrettasHouseAreaTitle = value),
+            _ => value,
         };
     }
 }

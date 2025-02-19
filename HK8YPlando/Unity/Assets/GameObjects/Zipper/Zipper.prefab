@@ -335,8 +335,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a4b74fb3c1058bd4b84c3e9674a38f00, type: 3}
   - {fileID: 8300000, guid: 15a3339f4fb9e6b4b8e783b35dc12ac0, type: 3}
   - {fileID: 8300000, guid: 565e8cf535205d747af56a65537e25a0, type: 3}
-  ZipperVolume: 0.6
   Platform: {fileID: 8978783085545065232}
+  BottomHurtBox: {fileID: 1099015753345659232}
   RestPosition: {fileID: 1680270584225353228}
   TargetPosition: {fileID: 0}
   ShakeRadius: 0.15

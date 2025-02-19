@@ -7,12 +7,10 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
-using ItemChanger.Internal.Preloaders;
 using SFCore.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace HK8YPlando.Scripts.Platforming;
 
@@ -274,18 +272,22 @@ internal class TraitorLords : MonoBehaviour
         fsm.GetFsmState("Roar Recover").AccelerateAnimation(accel, RageRoarSpeedup);
 
         Wrapped<bool> raged = new(false);
-        var idle = fsm.GetFsmState("Idle");
-        idle.AddFirstAction(new Lambda(() =>
+        List<string> stateNames = ["Attack Antic", "Attack Choice", "Cooldown", "Idle", "Sick Throw CD", "Slam Antic", "Walk"];
+        foreach (var name in stateNames)
         {
-            if (!raged.Value)
+            var state = fsm.GetFsmState(name);
+            state.AddFirstAction(new Lambda(() =>
             {
-                raged.Value = true;
-                fsm.SetState("Roar");
+                if (!raged.Value)
+                {
+                    raged.Value = true;
+                    fsm.SetState("Roar");
 
-                this.StartLibCoroutine(DelayedRoarAnim(fsm));
-                ActualRageMode(fsm);
-            }
-        }));
+                    this.StartLibCoroutine(DelayedRoarAnim(fsm));
+                    ActualRageMode(fsm);
+                }
+            }));
+        }
     }
 
     private IEnumerator<CoroutineElement> DelayedRoarAnim(PlayMakerFSM fsm)

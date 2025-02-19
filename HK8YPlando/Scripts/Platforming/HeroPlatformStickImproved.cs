@@ -1,6 +1,4 @@
-﻿using GlobalEnums;
-using HK8YPlando.Scripts.Platforming;
-using HK8YPlando.Scripts.SharedLib;
+﻿using HK8YPlando.Scripts.SharedLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

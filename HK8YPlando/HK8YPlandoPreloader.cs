@@ -9,6 +9,9 @@ internal class HK8YPlandoPreloader : Preloader
 {
     public static HK8YPlandoPreloader Instance { get; } = new();
 
+    [Preload("Fungus2_03", "Area Title Controller")]
+    public GameObject AreaTitleController { get; private set; }
+
     [PrefabPreload("Waterways_08", "Gas Explosion M2")]
     public GameObject BelflyExplosion { get; private set; }
 
