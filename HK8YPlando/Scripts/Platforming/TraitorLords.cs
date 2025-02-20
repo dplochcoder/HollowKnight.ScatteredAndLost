@@ -76,9 +76,12 @@ internal class TraitorLords : MonoBehaviour
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
         TempleMusicManager.Get()?.FadeOut(5f);
 
-        mod.CheckpointScene = "Room_Bretta";
-        mod.CheckpointGate = "right1";
-        mod.CheckpointPriority = 6;
+        if (mod.CheckpointPriority < 6)
+        {
+            mod.CheckpointScene = "Room_Bretta";
+            mod.CheckpointGate = "right1";
+            mod.CheckpointPriority = 6;
+        }
         BrettasHouse.godhomeTransition = true;
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
