@@ -71,7 +71,7 @@ internal class TraitorLords : MonoBehaviour
         });
 
         // Debug
-        this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
+        // this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
         TempleMusicManager.Get()?.FadeOut(5f);
