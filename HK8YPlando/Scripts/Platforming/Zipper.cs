@@ -3,6 +3,7 @@ using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -11,11 +12,11 @@ namespace HK8YPlando.Scripts.Platforming;
 internal class Zipper : MonoBehaviour
 {
     [ShimField] public List<Sprite> CogSprites = [];
-    [ShimField] public float CogFpsFast;
-    [ShimField] public float CogFpsSlow;
     [ShimField] public Sprite? RedLightSprite;
     [ShimField] public Sprite? YellowLightSprite;
     [ShimField] public Sprite? GreenLightSprite;
+    [ShimField] public float RotationPerUnit;
+    [ShimField] public float SpritesPerUnit;
 
     [ShimField] public List<AudioClip> TouchClips = [];
     [ShimField] public List<AudioClip> ImpactClips = [];
@@ -36,7 +37,30 @@ internal class Zipper : MonoBehaviour
     [ShimField] public float RewindSpeed;
     [ShimField] public float RewindCooldown;
 
-    private void Awake() => this.StartLibCoroutine(Run());
+    private Vector3 restPos;
+    private Vector3 targetPos;
+    private List<SpriteRenderer> lineCogs = [];
+    private List<GameObject> platCogs = [];
+
+    private void Awake()
+    {
+        restPos = RestPosition!.position;
+        targetPos = TargetPosition!.position;
+        lineCogs = gameObject.FindComponentsRecursive<ZipperLineCog>().Select(b => b.gameObject.GetComponent<SpriteRenderer>()).ToList();
+        platCogs = gameObject.FindComponentsRecursive<ZipperPlatformCog>().Select(b => b.gameObject).ToList();
+
+        this.StartLibCoroutine(Run());
+    }
+
+    private void Update()
+    {
+        var pos = (Platform!.transform.position - restPos).magnitude;
+        var spriteIndex = Mathf.RoundToInt(pos * SpritesPerUnit) % CogSprites.Count;
+        var rot = Quaternion.Euler(0, 0, pos * RotationPerUnit);
+
+        lineCogs.ForEach(s => s.sprite = CogSprites[spriteIndex]);
+        platCogs.ForEach(o => o.transform.localRotation = rot);
+    }
 
     private IEnumerator<CoroutineElement> Run()
     {
@@ -44,13 +68,11 @@ internal class Zipper : MonoBehaviour
         var audio = Platform.gameObject.AddComponent<AudioSource>();
         audio.outputAudioMixerGroup = AudioMixerGroups.Actors();
 
-        var restPos = RestPosition!.position;
-        var targetPos = TargetPosition!.position;
         var travelDist = (targetPos - restPos).magnitude;
         var rewindTime = travelDist / RewindSpeed;
         var shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
 
-        bool disableBottomSpikes = BottomHurtBox!.gameObject.activeSelf && (targetPos.y - restPos.y) >= 0.1f;
+        bool disableBottomSpikes = BottomHurtBox!.gameObject.activeSelf && (targetPos.y - restPos.y) >= -0.1f;
         Platform.Light!.sprite = RedLightSprite!;
 
         while (true)

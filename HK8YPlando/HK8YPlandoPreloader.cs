@@ -41,6 +41,9 @@ internal class HK8YPlandoPreloader : Preloader
     [Preload("Tutorial_01", "_Scenery/plat_float_07")]
     public GameObject SmallPlatform { get; private set; }
 
+    [Preload("Fungus2_10", "Soul Totem mini_horned")]
+    public GameObject SoulTotem { get; private set; }
+
     public PhysicsMaterial2D TerrainMaterial => SmallPlatform.GetComponent<Collider2D>().sharedMaterial;
 
     [Preload("Fungus3_23_boss", "Battle Scene/Wave 3/Mantis Traitor Lord")]

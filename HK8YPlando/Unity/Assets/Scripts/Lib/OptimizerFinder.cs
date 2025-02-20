@@ -103,6 +103,7 @@ namespace HK8YPlando.Scripts.Lib
             Update("Lighting()", UpdateLighting());
             Update("RemoveObsoleteObjects()", RemoveObsoleteObjects());
             Update("FixScenery()", FixScenery());
+            Update("FixTiles()", FixTiles());
             Update("FixAll<BlurPlanePatcher>(FixBPP)", FixAll<BlurPlanePatcher>(FixBPP));
             Update("FixAll<CameraLockAreaProxy>(FixCLAP)", FixAll<CameraLockAreaProxy>(FixCLAP));
             Update("FixAll<HeroDetectorProxy>(FixHDP)", FixAll<HeroDetectorProxy>(FixHDP));
@@ -171,6 +172,40 @@ namespace HK8YPlando.Scripts.Lib
             {"HUD", 7},
         };
 
+        private static bool FixTiles()
+        {
+            List<string> names = new List<string>();
+            names.Add("reflection_");
+            names.Add("snow_");
+            names.Add("templeA_");
+            names.Add("tower_");
+
+            bool changed = false;
+            foreach (var spriteRenderer in GameObject.Find("_Scenery").FindComponentsRecursive<SpriteRenderer>())
+            {
+                var go = spriteRenderer.gameObject;
+                foreach (var prefix in names)
+                {
+                    if (spriteRenderer.name.StartsWith(prefix))
+                    {
+                        if (go.GetComponent(SPRITE_PATCHER_TYPE) == null)
+                        {
+                            go.AddComponent(SPRITE_PATCHER_TYPE);
+                            changed = true;
+                        }
+
+                        if (spriteRenderer.sortingLayerName != "Far FG")
+                        {
+                            spriteRenderer.sortingLayerName = "Far FG";
+                            changed = true;
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
         private static bool FixScenery()
         {
             var go = GameObject.Find("_Scenery");
@@ -182,71 +217,75 @@ namespace HK8YPlando.Scripts.Lib
             }
 
             bool changed = false;
-            Dictionary<(int, int, int), List<SpriteRenderer>> depthBuckets = new Dictionary<(int, int, int), List<SpriteRenderer>>();
-            foreach (var spriteRenderer in go.FindComponentsRecursive<SpriteRenderer>())
+
+            if (Mathf.Sqrt(2) > 2)  // No depth fixing for tiles
             {
-                var quat = spriteRenderer.gameObject.transform.localRotation;
-                var ea = quat.eulerAngles;
-                if (ea.x != 0 || ea.y != 0)
+                Dictionary<(int, int, int), List<SpriteRenderer>> depthBuckets = new Dictionary<(int, int, int), List<SpriteRenderer>>();
+                foreach (var spriteRenderer in go.FindComponentsRecursive<SpriteRenderer>())
                 {
-                    ea.x = 0;
-                    ea.y = 0;
-                    spriteRenderer.gameObject.transform.localRotation = Quaternion.Euler(ea);
-                    changed = true;
-                }
-
-                var z = (int)System.Math.Round(spriteRenderer.gameObject.transform.position.z * 100);
-                int layer = SortingLayers[spriteRenderer.sortingLayerName];
-                if (z == 0) z = System.Math.Sign(layer - 3);
-
-                var depthBucket = (-z, layer, spriteRenderer.sortingOrder);
-                depthBuckets.GetOrAddNew(depthBucket).Add(spriteRenderer);
-            }
-
-            // Sort sprites by all parameters, then group by z.
-            List<((int, int, int), List<SpriteRenderer>)> sorted = new List<((int, int, int), List<SpriteRenderer>)>();
-            depthBuckets.ForEach(pair => sorted.Add((pair.Key, pair.Value)));
-            sorted.SortBy(pair => pair.Item1);
-
-            Dictionary<int, List<List<SpriteRenderer>>> zBuckets = new Dictionary<int, List<List<SpriteRenderer>>>();
-            foreach (var (k, v) in sorted) zBuckets.GetOrAddNew(k.Item1).Add(v);
-            List<(int, List<List<SpriteRenderer>>)> sortedZBuckets = new List<(int, List<List<SpriteRenderer>>)>();
-            zBuckets.ForEach(pair => sortedZBuckets.Add((pair.Key, pair.Value)));
-            sortedZBuckets.SortBy(pair => pair.Item1);
-
-            int curMax = int.MaxValue;
-            foreach (var (z, groups) in sortedZBuckets)
-            {
-                curMax = System.Math.Min(curMax, groups.Count / 2 - z);
-
-                foreach (var group in groups)
-                {
-                    var newZ = curMax / 100.0f;
-
-                    string layerName = "Default";
-                    if (newZ == 0) layerName = "Immediate FG";
-                    if (newZ < 0) layerName = "Far FG";
-
-                    foreach (var spriteRenderer in group)
+                    var quat = spriteRenderer.gameObject.transform.localRotation;
+                    var ea = quat.eulerAngles;
+                    if (ea.x != 0 || ea.y != 0)
                     {
-                        var pos = spriteRenderer.gameObject.transform.position;
-                        pos.z = newZ;
-                        spriteRenderer.gameObject.transform.position = pos;
-
-                        if (spriteRenderer.sortingLayerName != layerName)
-                        {
-                            spriteRenderer.sortingLayerName = layerName;
-                            changed = true;
-                        }
-
-                        if (spriteRenderer.sortingOrder != 0)
-                        {
-                            spriteRenderer.sortingOrder = 0;
-                            changed = true;
-                        }
+                        ea.x = 0;
+                        ea.y = 0;
+                        spriteRenderer.gameObject.transform.localRotation = Quaternion.Euler(ea);
+                        changed = true;
                     }
 
-                    --curMax;
+                    var z = (int)System.Math.Round(spriteRenderer.gameObject.transform.position.z * 100);
+                    int layer = SortingLayers[spriteRenderer.sortingLayerName];
+                    if (z == 0) z = System.Math.Sign(layer - 3);
+
+                    var depthBucket = (-z, layer, spriteRenderer.sortingOrder);
+                    depthBuckets.GetOrAddNew(depthBucket).Add(spriteRenderer);
+                }
+
+                // Sort sprites by all parameters, then group by z.
+                List<((int, int, int), List<SpriteRenderer>)> sorted = new List<((int, int, int), List<SpriteRenderer>)>();
+                depthBuckets.ForEach(pair => sorted.Add((pair.Key, pair.Value)));
+                sorted.SortBy(pair => pair.Item1);
+
+                Dictionary<int, List<List<SpriteRenderer>>> zBuckets = new Dictionary<int, List<List<SpriteRenderer>>>();
+                foreach (var (k, v) in sorted) zBuckets.GetOrAddNew(k.Item1).Add(v);
+                List<(int, List<List<SpriteRenderer>>)> sortedZBuckets = new List<(int, List<List<SpriteRenderer>>)>();
+                zBuckets.ForEach(pair => sortedZBuckets.Add((pair.Key, pair.Value)));
+                sortedZBuckets.SortBy(pair => pair.Item1);
+
+                int curMax = int.MaxValue;
+                foreach (var (z, groups) in sortedZBuckets)
+                {
+                    curMax = System.Math.Min(curMax, groups.Count / 2 - z);
+
+                    foreach (var group in groups)
+                    {
+                        var newZ = curMax / 100.0f;
+
+                        string layerName = "Default";
+                        if (newZ == 0) layerName = "Immediate FG";
+                        if (newZ < 0) layerName = "Far FG";
+
+                        foreach (var spriteRenderer in group)
+                        {
+                            var pos = spriteRenderer.gameObject.transform.position;
+                            pos.z = newZ;
+                            spriteRenderer.gameObject.transform.position = pos;
+
+                            if (spriteRenderer.sortingLayerName != layerName)
+                            {
+                                spriteRenderer.sortingLayerName = layerName;
+                                changed = true;
+                            }
+
+                            if (spriteRenderer.sortingOrder != 0)
+                            {
+                                spriteRenderer.sortingOrder = 0;
+                                changed = true;
+                            }
+                        }
+
+                        --curMax;
+                    }
                 }
             }
 

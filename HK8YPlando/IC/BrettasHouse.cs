@@ -6,6 +6,9 @@ using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
+using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
+using MonoMod.Utils;
 using SFCore.Utils;
 using System.Collections.Generic;
 using System.Text;
@@ -50,6 +53,8 @@ internal class BrettasHouse : Module
         return false;
     }
 
+    private ILHook? soulHook;
+
     public override void Initialize()
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
@@ -60,6 +65,7 @@ internal class BrettasHouse : Module
         ModHooks.LanguageGetHook += LanguageGetHook;
         ModHooks.GetPlayerBoolHook += GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook += SetPlayerBoolHook;
+        soulHook = new(typeof(SoulOrb).GetMethod("Zoom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetStateMachineTarget(), HookSoulOrbZoom);
     }
 
     public override void Unload()
@@ -72,6 +78,7 @@ internal class BrettasHouse : Module
         ModHooks.LanguageGetHook -= LanguageGetHook;
         ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook -= SetPlayerBoolHook;
+        soulHook?.Dispose();
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -172,5 +179,21 @@ internal class BrettasHouse : Module
             nameof(SeenBrettasHouseAreaTitle) => (SeenBrettasHouseAreaTitle = value),
             _ => value,
         };
+    }
+
+    private void HookSoulOrbZoom(ILContext il)
+    {
+        ILCursor cursor = new(il);
+        cursor.Goto(0);
+        cursor.GotoNext(i => i.MatchCallvirt<HeroController>("AddMPCharge"));
+        cursor.EmitDelegate(MaybeFullHeal);
+    }
+
+    private void MaybeFullHeal()
+    {
+        if (activeCheckpoints.Count == 0) return;
+
+        HeroController.instance.AddMPCharge(200);
+        HeroController.instance.AddHealth(20);
     }
 }

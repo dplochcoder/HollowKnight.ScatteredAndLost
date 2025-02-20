@@ -8,7 +8,7 @@ namespace HK8YPlando.Scripts.Framework;
 
 interface IPersistentBehaviour<B, M> where B : MonoBehaviour, IPersistentBehaviour<B, M> where M : PersistentBehaviourManager<B, M>
 {
-    void Awake(M initManager);
+    void AwakeWithManager(M initManager);
 
     void SceneChanged(M newManager);
 
@@ -51,7 +51,7 @@ internal abstract class PersistentBehaviourManager<B, M> : MonoBehaviour where B
         mgrName = gameObject.name;
         existing = Instantiate(prefab);
         existing!.name = $"Persistent_{typeof(B).Name}";
-        Get()!.Awake(Self());
+        Get()!.AwakeWithManager(Self());
         DontDestroyOnLoad(existing);
 
         sceneChangeHandler = (scene, mode) =>

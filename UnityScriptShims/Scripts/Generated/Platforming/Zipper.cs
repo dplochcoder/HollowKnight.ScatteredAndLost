@@ -3,11 +3,11 @@ namespace HK8YPlando.Scripts.Platforming
     public class Zipper : UnityEngine.MonoBehaviour
     {
         public System.Collections.Generic.List<UnityEngine.Sprite> CogSprites;
-        public float CogFpsFast;
-        public float CogFpsSlow;
         public UnityEngine.Sprite RedLightSprite;
         public UnityEngine.Sprite YellowLightSprite;
         public UnityEngine.Sprite GreenLightSprite;
+        public float RotationPerUnit;
+        public float SpritesPerUnit;
         public System.Collections.Generic.List<UnityEngine.AudioClip> TouchClips;
         public System.Collections.Generic.List<UnityEngine.AudioClip> ImpactClips;
         public UnityEngine.AudioClip RewindIntro;

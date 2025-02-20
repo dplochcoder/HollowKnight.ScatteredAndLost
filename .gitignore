@@ -372,6 +372,7 @@ LocalOverrides.targets
 /HK8YPlando/Unity/Assembly-CSharp-Editor.csproj
 /HK8YPlando/Unity/Assembly-CSharp.csproj
 /HK8YPlando/Unity/Unity.sln
+/HK8YPlando/Unity/Assets/**/*.mp3
 /HK8YPlando/Unity/Assets/**/*.ogg
 /HK8YPlando/Unity/Assets/**/*.wav
 /HK8YPlando/Resources/Data/debug.json

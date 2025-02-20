@@ -12,7 +12,7 @@ internal class BrettaHouseAreaTitleController : MonoBehaviour, IPersistentBehavi
     public const string AREA_NAME = "BRETTAS_HOUSE";
     public const int AREA_ID = 189234;
 
-    public void Awake(BrettaHouseAreaTitleControllerManager initManager)
+    public void AwakeWithManager(BrettaHouseAreaTitleControllerManager initManager)
     {
         var obj = Instantiate(HK8YPlandoPreloader.Instance.AreaTitleController);
         var fsm = obj.LocateMyFSM("Area Title Controller");

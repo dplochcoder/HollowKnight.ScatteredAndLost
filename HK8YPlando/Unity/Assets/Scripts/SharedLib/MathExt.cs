@@ -25,6 +25,14 @@ namespace HK8YPlando.Scripts.SharedLib
             }
         }
 
+        public static bool UpdateFloat(this ref float self, float value)
+        {
+            if (Mathf.Abs(self - value) < 0.001f) return false;
+
+            self = value;
+            return true;
+        }
+
         public static float Snap(float f, float epsilon) => epsilon * Mathf.Round(f / epsilon);
 
         public static bool NeedsSnap(float f, float epsilon) => Mathf.Abs(f - Snap(f, epsilon)) > 1e-6f;
@@ -117,7 +125,7 @@ namespace HK8YPlando.Scripts.SharedLib
             transform.position = Vector3.zero;
         }
 
-        public static bool UpdatePosition(Transform transform, Vector3 pos)
+        public static bool UpdatePosition(this Transform transform, Vector3 pos)
         {
             var diff = pos - transform.position;
             if (diff.sqrMagnitude < 1e-6f) return false;
@@ -126,7 +134,7 @@ namespace HK8YPlando.Scripts.SharedLib
             return true;
         }
 
-        public static bool UpdateLocalScale(Transform transform, Vector3 scale)
+        public static bool UpdateLocalScale(this Transform transform, Vector3 scale)
         {
             var diff = scale - transform.localScale;
             if (diff.sqrMagnitude < 1e-6f) return false;
@@ -135,7 +143,7 @@ namespace HK8YPlando.Scripts.SharedLib
             return true;
         }
 
-        public static bool UpdateLocalRotation(Transform transform, Quaternion rotation)
+        public static bool UpdateLocalRotation(this Transform transform, Quaternion rotation)
         {
             var dist = transform.localRotation * Quaternion.Inverse(rotation);
             var ea = dist.eulerAngles;
@@ -143,6 +151,18 @@ namespace HK8YPlando.Scripts.SharedLib
 
             transform.localRotation = rotation;
             return true;
+        }
+
+        public static bool UpdateSize(this SpriteRenderer spriteRenderer, Vector2 size)
+        {
+            var old = spriteRenderer.size;
+
+            bool changed = false;
+            changed |= old.x.UpdateFloat(size.x);
+            changed |= old.y.UpdateFloat(size.y);
+
+            if (changed) spriteRenderer.size = size;
+            return changed;
         }
 
         private const float CAMERA_DEPTH = 38.1f;

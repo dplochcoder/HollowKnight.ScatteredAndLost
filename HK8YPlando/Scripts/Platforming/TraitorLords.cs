@@ -1,11 +1,10 @@
 ﻿using HK8YPlando.IC;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
-using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
-using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using SFCore.Utils;
@@ -75,8 +74,8 @@ internal class TraitorLords : MonoBehaviour
         this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
+        TempleMusicManager.Get()?.FadeOut(5f);
 
-        // TODO: Cut music
         mod.CheckpointScene = "Room_Bretta";
         mod.CheckpointGate = "right1";
         mod.CheckpointPriority = 6;
