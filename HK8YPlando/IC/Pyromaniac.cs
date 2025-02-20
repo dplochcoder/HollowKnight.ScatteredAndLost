@@ -16,7 +16,6 @@ internal class Pyromaniac : ItemChanger.Modules.Module
     private void AlterShade(PlayMakerFSM fsm)
     {
         var attackChoice = fsm.GetState("Attack Choice");
-        attackChoice.ClearActions();
 
         Wrapped<int> consecutiveAttacks = new(0);
         attackChoice.AddFirstAction(new Lambda(() =>
