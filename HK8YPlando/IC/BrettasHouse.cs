@@ -6,6 +6,7 @@ using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
@@ -53,7 +54,7 @@ internal class BrettasHouse : Module
         return false;
     }
 
-    private ILHook? soulHook;
+    private List<ILHook> ilHooks = [];
 
     public override void Initialize()
     {
@@ -65,7 +66,8 @@ internal class BrettasHouse : Module
         ModHooks.LanguageGetHook += LanguageGetHook;
         ModHooks.GetPlayerBoolHook += GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook += SetPlayerBoolHook;
-        soulHook = new(typeof(SoulOrb).GetMethod("Zoom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetStateMachineTarget(), HookSoulOrbZoom);
+        ilHooks.Add(new(typeof(SoulOrb).GetMethod("Zoom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetStateMachineTarget(), HookSoulOrbZoom));
+        ilHooks.Add(new(typeof(FlingObjectsFromGlobalPool).GetMethod("OnEnter", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance), HookFlingObjectsFromGlobalPool));
     }
 
     public override void Unload()
@@ -78,7 +80,7 @@ internal class BrettasHouse : Module
         ModHooks.LanguageGetHook -= LanguageGetHook;
         ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook -= SetPlayerBoolHook;
-        soulHook?.Dispose();
+        ilHooks.ForEach(h => h.Dispose());
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -181,19 +183,48 @@ internal class BrettasHouse : Module
         };
     }
 
+    private void HookFlingObjectsFromGlobalPool(ILContext il)
+    {
+        ILCursor cursor = new(il);
+        cursor.Goto(0);
+        cursor.GotoNext(i => i.MatchCall<RigidBody2dActionBase>("CacheRigidBody2d"));
+        cursor.EmitDelegate(MaybeBuffSoulOrb);
+        cursor.Emit(OpCodes.Ldarg_0);
+        cursor.Emit(OpCodes.Ldloc_S, 4);
+    }
+
+    private HashSet<FlingObjectsFromGlobalPool> superSoulOrbFlingers = [];
+    internal void RegisterSuperSoulOrbFlinger(FlingObjectsFromGlobalPool action) => superSoulOrbFlingers.Add(action);
+    internal void UnregisterSuperSoulOrbFlinger(FlingObjectsFromGlobalPool action) => superSoulOrbFlingers.Remove(action);
+
+    private void MaybeBuffSoulOrb(FlingObjectsFromGlobalPool self, GameObject go)
+    {
+        if (!superSoulOrbFlingers.Contains(self)) return;
+
+        var orb = go.GetComponent<SoulOrb>();
+        if (orb == null) return;
+
+        buffedSoulOrbs.Add(orb);
+        go.AddComponent<OnDestroyHook>().Action = () => buffedSoulOrbs.Remove(orb);
+    }
+
     private void HookSoulOrbZoom(ILContext il)
     {
         ILCursor cursor = new(il);
         cursor.Goto(0);
         cursor.GotoNext(i => i.MatchCallvirt<HeroController>("AddMPCharge"));
-        cursor.EmitDelegate(MaybeFullHeal);
+        cursor.Emit(OpCodes.Ldloc_1);
+        cursor.EmitDelegate(MaybeSuperHeal);
     }
 
-    private void MaybeFullHeal()
-    {
-        if (activeCheckpoints.Count == 0) return;
+    private HashSet<SoulOrb> buffedSoulOrbs = [];
 
-        HeroController.instance.AddMPCharge(200);
-        HeroController.instance.AddHealth(20);
+    private void MaybeSuperHeal(SoulOrb orb)
+    {
+        if (buffedSoulOrbs.Remove(orb))
+        {
+            HeroController.instance.AddMPCharge(16);  // (16 + 2) * 11 = 198 = max MP
+            HeroController.instance.AddHealth(1);  // 1 * 11 = max health
+        }
     }
 }

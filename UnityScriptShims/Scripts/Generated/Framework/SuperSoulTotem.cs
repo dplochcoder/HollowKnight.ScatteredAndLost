@@ -6,8 +6,6 @@ namespace HK8YPlando.Scripts.Framework
         public float ParticleLifetime;
         public float ParticleSize;
         public int ParticleCap;
-        public int FlingMin;
-        public int FlingMax;
         
     }
 }

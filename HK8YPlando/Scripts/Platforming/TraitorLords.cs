@@ -114,7 +114,10 @@ internal class TraitorLords : MonoBehaviour
         victim.GetComponent<HealthManager>().ApplyExtraDamage(9999);
     }
 
-    // Force slams to not be overlapping.
+    private PlayMakerFSM? lastAttacker;
+    private float attackCooldown;
+    private PlayMakerFSM? lastSickler;
+    private float sickleCooldown;
     private PlayMakerFSM? lastSlammer;
     private float slamCooldown;
 
@@ -136,14 +139,6 @@ internal class TraitorLords : MonoBehaviour
             if (slamCooldown < 0) slamCooldown = 0;
         }
     }
-
-    // Force attacks to be at least slightly staggered.
-    private PlayMakerFSM? lastAttacker;
-    private float attackCooldown;
-
-    // Force sickle throws to be staggered.
-    private PlayMakerFSM? lastSickler;
-    private float sickleCooldown;
 
     private PlayMakerFSM SpawnTraitorLord(Vector3 position, bool facingRight, Action onDeath)
     {
