@@ -290,22 +290,17 @@ internal class TraitorLords : MonoBehaviour
         fsm.GetFsmState("Roar Recover").AccelerateAnimation(accel, RageRoarSpeedup);
 
         Wrapped<bool> raged = new(false);
-        List<string> stateNames = ["Attack Antic", "Attack Choice", "Cooldown", "Idle", "Sick Throw CD", "Slam Antic", "Walk"];
-        foreach (var name in stateNames)
+        fsm.GetFsmState("Idle").AddFirstAction(new Lambda(() =>
         {
-            var state = fsm.GetFsmState(name);
-            state.AddFirstAction(new Lambda(() =>
+            if (!raged.Value)
             {
-                if (!raged.Value)
-                {
-                    raged.Value = true;
-                    fsm.SetState("Roar");
+                raged.Value = true;
+                fsm.SetState("Roar");
 
-                    this.StartLibCoroutine(DelayedRoarAnim(fsm));
-                    ActualRageMode(fsm);
-                }
-            }));
-        }
+                this.StartLibCoroutine(DelayedRoarAnim(fsm));
+                ActualRageMode(fsm);
+            }
+        }));
     }
 
     private IEnumerator<CoroutineElement> DelayedRoarAnim(PlayMakerFSM fsm)
