@@ -126,15 +126,15 @@ MonoBehaviour:
     m_RotationOrder: 4
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   defaultIntensity: 0.8
-  heroLightColor: {r: 1, g: 1, b: 1, a: 0.48}
+  heroLightColor: {r: 1, g: 1, b: 1, a: 0}
   noParticles: 1
   overrideParticlesWith: 0
   AtmosCueSet: asjhdajkudaaskd
-  AtmosCueSnapshotName: at Surface
+  AtmosCueSnapshotName: at None
   AtmosCueSnapshotIndex: 0
   AtmosCueIsChannelEnabled: 00000000000000000000000000000000
   MusicCueSet: 
-  MusicCueSnapshotName: Silent
+  MusicCueSnapshotName: Normal
   MusicCueSnapshotIndex: 0
   MusicCueChannelInfoClips:
   - {fileID: 0}
@@ -145,7 +145,7 @@ MonoBehaviour:
   - {fileID: 0}
   MusicCueChannelInfoSyncs: 000000000000000000000000000000000000000000000000
   InfectedMusicCueSet: 
-  InfectedMusicCueSnapshotName: Silent
+  InfectedMusicCueSnapshotName: Normal
   InfectedMusicCueSnapshotIndex: 0
   InfectedMusicCueChannelInfoClips:
   - {fileID: 0}
@@ -159,9 +159,9 @@ MonoBehaviour:
   MsSnapshotIndex: 9
   musicDelayTime: 0
   musicTransitionTime: 3
-  AtsSnapshotName: at Surface
+  AtsSnapshotName: at Surface Interior
   AtsSnapshotIndex: 3
-  EsSnapshotName: en Cliffs
+  EsSnapshotName: en Cave
   EsSnapshotIndex: 0
   AcsSnapshotName: On
   AcsSnapshotIndex: 0

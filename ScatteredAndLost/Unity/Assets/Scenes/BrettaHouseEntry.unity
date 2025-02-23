@@ -41681,10 +41681,6 @@ PrefabInstance:
       propertyPath: MusicCueSnapshotName
       value: Normal
       objectReference: {fileID: 0}
-    - target: {fileID: -5454362712497873286, guid: 8239f550a484dc842ab69656852491cd, type: 3}
-      propertyPath: InfectedMusicCueSnapshotName
-      value: Normal
-      objectReference: {fileID: 0}
     - target: {fileID: 2293310922033627781, guid: 8239f550a484dc842ab69656852491cd, type: 3}
       propertyPath: m_Name
       value: __Initializer
