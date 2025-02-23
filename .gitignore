@@ -376,3 +376,7 @@ LocalOverrides.targets
 /HK8YPlando/Unity/Assets/**/*.ogg
 /HK8YPlando/Unity/Assets/**/*.wav
 /HK8YPlando/Resources/Data/debug.json
+/hooks
+/lfs/objects
+/ScatteredAndLost/Unity/Assets/AssetBundles
+/ScatteredAndLost/Unity/Assets/Assemblies
