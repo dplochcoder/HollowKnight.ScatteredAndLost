@@ -7,7 +7,7 @@
   </PropertyGroup>
   <Import Project="../LocalOverrides.targets" Condition="Exists('../LocalOverrides.targets')" />
   <ItemGroup>
-    <ProjectReference Include="..\HK8YPlando\HK8YPlando.csproj" />
+    <ProjectReference Include="..\ScatteredAndLost\ScatteredAndLost.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PurenailCore">
