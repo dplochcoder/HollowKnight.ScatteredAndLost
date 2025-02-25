@@ -1,21 +1,24 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Framework;
 
 internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, M> where B : MonoBehaviour, IPersistentBehaviour<B, M> where M : PersistentBehaviourManager<B, M>
 {
-    [ShimField] public AudioClip? Music;
+    [ShimField] public string? FileName;
 
     private AudioSource? audioSource;
 
     public void AwakeWithManager(M initManager)
     {
+        var path = Path.Combine(Path.GetDirectoryName(typeof(M).Assembly.Location), "Music", FileName!);
+
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
-        audioSource.clip = Music!;
+        audioSource.clip = SFCore.Utils.WavUtils.ToAudioClip(path);
         audioSource.bypassEffects = true;
         audioSource.outputAudioMixerGroup = AudioMixerGroups.Music();
 
