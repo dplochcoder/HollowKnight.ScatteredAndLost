@@ -188,9 +188,9 @@ internal class BrettasHouse : Module
         ILCursor cursor = new(il);
         cursor.Goto(0);
         cursor.GotoNext(i => i.MatchCall<RigidBody2dActionBase>("CacheRigidBody2d"));
-        cursor.EmitDelegate(MaybeBuffSoulOrb);
         cursor.Emit(OpCodes.Ldarg_0);
-        cursor.Emit(OpCodes.Ldloc_S, 4);
+        cursor.Emit(OpCodes.Ldloc_S, (byte)4);
+        cursor.EmitDelegate(MaybeBuffSoulOrb);
     }
 
     private HashSet<FlingObjectsFromGlobalPool> superSoulOrbFlingers = [];

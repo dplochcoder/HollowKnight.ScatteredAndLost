@@ -143,6 +143,7 @@ public class ScatteredAndLostMod : Mod
                 ItemChangerMod.Modules.Add<ArchivesSkipModule>();
                 ItemChangerMod.Modules.Add<Balladrius>();
                 ItemChangerMod.Modules.Add<BeastsDenSpiders>();
+                ItemChangerMod.Modules.Add<BinocularsModule>();
                 ItemChangerMod.Modules.Add<BlockDeepnestPlank>();
                 ItemChangerMod.Modules.Add<BlockFungalDrop>();
                 ItemChangerMod.Modules.Add<BlockKPDoor>();

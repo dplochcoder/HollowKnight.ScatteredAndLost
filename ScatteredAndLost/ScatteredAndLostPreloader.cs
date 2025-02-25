@@ -24,6 +24,9 @@ internal class ScatteredAndLostPreloader : Preloader
     [Preload("GG_Workshop", "GG_Statue_Gorb")]
     public GameObject GorbStatue { get; private set; }
 
+    [Preload("Tutorial_01", "_Props/Tut_tablet_top (1)")]
+    public GameObject KingsPassLoreTablet { get; private set; }
+
     [Preload("Crossroads_01", "_Scenery/Mender Bug")]
     public GameObject MenderBug { get; private set; }
 

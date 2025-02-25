@@ -8,7 +8,7 @@ internal static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
 
-    [BindableMethod(name = "Gear Up", category ="HK8YPlando")]
+    [BindableMethod(name = "Gear Up", category ="Scattered and Lost")]
     public static void GearUp()
     {
         BindableFunctions.GiveAllSkills();
@@ -19,23 +19,23 @@ internal static class DebugInterop
         BrettasHouse.Get().Hearts = 23;
     }
 
-    [BindableMethod(name = "Give Heart", category = "HK8YPlando")]
+    [BindableMethod(name = "Give Heart", category = "Scattered and Lost")]
     public static void GiveHeart() => ++BrettasHouse.Get().Hearts;
 
-    [BindableMethod(name = "Give All Hearts", category = "HK8YPlando")]
+    [BindableMethod(name = "Give All Hearts", category = "Scattered and Lost")]
     public static void GiveAllHearts()
     {
         var mod = BrettasHouse.Get();
         mod.Hearts = Math.Max(mod.Hearts, 23);
     }
 
-    [BindableMethod(name = "Take All Hearts", category = "HK8YPlando")]
+    [BindableMethod(name = "Take All Hearts", category = "Scattered and Lost")]
     public static void TakeAllHearts() => BrettasHouse.Get().Hearts = 0;
 
-    [BindableMethod(name = "Reset Doors", category = "HK8YPlando")]
+    [BindableMethod(name = "Reset Doors", category = "Scattered and Lost")]
     public static void ResetDoors() => BrettasHouse.Get().DoorData.Clear();
 
-    [BindableMethod(name = "Reset Checkpoint", category = "HK8YPlando")]
+    [BindableMethod(name = "Reset Checkpoint", category = "Scattered and Lost")]
     public static void ResetCheckpoint()
     {
         var mod = BrettasHouse.Get();
@@ -44,7 +44,7 @@ internal static class DebugInterop
         mod.CheckpointPriority = 0;
     }
 
-    [BindableMethod(name = "Skip to End", category = "HK8YPlando")]
+    [BindableMethod(name = "Skip to End", category = "Scattered and Lost")]
     public static void SkipToEnd()
     {
         var mod = BrettasHouse.Get();
