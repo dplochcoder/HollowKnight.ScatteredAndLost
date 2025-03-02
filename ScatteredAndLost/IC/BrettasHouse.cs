@@ -66,8 +66,8 @@ internal class BrettasHouse : Module
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.AddSceneChangeEdit("Room_Bretta", GodhomeTransition);
-        Events.AddFsmEdit(dreamNailId, EditDreamNail);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
+        Events.AddFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook += LanguageGetHook;
         ModHooks.GetPlayerBoolHook += GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook += SetPlayerBoolHook;
@@ -80,8 +80,8 @@ internal class BrettasHouse : Module
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.RemoveSceneChangeEdit("Room_Bretta", GodhomeTransition);
-        Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
+        Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook -= LanguageGetHook;
         ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook -= SetPlayerBoolHook;
@@ -124,7 +124,16 @@ internal class BrettasHouse : Module
 
     internal void UpdateCheckpoint(CheckpointLevel level)
     {
-        if (Checkpoint != null && Checkpoint < level) Checkpoint = level;
+        if (Checkpoint == null || Checkpoint >= level) return;
+
+        // Only update if all prior placements are obtained.
+        foreach (var loc in RandomizerData.Locations)
+        {
+            if (loc.Value.Checkpoint >= level) continue;
+            if (ItemChanger.Internal.Ref.Settings.Placements.TryGetValue(loc.Key, out var placement) && !placement.Items.All(i => i.WasEverObtained())) return;
+        }
+
+        Checkpoint = level;
     }
 
     internal void LoadCheckpoint(BrettaCheckpoint checkpointObj)
@@ -135,6 +144,32 @@ internal class BrettasHouse : Module
 
     internal void UnloadCheckpoint(BrettaCheckpoint checkpoint) => activeCheckpoints.Remove(checkpoint);
 
+    internal ShadeSpawnTrigger? lastShadeTrigger;
+
+    internal void ForceShadeSpawn(PlayMakerFSM fsm)
+    {
+        fsm.GetFsmState("Set Shade").AddFirstAction(new Lambda(() =>
+        {
+            var marker = lastShadeTrigger?.ShadeMarker;
+            if (marker != null)
+            {
+                var pd = PlayerData.instance;
+                pd.SetString(nameof(PlayerData.shadeScene), marker.gameObject.scene.name);
+                pd.SetFloat(nameof(PlayerData.shadePositionX), marker.transform.position.x);
+                pd.SetFloat(nameof(PlayerData.shadePositionY), marker.transform.position.y);
+
+                fsm.ForceSetState("Check MP");
+                return;
+            }
+        }));
+    }
+
+    internal void SetShadeSpawnTrigger(ShadeSpawnTrigger trigger) => lastShadeTrigger = trigger;
+    internal void ForgetShadeSpawnTrigger(ShadeSpawnTrigger trigger)
+    {
+        if (lastShadeTrigger == trigger) lastShadeTrigger = null;
+    }
+
     private HashSet<DreamgateFilter> dreamgateFilters = [];
 
     internal void RegisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Add(filter);
@@ -144,21 +179,6 @@ internal class BrettasHouse : Module
         {
             if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
         }));
-
-    internal void ForceShadeSpawn(PlayMakerFSM fsm)
-    {
-        fsm.GetFsmState("Set Shade").AddFirstAction(new Lambda(() =>
-        {
-            if (activeCheckpoints.Count > 0)
-            {
-                PlayerData.instance.SetString("shadeScene", "Town");
-                PlayerData.instance.SetFloat("shadePositionX", 165);
-                PlayerData.instance.SetFloat("shadePositionY", 18);
-
-                fsm.ForceSetState("Check MP");
-            }
-        }));
-    }
 
     private string LanguageGetHook(string key, string sheetTitle, string orig)
     {
