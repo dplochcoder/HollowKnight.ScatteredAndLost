@@ -725,6 +725,10 @@ PrefabInstance:
       value: Door23
       objectReference: {fileID: 0}
     - target: {fileID: 494352530608708503, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
+      propertyPath: DoorIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 494352530608708503, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
       propertyPath: NumHearts
       value: 23
       objectReference: {fileID: 0}
