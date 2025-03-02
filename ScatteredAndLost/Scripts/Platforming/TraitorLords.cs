@@ -48,12 +48,7 @@ internal class TraitorLords : MonoBehaviour
         yield return Coroutines.SleepUntil(() => Trigger!.Detected());
 
         var mod = BrettasHouse.Get();
-        if (mod.CheckpointPriority < 5)
-        {
-            mod.CheckpointScene = gameObject.scene.name;
-            mod.CheckpointGate = "top1";
-            mod.CheckpointPriority = 5;
-        }
+        mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
 
         yield return Coroutines.SleepSeconds(StartDelay);
 
@@ -76,12 +71,7 @@ internal class TraitorLords : MonoBehaviour
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
         TempleMusicManager.Get()?.FadeOut(5f);
 
-        if (mod.CheckpointPriority < 6)
-        {
-            mod.CheckpointScene = "Room_Bretta";
-            mod.CheckpointGate = "right1";
-            mod.CheckpointPriority = 6;
-        }
+        mod.UpdateCheckpoint(Data.CheckpointLevel.Bretta);
         BrettasHouse.godhomeTransition = true;
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
@@ -165,7 +155,7 @@ internal class TraitorLords : MonoBehaviour
         {
             if (sickleCooldown > 0 && lastSickler != null && lastSickler != this)
             {
-                fsm.SetState("Cooldown");
+                fsm.ForceSetState("Cooldown");
                 return;
             }
 
@@ -177,7 +167,7 @@ internal class TraitorLords : MonoBehaviour
         {
             if (slamCooldown > 0 && lastSlammer != null && lastSlammer != this)
             {
-                fsm.SetState("Idle");
+                fsm.ForceSetState("Idle");
                 return;
             }
 
@@ -192,7 +182,7 @@ internal class TraitorLords : MonoBehaviour
             {
                 if (attackCooldown > 0 && lastAttacker != null && lastAttacker != this)
                 {
-                    fsm.SetState("Cooldown");
+                    fsm.ForceSetState("Cooldown");
                     return;
                 }
 
@@ -202,7 +192,7 @@ internal class TraitorLords : MonoBehaviour
         }
 
         obj.SetActive(true);
-        fsm.SetState("Fall");
+        fsm.ForceSetState("Fall");
 
         // Shorten death anim.
         this.StartLibCoroutine(ModifyCorpseFsm(fsm));
@@ -295,7 +285,7 @@ internal class TraitorLords : MonoBehaviour
             if (!raged.Value)
             {
                 raged.Value = true;
-                fsm.SetState("Roar");
+                fsm.ForceSetState("Roar");
 
                 this.StartLibCoroutine(DelayedRoarAnim(fsm));
                 ActualRageMode(fsm);

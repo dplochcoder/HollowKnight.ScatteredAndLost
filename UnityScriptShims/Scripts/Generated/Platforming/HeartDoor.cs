@@ -2,11 +2,7 @@ namespace HK8YPlando.Scripts.Platforming
 {
     public class HeartDoor : UnityEngine.MonoBehaviour
     {
-        public string DataKey;
-        public int NumHearts;
-        public int HeartsPerRow;
-        public float HSpace;
-        public float VSpace;
+        public int DoorIndex;
         public float FallHeight;
         public float FallSpeed;
         public float FallBuffer;

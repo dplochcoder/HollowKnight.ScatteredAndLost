@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace HK8YPlando;
 
-public class ScatteredAndLostMod : Mod
+public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings>
 {
     private static ScatteredAndLostMod? Instance;
 
@@ -23,6 +23,12 @@ public class ScatteredAndLostMod : Mod
 
         AddMinerDoor();
     }
+
+    public static ScatteredAndLostSettings Settings = new();
+
+    public void OnLoadGlobal(ScatteredAndLostSettings s) => Settings = s;
+
+    public ScatteredAndLostSettings OnSaveGlobal() => Settings;
 
     private static void AddMinerDoor()
     {

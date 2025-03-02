@@ -11,24 +11,38 @@ namespace HK8YPlando.Scripts.Framework;
 [Shim]
 internal class SuperSoulTotem : MonoBehaviour
 {
-    [ShimField] public float EmissionRate;
-    [ShimField] public float ParticleLifetime;
-    [ShimField] public float ParticleSize;
-    [ShimField] public int ParticleCap;
+    private const float EMISSION_RATE = 30;
+    private const float PARTICLE_LIFETIME = 0.65f;
+    private const float PARTICLE_SIZE = 0.75f;
+    private const int PARTICLE_CAP = 100;
 
     private void Awake()
     {
+        var mod = BrettasHouse.Get();
+        if (mod.RandomizerSettings != null && mod.RandomizerSettings.RandomizeSoulTotems)
+        {
+            // Let ItemChanger place an item here instead.
+            Destroy(this);
+            return;
+        }
+
         var totem = Instantiate(ScatteredAndLostPreloader.Instance.SoulTotem);
 
+        totem.transform.position = transform.position;
+        totem.transform.localScale = transform.localScale;
+        EnhanceTotem(totem);
+        totem.SetActive(true);
+
+        Destroy(gameObject);
+    }
+
+    internal static void EnhanceTotem(GameObject totem)
+    {
         var data = totem.GetComponent<PersistentIntItem>().persistentIntData;
         data.value = 3;
         data.semiPersistent = false;
         data.id = "SuperSoulTotem";
         data.sceneName = "BrettasHouse";
-
-        totem.transform.position = transform.position;
-        totem.transform.localScale = transform.localScale;
-        totem.SetActive(true);
 
         var fsm = totem.LocateMyFSM("soul_totem");
         fsm.GetFsmState("Close").AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
@@ -43,11 +57,9 @@ internal class SuperSoulTotem : MonoBehaviour
         totem.AddComponent<OnDestroyHook>().Action = () => mod.UnregisterSuperSoulOrbFlinger(flinger);
 
         var particles = GameObjectExtensions.FindChild(totem, "Soul Particles").GetComponent<ParticleSystem>();
-        particles.emissionRate = EmissionRate;
-        particles.startSize = ParticleSize;
-        particles.maxParticles = ParticleCap;
-        particles.startLifetime = ParticleLifetime;
-
-        Destroy(gameObject);
+        particles.emissionRate = EMISSION_RATE;
+        particles.startSize = PARTICLE_SIZE;
+        particles.maxParticles = PARTICLE_CAP;
+        particles.startLifetime = PARTICLE_LIFETIME;
     }
 }

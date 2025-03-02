@@ -1,5 +1,7 @@
 ﻿using ItemChanger;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace HK8YPlando.IC;
@@ -14,11 +16,15 @@ internal enum HeartType
 internal static class HeartTypeExtensions
 {
     internal static string ItemName(this HeartType type) => type switch { HeartType.Blue => "BrettaHeart-Blue", HeartType.Red => "BrettaHeart-Red", HeartType.Yellow => "BrettaHeart-Yellow", _ => "" };
+
+    internal static List<HeartType> All() => [HeartType.Blue, HeartType.Red, HeartType.Yellow];
 }
 
 internal class BrettaHeart : AbstractItem
 {
-    public const int MAX_HEARTS = 24;
+    public static List<BrettaHeart> All() => HeartTypeExtensions.All().Select(t => new BrettaHeart(t)).ToList();
+
+    static BrettaHeart() => All().ForEach(Finder.DefineCustomItem);
 
     public const string TermName = "BRETTA_HEART";
 
@@ -37,7 +43,7 @@ internal class BrettaHeart : AbstractItem
 
     public override void GiveImmediate(GiveInfo info) => ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts++;
 
-    public override bool Redundant() => ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts >= MAX_HEARTS;
+    public override bool Redundant() => false;
 
     public override AbstractItem Clone() => new BrettaHeart(HeartType, FlavorName);
 }

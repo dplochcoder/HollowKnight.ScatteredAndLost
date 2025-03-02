@@ -1,5 +1,7 @@
-﻿using HK8YPlando.Scripts.Framework;
+﻿using HK8YPlando.Data;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
@@ -12,6 +14,7 @@ using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using SFCore.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,6 +23,7 @@ namespace HK8YPlando.IC;
 
 internal record HeartDoorData
 {
+    public int Total = 1;
     public bool Closed = false;
     public int NumUnlocked = 0;
     public bool Opened = false;
@@ -30,13 +34,14 @@ internal class BrettasHouse : Module
     private static readonly FsmID shadeId = new("Hero Death", "Hero Death Anim");
     private static readonly FsmID dreamNailId = new("Dream Nail");
 
-    public int Hearts = 0;
-    public Dictionary<string, HeartDoorData> DoorData = [];
-    public bool SeenBrettasHouseAreaTitle = false;
+    public CheckpointLevel? Checkpoint;
 
-    public string CheckpointScene = "BrettaHouseEntry";
-    public string CheckpointGate = "right1";
-    public int CheckpointPriority = 0;
+    public int Hearts = 0;
+    public List<HeartDoorData> DoorData = [new(), new()];
+    public bool SeenBrettasHouseAreaTitle = false;
+    public bool DefeatedBrettorLords = false;
+
+    public RandomizerSettings? RandomizerSettings;
 
     public static BrettasHouse Get() => ItemChangerMod.Modules.Get<BrettasHouse>()!;
 
@@ -96,8 +101,8 @@ internal class BrettasHouse : Module
     {
         var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
         var vars = obj.LocateMyFSM("Door Control").FsmVariables;
-        vars.FindFsmString("New Scene").Value = CheckpointScene;
-        vars.FindFsmString("Entry Gate").Value = CheckpointGate;
+        // vars.FindFsmString("New Scene").Value = CheckpointScene;
+        // vars.FindFsmString("Entry Gate").Value = CheckpointGate;
     }
 
     internal static bool godhomeTransition = false;
@@ -117,23 +122,27 @@ internal class BrettasHouse : Module
 
     private HashSet<BrettaCheckpoint> activeCheckpoints = [];
 
-    internal void LoadCheckpoint(BrettaCheckpoint checkpoint)
+    internal void UpdateCheckpoint(CheckpointLevel level)
     {
-        activeCheckpoints.Add(checkpoint);
+        if (Checkpoint != null && Checkpoint < level) Checkpoint = level;
+    }
 
-        if (checkpoint.Priority > CheckpointPriority)
-        {
-            CheckpointPriority = checkpoint.Priority;
-            CheckpointGate = checkpoint.EntryGate!;
-            CheckpointScene = checkpoint.gameObject.scene.name;
-        }
+    internal void LoadCheckpoint(BrettaCheckpoint checkpointObj)
+    {
+        activeCheckpoints.Add(checkpointObj);
+        UpdateCheckpoint(checkpointObj.Level);
     }
 
     internal void UnloadCheckpoint(BrettaCheckpoint checkpoint) => activeCheckpoints.Remove(checkpoint);
 
+    private HashSet<DreamgateFilter> dreamgateFilters = [];
+
+    internal void RegisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Add(filter);
+    internal void UnregisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Remove(filter);
+
     internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetFsmState("Can Set?")?.AddFirstAction(new Lambda(() =>
         {
-            if (activeCheckpoints.Count > 0) fsm.SendEvent("FAIL");
+            if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
         }));
 
     internal void ForceShadeSpawn(PlayMakerFSM fsm)
@@ -146,7 +155,7 @@ internal class BrettasHouse : Module
                 PlayerData.instance.SetFloat("shadePositionX", 165);
                 PlayerData.instance.SetFloat("shadePositionY", 18);
 
-                fsm.SetState("Check MP");
+                fsm.ForceSetState("Check MP");
             }
         }));
     }
@@ -199,13 +208,16 @@ internal class BrettasHouse : Module
 
     private void MaybeBuffSoulOrb(FlingObjectsFromGlobalPool self, GameObject go)
     {
-        if (!superSoulOrbFlingers.Contains(self)) return;
+        if (superSoulOrbFlingers.Contains(self)) BuffSoulOrb(go);
+    }
 
+    internal void BuffSoulOrb(GameObject go)
+    {
         var orb = go.GetComponent<SoulOrb>();
         if (orb == null) return;
 
         buffedSoulOrbs.Add(orb);
-        go.AddComponent<OnDestroyHook>().Action = () => buffedSoulOrbs.Remove(orb);
+        GameObjectExtensions.GetOrAddComponent<OnDestroyHook>(go).Action += () => buffedSoulOrbs.Remove(orb);
     }
 
     private void HookSoulOrbZoom(ILContext il)

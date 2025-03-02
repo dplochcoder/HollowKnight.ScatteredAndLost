@@ -23,6 +23,15 @@ internal static class FSMExtensions
         fsmState.AddLastAction(new Lambda(() => fsm.SendEvent("FINISHED")));
     }
 
+    internal static void ForceSetState(this PlayMakerFSM fsm, string state)
+    {
+        string eventName = $"FORCE_STATE_{state.ToUpper().Replace(' ', '_')}";
+        if (fsm.FsmGlobalTransitions.Any(t => t.EventName == eventName)) return;
+
+        fsm.AddFsmGlobalTransitions(eventName, state);
+        fsm.SendEvent(eventName);
+    }
+
     internal static void InsertBefore<T>(this FsmState self, FsmStateAction action) where T : FsmStateAction
     {
         List<FsmStateAction> actions = self.Actions.ToList();

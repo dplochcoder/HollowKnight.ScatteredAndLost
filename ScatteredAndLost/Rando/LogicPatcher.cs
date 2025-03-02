@@ -1,13 +1,9 @@
-﻿using HK8YPlando.IC;
-using ItemChanger;
-using ItemChanger.Locations;
-using PurenailCore.ICUtil;
+﻿using HK8YPlando.Data;
+using HK8YPlando.IC;
 using RandomizerCore.Logic;
-using RandomizerCore.LogicItems;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
-using System;
 
 namespace HK8YPlando.Rando;
 
@@ -16,138 +12,111 @@ internal static class LogicPatcher
     public static void Setup()
     {
         RCData.RuntimeLogicOverride.Subscribe(101f, ModifyLogic);
-        RequestBuilder.OnUpdate.Subscribe(101f, ModifyRequest);
-    }
-
-    private static void AddSplitItems(string name, LogicManagerBuilder lmb)
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            var sName = $"Scatternest{i}-{name}";
-            lmb.AddItem(new EmptyItem(sName));
-        }
+        RequestBuilder.OnUpdate.Subscribe(-1000f, ModifyRequestBuilder);
+        ProgressionInitializer.OnCreateProgressionInitializer += OnCreateProgressionInitializer;
     }
 
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        // Add hearts
-        var term = lmb.GetOrAddTerm(BrettaHeart.TermName);
-        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Blue).name, [new(term, 1)], new(term, 23)));
-        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Red).name, [new(term, 1)], new(term, 23)));
-        lmb.AddItem(new CappedItem(new BrettaHeart(HeartType.Yellow).name, [new(term, 1)], new(term, 23)));
-
-        // Add bretta locations
-        lmb.AddLogicDef(new("BrettaHouse15", $"Rescued_Bretta + {BrettaHeart.TermName} > 14"));
-        lmb.AddLogicDef(new("BrettaHouse23", $"Rescued_Bretta + {BrettaHeart.TermName} > 22"));
-
-        Finder.DefineCustomLocation(new CoordinateLocation
+        var settings = ScatteredAndLostMod.Settings.RandomizerSettings;
+        if (settings.EnableHeartDoors)
         {
-            name = "BrettaHouse15",
-            sceneName = "BrettaHouseEntry",
-            x = 81,
-            y = 4,
-        });
-        Finder.DefineCustomLocation(new CoordinateLocation
-        {
-            name = "BrettaHouse23",
-            sceneName = "BrettaHouseEntry",
-            x = 22,
-            y = 4,
-        });
-
-        AddSplitItems("Left_Mantis_Claw", lmb);
-        AddSplitItems("Right_Mantis_Claw", lmb);
-        AddSplitItems("Mothwing_Cloak", lmb);
-        AddSplitItems("Queen's_Gardens_Stag", lmb);
-        AddSplitItems("Distant_Village_Stag", lmb);
-        AddSplitItems("Tram_Pass", lmb);
-        AddSplitItems("Swim", lmb);
-        AddSplitItems("Isma's_Tear", lmb);
-
-        foreach (var e in MoreDoors.Data.DoorData.All())
-        {
-            var keyName = e.Value.Key!.ItemName;
-            AddSplitItems(keyName, lmb);
+            var (cost1, cost2) = settings.ComputeDoorCosts(gs);
+            lmb.AddWaypoint(new("BrettaHouseGate1", $"{BrettaHeart.TermName}>{cost1 - 1}"));
+            lmb.AddWaypoint(new("BrettaHouseGate2", $"{BrettaHeart.TermName}>{cost2 - 1}"));
         }
+
+        foreach (var e in RandomizerData.Transitions)
+        {
+            if (e.Value.Logic != null) lmb.AddTransition(new(e.Key, e.Value.Logic));
+        }
+
+        foreach (var e in RandomizerData.Logic)
+        {
+            lmb.GetOrAddTerm(e.Key, TermType.State);
+            lmb.AddLogicDef(new(e.Key, e.Value));
+        }
+
+        foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value));
     }
 
-    private static void AddSplitItems(string name, RequestBuilder rb)
+    private static void ModifyRequestBuilder(RequestBuilder rb)
     {
-        var orig = Finder.GetItem(name)!;
-        if (orig == null) throw new ArgumentException($"Bad item: '{name}'");
+        var settings = ScatteredAndLostMod.Settings.RandomizerSettings;
+        if (!settings.Enabled) return;
 
-        for (int i = 0; i < 2; i++)
+        RandomizerSettings.LocalSettings = settings.Clone();
+
+        if (settings.EnableCheckpoints && rb.gs.TransitionSettings.Mode == TransitionSettings.TransitionMode.RoomRandomizer)
+            throw new System.ArgumentException("Bretta House checkpoints are incompatible with room rando");
+        if (settings.RandomizeSoulTotems && !rb.gs.PoolSettings.SoulTotems)
+            throw new System.ArgumentException("Soul Totems must be randomized if randomizing Bretta House Soul Totems");
+
+        rb.RemoveTransitionByName("Town[door_bretta]");
+        rb.RemoveTransitionByName("Room_Bretta[right1]");
+
+        foreach (var e in RandomizerData.Transitions)
         {
-            var sName = $"Scatternest{i}-{name}";
-
-            Finder.DefineCustomItem(new ScatternestRestrictedItem()
+            rb.EditTransitionRequest(e.Key, info =>
             {
-                name = sName,
-                Wrapped = orig,
-                ScatternestIndex = i,
+                info.getTransitionDef = () => e.Value.Def!;
             });
-            rb.AddItemByName(sName);
+        }
+
+        if (settings.EnableHeartDoors)
+        {
+            if (!rb.gs.PoolSettings.Keys)
+                throw new System.ArgumentException("Cannot enable heart doors without randomizing keys");
+
+            var allHearts = BrettaHeart.All();
+            foreach (var heart in allHearts)
+            {
+                rb.EditItemRequest(heart.name, info =>
+                {
+                    info.getItemDef = () => new()
+                    {
+                        Name = heart.name,
+                        Pool = PoolNames.Key,
+                        MajorItem = false,
+                        PriceCap = 500,
+                    };
+                });
+            }
+
+            int numHearts = settings.ComputeDoorCosts(rb.gs).Item2 + settings.HeartTolerance;
+
+            System.Random r = new(rb.gs.Seed + 13);
+            for (int i = 0; i < numHearts; i++) rb.AddItemByName(allHearts[r.Next(allHearts.Count)].name);
+        }
+        else
+        {
+            rb.EditTransitionRequest("Town[door_bretta]", info =>
+            {
+                info.AddGetTransitionDefModifier("Town[door_bretta]", def => def with { VanillaTarget = "BrettaHouseZippers[right1]" });
+            });
+            rb.EditTransitionRequest("BrettaHouseZippers[right1]", info =>
+            {
+                info.AddGetTransitionDefModifier("BrettaHouseZippers[right1]", def => def with { VanillaTarget = "Town[door_bretta]", IsTitledAreaTransition = true });
+            });
+        }
+
+        foreach (var loc in RandomizerData.Locations)
+        {
+            if (settings.EnableHeartDoors || loc.Value.Checkpoint > CheckpointLevel.Entrance)
+            {
+                rb.EditLocationRequest(loc.Key, info =>
+                {
+                    info.getLocationDef = () => loc.Value.GetLocationDef();
+                });
+            }
         }
     }
 
-    private static void AddHearts(HeartType heartType, RequestBuilder rb)
+    private static void OnCreateProgressionInitializer(LogicManager lm, GenerationSettings gs, ProgressionInitializer prog)
     {
-        var heart = new BrettaHeart(heartType);
-        Finder.DefineCustomItem(heart);
+        var settings = RandomizerSettings.LocalSettings;
+        if (!settings.Enabled || !settings.EnableHeartDoors) return;
 
-        rb.EditItemRequest(heart.name, info =>
-        {
-            info.getItemDef = () => new()
-            {
-                Name = heart.name,
-                Pool = PoolNames.Key,
-                MajorItem = false,
-                PriceCap = 1000,
-            };
-        });
-
-        for (int i = 0; i < 8; i++) rb.AddItemByName(heart.name);
-    }
-
-    private static void ModifyRequest(RequestBuilder rb)
-    {
-        rb.EditLocationRequest("BrettaHouse15", info =>
-        {
-            info.getLocationDef = () => new()
-            {
-                Name = "BrettaHouse15",
-                SceneName = "BrettaHouseEntry",
-            };
-        });
-        rb.AddLocationByName("BrettaHouse15");
-
-        rb.EditLocationRequest("BrettaHouse23", info =>
-        {
-            info.getLocationDef = () => new()
-            {
-                Name = "BrettaHouse23",
-                SceneName = "BrettaHouseEntry",
-            };
-        });
-        rb.AddLocationByName("BrettaHouse23");
-
-        AddHearts(HeartType.Blue, rb);
-        AddHearts(HeartType.Red, rb);
-        AddHearts(HeartType.Yellow, rb);
-
-        AddSplitItems("Left_Mantis_Claw", rb);
-        AddSplitItems("Right_Mantis_Claw", rb);
-        AddSplitItems("Mothwing_Cloak", rb);
-        AddSplitItems("Queen's_Gardens_Stag", rb);
-        AddSplitItems("Distant_Village_Stag", rb);
-        AddSplitItems("Tram_Pass", rb);
-        AddSplitItems("Swim", rb);
-        AddSplitItems("Isma's_Tear", rb);
-
-        foreach (var e in MoreDoors.Data.DoorData.All())
-        {
-            var keyName = e.Value.Key!.ItemName;
-            AddSplitItems(keyName, rb);
-        }
+        prog.Setters.Add(new(lm.GetTermStrict(BrettaHeart.TermName), -settings.HeartTolerance));
     }
 }

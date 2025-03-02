@@ -1,0 +1,146 @@
+{
+  "BrettaHouseBubbles[left1]": {
+    "Def": {
+      "SceneName": "BrettaHouseBubbles",
+      "DoorName": "left1",
+      "VanillaTarget": "Room_Bretta[right1]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseBubbles[left1] | BrettaHouseBubbles5 + DefeatedBrettorLords"
+  },
+  "BrettaHouseBubbles[bot1]": {
+    "Def": {
+      "SceneName": "BrettaHouseBubbles",
+      "DoorName": "bot1",
+      "VanillaTarget": "BrettaHouseSwitches[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseBubbles[bot1]"
+  },
+  "BrettaHouseBumpers[top1]": {
+    "Def": {
+      "SceneName": "BrettaHouseBumpers",
+      "DoorName": "top1",
+      "VanillaTarget": "BrettaHouseBubbles[bot1]",
+      "Direction": "Top",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseBumpers[top1] | BrettaHouseBumpers3 + FULLSHADOWDASH + ANYCLAW + WINGS + LEFTSLASH + RIGHTSLASH + UPSLASH + (GREATSLASH | LONGNAIL + MARKOFPRIDE)"
+  },
+  "BrettaHouseBumpers[right1]": {
+    "Def": {
+      "SceneName": "BrettaHouseBumpers",
+      "DoorName": "right1",
+      "VanillaTarget": "BrettaHouseSwitches[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseBumpers[right1]"
+  },
+  "BrettaHouseSwitches[left1]": {
+    "Def": {
+      "SceneName": "BrettaHouseSwitches",
+      "DoorName": "left1",
+      "VanillaTarget": "BrettaHouseBumpers[right1]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseSwitches[left1] | BrettaHouseSwitches5 + (GREATSLASH | MARKOFPRIDE + ANYSIDESLASH) + (CYCLONESLASH | GREATSLASH + (LEFTDASH + LEFTSLASH | RIGHTDASH + RIGHTSLASH) | ANYDASHSLASH) + (LEFTSUPERDASH | LEFTDASH + $SHRIEKPOGO[2])"
+  },
+  "BrettaHouseSwitches[right1]": {
+    "Def": {
+      "SceneName": "BrettaHouseSwitches",
+      "DoorName": "right1",
+      "VanillaTarget": "BrettaHouseZippers[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseSwitches[right1]"
+  },
+  "BrettaHouseZippers[left1]": {
+    "Def": {
+      "SceneName": "BrettaHouseZippers",
+      "DoorName": "left1",
+      "VanillaTarget": "BrettaHouseSwitches[right1]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseZippers[left1] | BrettaHouseZippers3 + LEFTDASH + RIGHTCLAW + WINGS"
+  },
+  "BrettaHouseZippers[right1]": {
+    "Def": {
+      "SceneName": "BrettaHouseZippers",
+      "DoorName": "right1",
+      "VanillaTarget": "BrettaHouseEntry[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseZippers[right1]"
+  },
+  "BrettaHouseEntry[left1]": {
+    "Def": {
+      "SceneName": "BrettaHouseEntry",
+      "DoorName": "left1",
+      "VanillaTarget": "BrettaHouseZippers[right1]",
+      "Direction": "Left",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseEntry[left1] | BrettaHouseEntry[right1] + BRETTA_HEARTS>$BrettaHouseGateCost[0] + BRETTA_HEARTS>$BrettaHouseGateCost[1]"
+  },
+  "BrettaHouseEntry[right1]": {
+    "Def": {
+      "SceneName": "BrettaHouseEntry",
+      "DoorName": "right1",
+      "VanillaTarget": "Town[door_bretta]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": "BrettaHouseEntry[right1] | BrettaHouseEntry[left1] + BRETTA_HEARTS>$BrettaHouseGateCost[0] + BRETTA_HEARTS>$BrettaHouseGateCost[1]"
+  },
+  "Room_Bretta[right1]": {
+    "Def": {
+      "SceneName": "Room_Bretta",
+      "DoorName": "right1",
+      "VanillaTarget": "BrettaHouseBubbles[left1]",
+      "Direction": "Right",
+      "IsTitledAreaTransition": false,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": null
+  },
+  "Town[door_bretta]": {
+    "Def": {
+      "SceneName": "Town",
+      "DoorName": "door_bretta",
+      "VanillaTarget": "BrettaHouseEntry[right1]",
+      "Direction": "Door",
+      "IsTitledAreaTransition": true,
+      "IsMapAreaTransition": false,
+      "Sides": "Both"
+    },
+    "Logic": null
+  }
+}

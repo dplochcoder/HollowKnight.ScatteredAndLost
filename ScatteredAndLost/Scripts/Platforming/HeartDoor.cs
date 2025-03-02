@@ -9,15 +9,45 @@ using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
 
+internal record HeartSpacing
+{
+    public int NumHearts;
+    public int NumPerRow;
+    public float HSpace;
+    public float VSpace;
+
+    public HeartSpacing(int numHearts)
+    {
+        NumHearts = numHearts;
+
+        int? rowSize = null;
+        for (int i = 1; i <= 4; i++) if (numHearts <= i * i)
+        {
+            rowSize = i;
+            break;
+        }
+        rowSize ??= 5;
+
+        NumPerRow = rowSize.Value;
+        HSpace = 5f / NumPerRow;
+        VSpace = HSpace;
+    }
+
+    public Vector2 LocalHeartPos(int idx)
+    {
+        var row = idx / NumPerRow;
+        var col = idx % NumPerRow;
+        var numRows = (NumHearts + (NumPerRow - 1)) / NumPerRow;
+        var numCols = (row == numRows - 1 && NumHearts % NumPerRow != 0) ? (NumHearts % NumPerRow) : NumPerRow;
+
+        return new(HSpace * (col - (numCols - 1) / 2f), VSpace * ((numRows - 1) / 2f - row));
+    }
+}
+
 [Shim]
 internal class HeartDoor : MonoBehaviour
 {
-    [ShimField] public string? DataKey;
-
-    [ShimField] public int NumHearts;
-    [ShimField] public int HeartsPerRow;
-    [ShimField] public float HSpace;
-    [ShimField] public float VSpace;
+    [ShimField] public int DoorIndex;
 
     [ShimField] public float FallHeight;
     [ShimField] public float FallSpeed;
@@ -37,21 +67,22 @@ internal class HeartDoor : MonoBehaviour
 
     [ShimField] public GameObject? HeartPrefab;
 
-    private void Awake() => this.StartLibCoroutine(Run());
+    private BrettasHouse? mod;
+    private HeartSpacing? spacing;
+
+    private void Awake()
+    {
+        mod = BrettasHouse.Get();
+        spacing = new(mod.DoorData[DoorIndex].Total);
+
+        this.StartLibCoroutine(Run());
+    }
 
     private HeartDoorHeart CreateHeart(int index, bool active)
     {
-        var row = index / HeartsPerRow;
-        var col = index % HeartsPerRow;
-        var numRows = (NumHearts + (HeartsPerRow - 1)) / HeartsPerRow;
-        var numCols = (row == numRows - 1 && NumHearts % HeartsPerRow != 0) ? (NumHearts % HeartsPerRow) : HeartsPerRow;
-
         var obj = Instantiate(HeartPrefab)!;
         obj.transform.SetParent(MainRender!.transform);
-        obj.transform.localPosition = new(
-            HSpace * (col - (numCols - 1) / 2f),
-            VSpace * ((numRows - 1) / 2f - row),
-            0);
+        obj.transform.localPosition = spacing!.LocalHeartPos(index);
 
         var h = obj.GetComponent<HeartDoorHeart>();
         h.SetHeartActive(active);
@@ -61,7 +92,7 @@ internal class HeartDoor : MonoBehaviour
     private IEnumerator<CoroutineElement> Run()
     {
         var mod = BrettasHouse.Get();
-        var data = mod.DoorData.GetOrAddNew(DataKey!);
+        var data = mod.DoorData[DoorIndex];
         if (data.Opened)
         {
             Terrain?.SetActive(false);
@@ -70,7 +101,7 @@ internal class HeartDoor : MonoBehaviour
         }
 
         List<HeartDoorHeart> hearts = [];
-        for (int i = 0; i < NumHearts; i++) hearts.Add(CreateHeart(i, data.NumUnlocked > i));
+        for (int i = 0; i < data.Total; i++) hearts.Add(CreateHeart(i, data.NumUnlocked > i));
 
         var knight = HeroController.instance.gameObject;
         if (!data.Closed)
@@ -78,8 +109,8 @@ internal class HeartDoor : MonoBehaviour
             MainRender!.transform.SetPositionY(transform.position.y + FallHeight);
 
             var cdashSpeed = 30;
-            var limit = transform.position.x + FallBuffer + FallHeight / FallSpeed * cdashSpeed;
-            yield return Coroutines.SleepUntil(() => knight.transform.position.x <= limit);
+            var wakeRange = FallBuffer + FallHeight / FallSpeed * cdashSpeed;
+            yield return Coroutines.SleepUntil(() => Mathf.Abs(knight.transform.position.x - transform.position.x) <= wakeRange);
 
             yield return Coroutines.SleepSecondsUpdatePercent(FallHeight / FallSpeed, pct =>
             {
@@ -95,7 +126,7 @@ internal class HeartDoor : MonoBehaviour
         else ClosedParticleSystems.ForEach(p => p.Play());
 
         yield return Coroutines.SleepUntil(() => ActivationTrigger!.Detected());
-        while (data.NumUnlocked < NumHearts)
+        while (data.NumUnlocked < data.Total)
         {
             yield return Coroutines.SleepUntil(() => mod.Hearts > data.NumUnlocked);
 
@@ -127,31 +158,6 @@ internal class HeartDoor : MonoBehaviour
     {
         doorAnimFinished = true;
         OpenParticleSystems.ForEach(p => p.Stop(true, ParticleSystemStopBehavior.StopEmitting));
-    }
-}
-
-[Shim]
-internal class SpriteOffsetter : MonoBehaviour
-{
-    [ShimField] public float XSpeed;
-    [ShimField] public float XMod;
-    [ShimField] public float YSpeed;
-    [ShimField] public float YMod;
-
-    private SpriteRenderer? spriteRenderer;
-    
-    private void Awake() => spriteRenderer = GetComponent<SpriteRenderer>();
-
-    private float offX;
-    private float offY;
-
-    private void Update()
-    {
-        if (spriteRenderer == null) return;
-
-        offX = (offX + XSpeed * Time.deltaTime) % XMod;
-        offY = (offY + YSpeed * Time.deltaTime) % YMod;
-        spriteRenderer.material.mainTextureOffset = new(offX, offY);
     }
 }
 

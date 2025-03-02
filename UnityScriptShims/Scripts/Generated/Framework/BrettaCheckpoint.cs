@@ -2,8 +2,7 @@ namespace HK8YPlando.Scripts.Framework
 {
     public class BrettaCheckpoint : UnityEngine.MonoBehaviour
     {
-        public int Priority;
-        public string EntryGate;
+        public HK8YPlando.Data.CheckpointLevel Level;
         
     }
 }

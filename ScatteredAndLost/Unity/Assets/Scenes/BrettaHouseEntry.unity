@@ -734,7 +734,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8061740572729209986, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
       propertyPath: m_Name
-      value: Door23
+      value: Door2
       objectReference: {fileID: 0}
     - target: {fileID: 8061740572729209987, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
       propertyPath: m_RootOrder
@@ -12229,7 +12229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8061740572729209986, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
       propertyPath: m_Name
-      value: Door15
+      value: Door1
       objectReference: {fileID: 0}
     - target: {fileID: 8061740572729209987, guid: f6fd76acfa753ad45918aa7db806c9f8, type: 3}
       propertyPath: m_RootOrder
@@ -26595,8 +26595,7 @@ MonoBehaviour:
   m_Script: {fileID: 1473228618, guid: 5eec8a214b044be428bd565b854d72b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Priority: 0
-  EntryGate: right1
+  Level: 0
 --- !u!1 &1133564376
 GameObject:
   m_ObjectHideFlags: 0

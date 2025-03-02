@@ -55,11 +55,9 @@
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="README.md" />
-    <None Remove="Resources\Sprites\heart_blue.png" />
-    <None Remove="Resources\Sprites\heart_red.png" />
-    <None Remove="Resources\Sprites\heart_yellow.png" />
-    <None Remove="Resources\Sprites\miner_key.png" />
+    <None Remove="Resources\Data\locations.json" />
+    <None Remove="resources\data\transitions.json" />
+    <None Remove="Resources\Data\waypoints.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -359,8 +357,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\Data\" />
   </ItemGroup>
 </Project>
