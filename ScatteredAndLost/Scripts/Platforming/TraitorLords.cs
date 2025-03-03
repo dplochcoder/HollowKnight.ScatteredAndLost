@@ -79,10 +79,10 @@ internal class TraitorLords : MonoBehaviour
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION OUT");
 
+        Events.OnSceneChange += FinishGodhomeTransition;
         yield return Coroutines.SleepSeconds(1.5f);
 
         // Finish the transition in the next scene.
-        Events.OnSceneChange += FinishGodhomeTransition;
         GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
         {
             SceneName = "Room_Bretta",

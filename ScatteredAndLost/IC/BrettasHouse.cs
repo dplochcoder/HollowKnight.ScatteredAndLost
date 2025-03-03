@@ -65,7 +65,8 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
-        Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
+        Events.AddSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
+        Events.AddSceneChangeEdit("Town", RedirectBrettaDoorOutside);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook += LanguageGetHook;
@@ -79,7 +80,8 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
-        Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
+        Events.RemoveSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
+        Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoorOutside);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook -= LanguageGetHook;
@@ -113,7 +115,7 @@ internal class BrettasHouse : Module
         else return Checkpoint.Value.SceneAndGate();
     }
 
-    private void RedirectBrettaDoor(Scene scene)
+    private void RedirectBrettaDoorOutside(Scene scene)
     {
         var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
 
@@ -121,6 +123,13 @@ internal class BrettasHouse : Module
         var (sceneName, gateName) = GetBrettaDoorTarget();
         vars.FindFsmString("New Scene").Value = sceneName;
         vars.FindFsmString("Entry Gate").Value = gateName;
+    }
+
+    private void RedirectBrettaDoorInside(Scene scene)
+    {
+        var tp = scene.FindGameObject("right1")!.GetComponent<TransitionPoint>();
+        tp.targetScene = "BrettaHouseBubbles";
+        tp.entryPoint = "left1";
     }
 
     private HashSet<BrettaCheckpoint> activeCheckpoints = [];
