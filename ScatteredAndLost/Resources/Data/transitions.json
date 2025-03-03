@@ -5,7 +5,7 @@
       "DoorName": "left1",
       "VanillaTarget": "Room_Bretta[right1]",
       "Direction": "Left",
-      "IsTitledAreaTransition": false,
+      "IsTitledAreaTransition": true,
       "IsMapAreaTransition": false,
       "Sides": "Both"
     },
