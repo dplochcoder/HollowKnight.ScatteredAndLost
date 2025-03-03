@@ -34,14 +34,14 @@ internal class BrettasHouse : Module
     private static readonly FsmID shadeId = new("Hero Death", "Hero Death Anim");
     private static readonly FsmID dreamNailId = new("Dream Nail");
 
+    public bool EnabledHeartDoors;
     public CheckpointLevel? Checkpoint;
+    public bool RandomizeSoulTotems;
 
     public int Hearts = 0;
     public List<HeartDoorData> DoorData = [new(), new()];
     public bool SeenBrettasHouseAreaTitle = false;
     public bool DefeatedBrettorLords = false;
-
-    public RandomizerSettings? RandomizerSettings;
 
     public static BrettasHouse Get() => ItemChangerMod.Modules.Get<BrettasHouse>()!;
 
@@ -65,7 +65,6 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
-        Events.AddSceneChangeEdit("Room_Bretta", GodhomeTransition);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook += LanguageGetHook;
@@ -79,7 +78,6 @@ internal class BrettasHouse : Module
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
-        Events.RemoveSceneChangeEdit("Room_Bretta", GodhomeTransition);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
         ModHooks.LanguageGetHook -= LanguageGetHook;
@@ -97,27 +95,20 @@ internal class BrettasHouse : Module
         }
     }
 
+    private (string, string) GetBrettaDoorTarget()
+    {
+        if (Checkpoint == null) return (EnabledHeartDoors ? "BrettaHouseEntry" : "BrettaHouseZippers", "right1");
+        else return Checkpoint.Value.SceneAndGate();
+    }
+
     private void RedirectBrettaDoor(Scene scene)
     {
         var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
+
         var vars = obj.LocateMyFSM("Door Control").FsmVariables;
-        // vars.FindFsmString("New Scene").Value = CheckpointScene;
-        // vars.FindFsmString("Entry Gate").Value = CheckpointGate;
-    }
-
-    internal static bool godhomeTransition = false;
-
-    private void GodhomeTransition(Scene scene)
-    {
-        if (!godhomeTransition) return;
-        godhomeTransition = false;
-
-        var ggBattleTransitions = GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
-            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
-
-        var transitions = Object.Instantiate(ggBattleTransitions);
-        transitions.SetActive(true);
-        transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION IN");
+        var (sceneName, gateName) = GetBrettaDoorTarget();
+        vars.FindFsmString("New Scene").Value = sceneName;
+        vars.FindFsmString("Entry Gate").Value = gateName;
     }
 
     private HashSet<BrettaCheckpoint> activeCheckpoints = [];
@@ -176,9 +167,9 @@ internal class BrettasHouse : Module
     internal void UnregisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Remove(filter);
 
     internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetFsmState("Can Set?")?.AddFirstAction(new Lambda(() =>
-        {
-            if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
-        }));
+    {
+        if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
+    }));
 
     private string LanguageGetHook(string key, string sheetTitle, string orig)
     {

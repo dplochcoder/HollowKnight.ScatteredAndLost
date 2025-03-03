@@ -6,3 +6,6 @@ Randomizer 4
 RandomizerCore
 MoreDoors
 DebugMod
+CondensedSpoilerLogger
+RandoSettingsManager
+MenuChanger

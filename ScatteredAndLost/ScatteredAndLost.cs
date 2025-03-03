@@ -13,7 +13,7 @@ namespace HK8YPlando;
 
 public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings>
 {
-    private static ScatteredAndLostMod? Instance;
+    public static ScatteredAndLostMod? Instance;
 
     public override string GetVersion() => PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
 
@@ -127,39 +127,32 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => ScatteredAndLostPreloader.Instance.PreloadSceneHooks();
 
-#if DEBUG
-    private const bool CreatePlando = true;
-#else
-    private const bool CreatePlando = false;
-#endif
+    private static void SetupDebug() => DebugInterop.DebugInterop.Setup();
+
+    private static void SetupRando() => RandoInterop.Setup();
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
-        if (ModHooks.GetMod("DebugMod") is Mod) DebugInterop.DebugInterop.Setup();
-
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
 
-        if (CreatePlando)
+        if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
+        if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
+
+        On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {
-            LogicPatcher.Setup();
-            On.UIManager.StartNewGame += (orig, self, pd, br) =>
+            if (Settings.EnableInVanilla)
             {
                 ItemChangerMod.CreateSettingsProfile(false);
-                ItemChangerMod.Modules.Add<ArchivesSkipModule>();
-                ItemChangerMod.Modules.Add<Balladrius>();
-                ItemChangerMod.Modules.Add<BeastsDenSpiders>();
                 ItemChangerMod.Modules.Add<BinocularsModule>();
-                ItemChangerMod.Modules.Add<BlockDeepnestPlank>();
-                ItemChangerMod.Modules.Add<BlockFungalDrop>();
-                ItemChangerMod.Modules.Add<BlockKPDoor>();
-                ItemChangerMod.Modules.Add<BlockPeaksToll>();
-                ItemChangerMod.Modules.Add<BrettasHouse>();
                 ItemChangerMod.Modules.Add<BumperModule>();
-                ItemChangerMod.Modules.Add<Pyromaniac>();
+                var mod = ItemChangerMod.Modules.Add<BrettasHouse>();
 
-                orig(self, pd, br);
-            };
-        }
+                mod.EnabledHeartDoors = false;
+                if (Settings.EnableCheckpoints) mod.Checkpoint = Data.CheckpointLevel.Entrance;
+            }
+
+            orig(self, pd, br);
+        };
     }
 }

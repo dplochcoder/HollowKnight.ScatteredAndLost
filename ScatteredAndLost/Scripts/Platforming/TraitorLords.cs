@@ -5,12 +5,14 @@ using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
+using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using SFCore.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace HK8YPlando.Scripts.Platforming;
 
@@ -42,7 +44,7 @@ internal class TraitorLords : MonoBehaviour
 
     private IEnumerator<CoroutineElement> Run()
     {
-        yield return Coroutines.SleepFrames(10);
+        yield return Coroutines.SleepFrames(2);
         Destroy(GameObject.Find("/_Transition Gates/top1")!);
 
         yield return Coroutines.SleepUntil(() => Trigger!.Detected());
@@ -65,14 +67,11 @@ internal class TraitorLords : MonoBehaviour
             if (!traitor1Dead) RageMode(traitor1);
         });
 
-        // Debug
-        // this.StartLibCoroutine(DelayedKill(traitor2.gameObject));
-
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
         TempleMusicManager.Get()?.FadeOut(5f);
 
+        mod.DefeatedBrettorLords = true;
         mod.UpdateCheckpoint(Data.CheckpointLevel.Bretta);
-        BrettasHouse.godhomeTransition = true;
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
 
@@ -85,8 +84,9 @@ internal class TraitorLords : MonoBehaviour
 
         yield return Coroutines.SleepSeconds(1.5f);
 
-        var unsafeInstance = GameManager.UnsafeInstance;
-        unsafeInstance.BeginSceneTransition(new GameManager.SceneLoadInfo
+        // Finish the transition in the next scene.
+        Events.OnSceneChange += FinishGodhomeTransition;
+        GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
         {
             SceneName = "Room_Bretta",
             EntryGateName = "right1",
@@ -96,12 +96,6 @@ internal class TraitorLords : MonoBehaviour
             WaitForSceneTransitionCameraFade = false,
             AlwaysUnloadUnusedAssets = false
         });
-    }
-
-    private IEnumerator<CoroutineElement> DelayedKill(GameObject victim)
-    {
-        yield return Coroutines.SleepSeconds(5);
-        victim.GetComponent<HealthManager>().ApplyExtraDamage(9999);
     }
 
     private PlayMakerFSM? lastAttacker;
@@ -361,5 +355,16 @@ internal class TraitorLords : MonoBehaviour
         var waves = fsm.GetFsmState("Waves");
         waves.GetFirstActionOfType<Wait>().time = 1f / RageWavesSpeedup;
         foreach (var action in waves.GetActionsOfType<SetVelocity2d>()) action.x.Value = Mathf.Sign(action.x.Value) * RageWaveSpeed;
+    }
+
+    private void FinishGodhomeTransition(Scene scene)
+    {
+        var ggBattleTransitions = GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
+            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
+
+        var transitions = Instantiate(ggBattleTransitions);
+        transitions.AddComponent<OnDestroyHook>().Action = () => Events.OnSceneChange -= FinishGodhomeTransition;
+        transitions.SetActive(true);
+        transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION IN");
     }
 }

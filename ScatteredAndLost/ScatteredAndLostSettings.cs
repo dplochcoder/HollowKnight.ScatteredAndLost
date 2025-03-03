@@ -1,4 +1,5 @@
-﻿using RandomizerMod.Settings;
+﻿using MenuChanger.Attributes;
+using RandomizerMod.Settings;
 
 namespace HK8YPlando;
 
@@ -12,14 +13,20 @@ public class ScatteredAndLostSettings
 
 public class RandomizerSettings
 {
-    public static RandomizerSettings LocalSettings = new();
-
     public bool Enabled = false;
     public bool EnableCheckpoints = true;
     public bool RandomizeSoulTotems = false;
     public bool EnableHeartDoors = true;
+
+    [DynamicBound(nameof(MaxHearts), true)]
+    [MenuRange(1, 50)]
     public int MinHearts = 3;
+
+    [DynamicBound(nameof(MinHearts), false)]
+    [MenuRange(1, 50)]
     public int MaxHearts = 10;
+
+    [MenuRange(0, 50)]
     public int HeartTolerance = 2;
 
     public (int, int) ComputeDoorCosts(GenerationSettings gs)

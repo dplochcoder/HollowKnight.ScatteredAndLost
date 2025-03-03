@@ -19,7 +19,7 @@ internal class SuperSoulTotem : MonoBehaviour
     private void Awake()
     {
         var mod = BrettasHouse.Get();
-        if (mod.RandomizerSettings != null && mod.RandomizerSettings.RandomizeSoulTotems)
+        if (mod.RandomizeSoulTotems)
         {
             // Let ItemChanger place an item here instead.
             Destroy(this);
