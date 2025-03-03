@@ -56,11 +56,6 @@
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Resources\Data\locations.json" />
-    <None Remove="resources\data\transitions.json" />
-    <None Remove="Resources\Data\waypoints.json" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>

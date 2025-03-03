@@ -65,7 +65,7 @@ public record BrettaHouseLocationDef : LocationDef
 
 public static class RandomizerData
 {
-    private static T LoadEmbedded<T>(string name) where T : class => JsonUtil.DeserializeEmbedded<T>($"ScatteredAndLost.Resources.Data.{name}.json");
+    private static T LoadEmbedded<T>(string name) where T : class => JsonUtil.DeserializeEmbedded<T>($"HK8YPlando.Resources.Data.{name}.json");
 
     public static SortedDictionary<string, TransitionData> Transitions = LoadEmbedded<SortedDictionary<string, TransitionData>>("transitions");
 
@@ -74,6 +74,4 @@ public static class RandomizerData
     public static SortedDictionary<string, string> Logic = LoadEmbedded<SortedDictionary<string, string>>("logic");
 
     public static SortedDictionary<string, string> Waypoints = LoadEmbedded<SortedDictionary<string, string>>("waypoints");
-
-    static RandomizerData() => Locations.Values.ForEach(d => Finder.DefineCustomLocation(d.Location!));
 }

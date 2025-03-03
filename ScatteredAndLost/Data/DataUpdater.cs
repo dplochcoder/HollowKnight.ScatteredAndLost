@@ -39,6 +39,11 @@ public static class DataUpdater
         DebugData debugData = new() { LocalAssetBundlesPath = $"{root}/ScatteredAndLost/Unity/Assets/AssetBundles" };
         JsonUtil.RewriteJsonFile(debugData, $"{root}/ScatteredAndLost/Resources/Data/debug.json");
 
+        JsonUtil.RewriteJsonFile(RandomizerData.Locations, $"{root}/ScatteredAndLost/Resources/Data/locations.json");
+        JsonUtil.RewriteJsonFile(RandomizerData.Logic, $"{root}/ScatteredAndLost/Resources/Data/logic.json");
+        JsonUtil.RewriteJsonFile(RandomizerData.Transitions, $"{root}/ScatteredAndLost/Resources/Data/transitions.json");
+        JsonUtil.RewriteJsonFile(RandomizerData.Waypoints, $"{root}/ScatteredAndLost/Resources/Data/waypoints.json");
+
         // Code generation.
         var deferredShimsDir = DeferredGenerateUnityShims(root);
         var shimsDir = deferredShimsDir();

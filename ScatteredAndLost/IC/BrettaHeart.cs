@@ -24,8 +24,6 @@ internal class BrettaHeart : AbstractItem
 {
     public static List<BrettaHeart> All() => HeartTypeExtensions.All().Select(t => new BrettaHeart(t)).ToList();
 
-    static BrettaHeart() => All().ForEach(Finder.DefineCustomItem);
-
     public const string TermName = "BRETTA_HEART";
 
     public HeartType HeartType;

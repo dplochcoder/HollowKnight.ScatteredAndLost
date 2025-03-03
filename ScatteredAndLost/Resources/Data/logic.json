@@ -1,17 +1,17 @@
-﻿{
-  "BrettaHouseZippers2": "BrettaHouseZippers[right1] + RIGHTDASH + RIGHTCLAW + LEFTSUPERDASH + WINGS",
-  "BrettaHouseZippers3": "BrettaHouseZippers2 + RIGHTDASH + FULLCLAW + WINGS",
-  "BrettaHouseZippers3Reversed": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | OBSCURESKIPS + RIGHTDASH)",
-  "BrettaHouseZippers2Reversed": "BrettaHouseZippers3Reversed + WINGS + LEFTDASH",
-  "BrettaHouseSwitches2": "BrettaHouseSwitches[right1] + WINGS",
-  "BrettaHouseSwitches3": "BrettaHouseSwitches2 + WINGS + (UPSLASH | $SHRIEKPOGO[1])",
-  "BrettaHouseSwitches4": "BrettaHouseSwitches3 + (MARKOFPRIDE + SIDESLASH | GREATSLASH | CYCLONESLASH | ANYDASHSLASH) + ANYCLAW + WINGS",
-  "BrettaHouseSwitches5": "BrettaHouseSwitches4 + FULLCLAW + WINGS + (LEFTDASH | LEFTSUPERDASH)",
-  "BrettaHouseBumpers2": "BrettaHouseBumpers[right1] + FULLDASH + FULLCLAW + WINGS",
-  "BrettaHouseBumpers3": "BrettaHouseBumpers2 + LEFTDASH + ANYCLAW + WINGS + RIGHTSLASH",
+{
   "BrettaHouseBubbles2": "BrettaHouseBubbles[bot1] + (WINGS | RIGHTCLAW | LEFTCLAW + RIGHTDASH)",
   "BrettaHouseBubbles3": "BrettaHouseBubbles2 + (WINGS | RIGHTCLAW) + LEFTSLASH + RIGHTDASH + (WINGS | RIGHTDASH>1 + SHARPSHADOW)",
   "BrettaHouseBubbles4": "BrettaHouseBubbles3 + LEFTDASH + WINGS + (DASHMASTER | BRETTAHOUSESOULTOTEMS + (FIREBALL | SCREAM))",
   "BrettaHouseBubbles5": "BrettaHouseBubbles4 + FULLDASH + WINGS + RIGHTSLASH + (UPSLASH | BRETTAHOUSESOULTOTEMS + DASHMASTER + SCREAM)",
-  "BrettaHouseBubbles6": "BrettaHouseBubbles5 + FULLDASH + RIGHTSUPERDASH + RIGHTCLAW + WINGS + LEFTSLASH + UPSLASH"
+  "BrettaHouseBubbles6": "BrettaHouseBubbles5 + FULLDASH + RIGHTSUPERDASH + RIGHTCLAW + WINGS + LEFTSLASH + UPSLASH",
+  "BrettaHouseBumpers2": "BrettaHouseBumpers[right1] + FULLDASH + FULLCLAW + WINGS",
+  "BrettaHouseBumpers3": "BrettaHouseBumpers2 + LEFTDASH + ANYCLAW + WINGS + RIGHTSLASH",
+  "BrettaHouseSwitches2": "BrettaHouseSwitches[right1] + WINGS",
+  "BrettaHouseSwitches3": "BrettaHouseSwitches2 + WINGS + (UPSLASH | $SHRIEKPOGO[1])",
+  "BrettaHouseSwitches4": "BrettaHouseSwitches3 + (MARKOFPRIDE + SIDESLASH | GREATSLASH | CYCLONESLASH | ANYDASHSLASH) + ANYCLAW + WINGS",
+  "BrettaHouseSwitches5": "BrettaHouseSwitches4 + FULLCLAW + WINGS + (LEFTDASH | LEFTSUPERDASH)",
+  "BrettaHouseZippers2": "BrettaHouseZippers[right1] + RIGHTDASH + RIGHTCLAW + LEFTSUPERDASH + WINGS",
+  "BrettaHouseZippers2Reversed": "BrettaHouseZippers3Reversed + WINGS + LEFTDASH",
+  "BrettaHouseZippers3": "BrettaHouseZippers2 + RIGHTDASH + FULLCLAW + WINGS",
+  "BrettaHouseZippers3Reversed": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | OBSCURESKIPS + RIGHTDASH)"
 }

@@ -1,5 +1,6 @@
 ﻿using HK8YPlando.Data;
 using HK8YPlando.IC;
+using HK8YPlando.Scripts.SharedLib;
 using ItemChanger;
 using Modding;
 using Newtonsoft.Json;
@@ -33,6 +34,10 @@ internal static class RandoInterop
         RCData.RuntimeLogicOverride.Subscribe(-100f, ModifyLogic);
         RequestBuilder.OnUpdate.Subscribe(-1000f, ModifyRequestBuilder);
         SettingsLog.AfterLogSettings += LogSettings;
+
+        // Call Finder.
+        RandomizerData.Locations.Values.ForEach(l => Finder.DefineCustomLocation(l.Location!));
+        BrettaHeart.All().ForEach(Finder.DefineCustomItem);
 
         if (ModHooks.GetMod("RandoSettingsManager") is Mod) SetupRSM();
     }
