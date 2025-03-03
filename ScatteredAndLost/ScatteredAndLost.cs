@@ -1,6 +1,7 @@
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
 using ItemChanger;
+using ItemChanger.Internal.Menu;
 using ItemChanger.Locations;
 using Modding;
 using MoreDoors.Data;
@@ -11,7 +12,7 @@ using System.Collections.Generic;
 
 namespace HK8YPlando;
 
-public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings>
+public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings>, ICustomMenuMod
 {
     public static ScatteredAndLostMod? Instance;
 
@@ -25,6 +26,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     }
 
     public static ScatteredAndLostSettings Settings = new();
+
+    public bool ToggleButtonInsideMenu => throw new NotImplementedException();
 
     public void OnLoadGlobal(ScatteredAndLostSettings s) => Settings = s;
 
@@ -154,5 +157,27 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
             orig(self, pd, br);
         };
+    }
+
+    public MenuScreen GetMenuScreen(MenuScreen modListMenu, ModToggleDelegates? toggleDelegates)
+    {
+        ModMenuScreenBuilder builder = new("Scattered and Lost", modListMenu);
+        builder.AddHorizontalOption(new()
+        {
+            Name = "Enable in Vanilla",
+            Description = "If yes, Bretta's House will be expanded in vanilla saves.",
+            Values = ["No", "Yes"],
+            Saver = i => Settings.EnableInVanilla = i == 1,
+            Loader = () => Settings.EnableInVanilla ? 1 : 0,
+        });
+        builder.AddHorizontalOption(new()
+        {
+            Name = "Enable Checkpoints",
+            Description = "If yes, re-entering Bretta's house will always skip to the furthest accessed room.",
+            Values = ["No", "Yes"],
+            Saver = i => Settings.EnableCheckpoints = i == 1,
+            Loader = () => Settings.EnableCheckpoints ? 1 : 0,
+        });
+        return builder.CreateMenuScreen();
     }
 }
