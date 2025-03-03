@@ -1,6 +1,6 @@
 {
   "BrettaHouseBubbles2": "BrettaHouseBubbles[bot1] + (WINGS | RIGHTCLAW | LEFTCLAW + RIGHTDASH)",
-  "BrettaHouseBubbles3": "BrettaHouseBubbles2 + (WINGS | RIGHTCLAW) + LEFTSLASH + RIGHTDASH + (WINGS | RIGHTDASH>1 + SHARPSHADOW)",
+  "BrettaHouseBubbles3": "BrettaHouseBubbles2 + (WINGS | RIGHTCLAW) + LEFTSLASH + RIGHTDASH",
   "BrettaHouseBubbles4": "BrettaHouseBubbles3 + LEFTDASH + WINGS + (DASHMASTER | BRETTAHOUSESOULTOTEMS + (FIREBALL | SCREAM))",
   "BrettaHouseBubbles5": "BrettaHouseBubbles4 + FULLDASH + WINGS + RIGHTSLASH + (UPSLASH | BRETTAHOUSESOULTOTEMS + DASHMASTER + SCREAM)",
   "BrettaHouseBubbles6": "BrettaHouseBubbles5 + FULLDASH + RIGHTSUPERDASH + RIGHTCLAW + WINGS + LEFTSLASH + UPSLASH",
