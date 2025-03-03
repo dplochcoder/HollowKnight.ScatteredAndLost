@@ -31,6 +31,8 @@ public class RandomizerSettings
 
     public (int, int) ComputeDoorCosts(GenerationSettings gs)
     {
+        if (MaxHearts - MinHearts <= 1) return (MinHearts, MaxHearts);
+
         System.Random r = new(gs.Seed + 117);
         int range = MaxHearts - MinHearts + 1;
         int d = r.Next(range);
