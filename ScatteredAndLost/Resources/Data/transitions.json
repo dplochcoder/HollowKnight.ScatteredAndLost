@@ -3,8 +3,8 @@
     "Def": {
       "SceneName": "BrettaHouseBubbles",
       "DoorName": "bot1",
-      "VanillaTarget": "BrettaHouseSwitches[left1]",
-      "Direction": "Right",
+      "VanillaTarget": "BrettaHouseBumpers[top1]",
+      "Direction": "Bot",
       "IsTitledAreaTransition": false,
       "IsMapAreaTransition": false,
       "Sides": "Both"
