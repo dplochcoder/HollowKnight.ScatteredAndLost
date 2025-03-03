@@ -1,8 +1,10 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace HK8YPlando.Scripts.Framework;
 
@@ -12,13 +14,21 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
 
     private AudioSource? audioSource;
 
-    public void AwakeWithManager(M initManager)
+    public void AwakeWithManager(M initManager) => this.StartCoroutine(Run());
+
+    private IEnumerator Run()
     {
         var path = Path.Combine(Path.GetDirectoryName(typeof(M).Assembly.Location), "Music", FileName!);
+        AudioClip? clip;
+        using (UnityWebRequest req = UnityWebRequestMultimedia.GetAudioClip($"file://{path}", AudioType.MPEG))
+        {
+            yield return req.SendWebRequest();
+            clip = DownloadHandlerAudioClip.GetContent(req);
+        }
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
-        audioSource.clip = SFCore.Utils.WavUtils.ToAudioClip(path);
+        audioSource.clip = clip;
         audioSource.bypassEffects = true;
         audioSource.outputAudioMixerGroup = AudioMixerGroups.Music();
 
@@ -41,6 +51,9 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
 
     private IEnumerator<CoroutineElement> FadeOutImpl(float duration)
     {
+        yield return Coroutines.OneOf(
+            Coroutines.SleepUntil(() => audioSource != null),
+            Coroutines.SleepSeconds(5));
         yield return Coroutines.SleepSecondsUpdatePercent(duration, pct =>
         {
             fade = Mathf.Min(fade, 1 - pct);
