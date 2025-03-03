@@ -101,7 +101,7 @@ internal class BrettasHouse : Module
     {
         if (EnabledHeartDoors) return;
 
-        var gate = GameObjectExtensions.FindChild(scene.FindGameObject("_Transitions")!, "right1");
+        var gate = GameObjectExtensions.FindChild(scene.FindGameObject("_Transition Gates")!, "right1");
         var tp = gate.GetComponent<TransitionPoint>();
         tp.targetScene = "Town";
         tp.entryPoint = "door_bretta";
