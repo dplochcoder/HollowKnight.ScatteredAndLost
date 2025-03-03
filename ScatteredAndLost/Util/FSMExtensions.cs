@@ -16,13 +16,6 @@ internal static class FSMExtensions
         self.timeMax.Value = max;
     }
 
-    internal static void AlwaysFinishState(this PlayMakerFSM fsm, string state)
-    {
-        var fsmState = fsm.GetFsmState(state);
-        fsmState.ClearActions();
-        fsmState.AddLastAction(new Lambda(() => fsm.SendEvent("FINISHED")));
-    }
-
     internal static void ForceSetState(this PlayMakerFSM fsm, string state)
     {
         string eventName = $"FORCE_STATE_{state.ToUpper().Replace(' ', '_')}";
