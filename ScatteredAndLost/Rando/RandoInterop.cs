@@ -32,8 +32,8 @@ internal static class RandoInterop
         ProgressionInitializer.OnCreateProgressionInitializer += OnCreateProgressionInitializer;
         RandoController.OnBeginRun += CreateLocalSettings;
         RandoController.OnExportCompleted += ExportCompleted;
-        RCData.RuntimeLogicOverride.Subscribe(-100f, ModifyLogic);
-        RequestBuilder.OnUpdate.Subscribe(-1000f, ModifyRequestBuilder);
+        RCData.RuntimeLogicOverride.Subscribe(-2000f, ModifyLogic);
+        RequestBuilder.OnUpdate.Subscribe(-2000f, ModifyRequestBuilder);
         SettingsLog.AfterLogSettings += LogSettings;
 
         // Call Finder.
@@ -100,7 +100,16 @@ internal static class RandoInterop
 
         foreach (var e in RandomizerData.Logic) lmb.AddWaypoint(new(e.Key, e.Value, false));
         foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value, true));
+
+
+        foreach (var loc in RandomizerData.Locations)
+        {
+            if (loc.Value.Logic != null) lmb.AddLogicDef(new(loc.Key, loc.Value.Logic));
+        }
     }
+
+    private const string BrettaDoorIn = "Town[door_bretta]";
+    private const string BrettaDoorOut = "Room_Bretta[right1]";
 
     private static void ModifyRequestBuilder(RequestBuilder rb)
     {
@@ -111,15 +120,19 @@ internal static class RandoInterop
         if (LS.RandomizeSoulTotems && !rb.gs.PoolSettings.SoulTotems)
             throw new System.ArgumentException("Soul Totems must be randomized if randomizing Bretta House Soul Totems");
 
-        rb.RemoveTransitionByName("Town[door_bretta]");
-        rb.RemoveTransitionByName("Room_Bretta[right1]");
+        rb.TransitionRequests.Remove(BrettaDoorIn);
+        rb.TransitionRequests.Remove(BrettaDoorOut);
+        rb.RemoveFromVanilla(BrettaDoorIn);
+        rb.RemoveFromVanilla(BrettaDoorOut);
 
         foreach (var e in RandomizerData.Transitions)
         {
+            var def = e.Value.Def!;
             rb.EditTransitionRequest(e.Key, info =>
             {
-                info.getTransitionDef = () => e.Value.Def!;
+                info.getTransitionDef = () => def;
             });
+            rb.AddToVanilla(new(def.VanillaTarget, e.Key));
         }
 
         if (LS.EnableHeartDoors)
@@ -149,17 +162,22 @@ internal static class RandoInterop
         }
         else
         {
-            rb.RemoveTransitionByName("BrettaHouseEntry[left1]");
-            rb.RemoveTransitionByName("BrettaHouseEntry[right1]");
+            rb.RemoveFromVanilla("BrettaHouseEntry[left1]");
+            rb.RemoveFromVanilla("BrettaHouseEntry[right1]");
 
-            rb.EditTransitionRequest("Town[door_bretta]", info =>
+            rb.EditTransitionRequest(BrettaDoorIn, info =>
             {
-                info.AddGetTransitionDefModifier("Town[door_bretta]", def => def with { VanillaTarget = "BrettaHouseZippers[right1]" });
+                info.AddGetTransitionDefModifier(BrettaDoorIn, def => def with { VanillaTarget = "BrettaHouseZippers[right1]", IsTitledAreaTransition = true });
             });
+            rb.RemoveFromVanilla(BrettaDoorIn);
+            rb.AddToVanilla(new("BrettaHouseZippers[right1]", BrettaDoorIn));
+
             rb.EditTransitionRequest("BrettaHouseZippers[right1]", info =>
             {
-                info.AddGetTransitionDefModifier("BrettaHouseZippers[right1]", def => def with { VanillaTarget = "Town[door_bretta]", IsTitledAreaTransition = true });
+                info.AddGetTransitionDefModifier("BrettaHouseZippers[right1]", def => def with { VanillaTarget = BrettaDoorIn, IsTitledAreaTransition = true });
             });
+            rb.RemoveFromVanilla("BrettaHouseZippers[right1]");
+            rb.AddToVanilla(new(BrettaDoorIn, "BrettaHouseZippers[right1]"));
         }
 
         foreach (var loc in RandomizerData.Locations)
@@ -170,6 +188,7 @@ internal static class RandoInterop
                 {
                     info.getLocationDef = () => loc.Value.GetLocationDef();
                 });
+                rb.AddLocationByName(loc.Key);
             }
         }
     }

@@ -11,7 +11,7 @@
   "BrettaHouseSwitches4": "BrettaHouseSwitches3 + (MARKOFPRIDE + SIDESLASH | GREATSLASH | CYCLONE | ANYDASHSLASH) + ANYCLAW + WINGS",
   "BrettaHouseSwitches5": "BrettaHouseSwitches4 + FULLCLAW + WINGS + (LEFTDASH | LEFTSUPERDASH)",
   "BrettaHouseZippers2": "BrettaHouseZippers[right1] + RIGHTDASH + RIGHTCLAW + LEFTSUPERDASH + WINGS",
-  "BrettaHouseZippers2Reversed": "BrettaHouseZippers3Reversed + WINGS + LEFTDASH",
+  "BrettaHouseZippers2Reverse": "BrettaHouseZippers3Reverse + WINGS + LEFTDASH",
   "BrettaHouseZippers3": "BrettaHouseZippers2 + RIGHTDASH + FULLCLAW + WINGS",
-  "BrettaHouseZippers3Reversed": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | OBSCURESKIPS + RIGHTDASH)"
+  "BrettaHouseZippers3Reverse": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | OBSCURESKIPS + RIGHTDASH)"
 }
