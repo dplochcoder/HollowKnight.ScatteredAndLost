@@ -21,7 +21,7 @@
       "IsMapAreaTransition": false,
       "Sides": "Both"
     },
-    "Logic": "BrettaHouseBubbles[left1] | BrettaHouseBubbles5 + DefeatedBrettorLords"
+    "Logic": "BrettaHouseBubbles[left1] | BrettaHouseBubbles5 + Defeated_Brettor_Lords"
   },
   "BrettaHouseBumpers[right1]": {
     "Def": {
@@ -57,7 +57,7 @@
       "IsMapAreaTransition": false,
       "Sides": "Both"
     },
-    "Logic": "BrettaHouseEntry[left1] | BrettaHouseEntry[right1] + BRETTA_HEARTS>$BrettaHouseGateCost[0] + BRETTA_HEARTS>$BrettaHouseGateCost[1]"
+    "Logic": "BrettaHouseEntry[left1] | BrettaHouseEntry[right1] + BrettaHouseGate1 + BrettaHouseGate2"
   },
   "BrettaHouseEntry[right1]": {
     "Def": {
@@ -69,7 +69,7 @@
       "IsMapAreaTransition": false,
       "Sides": "Both"
     },
-    "Logic": "BrettaHouseEntry[right1] | BrettaHouseEntry[left1] + BRETTA_HEARTS>$BrettaHouseGateCost[0] + BRETTA_HEARTS>$BrettaHouseGateCost[1]"
+    "Logic": "BrettaHouseEntry[right1] | BrettaHouseEntry[left1] + BrettaHouseGate1 + BrettaHouseGate2"
   },
   "BrettaHouseSwitches[left1]": {
     "Def": {
@@ -81,7 +81,7 @@
       "IsMapAreaTransition": false,
       "Sides": "Both"
     },
-    "Logic": "BrettaHouseSwitches[left1] | BrettaHouseSwitches5 + (GREATSLASH | MARKOFPRIDE + ANYSIDESLASH) + (CYCLONESLASH | GREATSLASH + (LEFTDASH + LEFTSLASH | RIGHTDASH + RIGHTSLASH) | ANYDASHSLASH) + (LEFTSUPERDASH | LEFTDASH + $SHRIEKPOGO[2])"
+    "Logic": "BrettaHouseSwitches[left1] | BrettaHouseSwitches5 + (GREATSLASH | MARKOFPRIDE + SIDESLASH) + (CYCLONE | GREATSLASH + (LEFTDASH + LEFTSLASH | RIGHTDASH + RIGHTSLASH) | ANYDASHSLASH) + (LEFTSUPERDASH | LEFTDASH + $SHRIEKPOGO[2])"
   },
   "BrettaHouseSwitches[right1]": {
     "Def": {

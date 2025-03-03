@@ -1,5 +1,4 @@
 ﻿using MenuChanger;
-using MenuChanger.Attributes;
 using MenuChanger.Extensions;
 using MenuChanger.MenuElements;
 using MenuChanger.MenuPanels;
@@ -32,7 +31,7 @@ internal class ConnectionMenu
     private RandomizerSettings Settings => ScatteredAndLostMod.Settings.RandomizerSettings;
 
     private List<ILockable> requireEnabled = [];
-    private List<ILockable> requireHeartDoors = [];
+    private List<IMenuElement> requireHeartDoors = [];
 
     private ConnectionMenu(MenuPage connectionsPage)
     {
@@ -52,18 +51,15 @@ internal class ConnectionMenu
         {
             if (e.Key == nameof(RandomizerSettings.Enabled)) continue;
 
-            if (e.Value is ILockable l)
-            {
-                requireEnabled.Add(l);
-                if (heartFields.Contains(e.Key)) requireHeartDoors.Add(l);
-            }
+            if (e.Value is ILockable l) requireEnabled.Add(l);
+            else if (e.Value is IMenuElement m && heartFields.Contains(e.Key)) requireHeartDoors.Add(m);
         }
 
         new VerticalItemPanel(scatteredAndLostPage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, factory.Elements);
         SetEnabledColor();
     }
 
-    private void SetEnabledColor() => entryButton.Text.color = Settings.Enabled ? Colors.TRUE_COLOR : Colors.FALSE_COLOR;
+    private void SetEnabledColor() => entryButton.Text.color = Settings.Enabled ? Colors.TRUE_COLOR : Colors.DEFAULT_COLOR;
 
     private (bool, bool) prevLockState = (true, true);
 
@@ -74,19 +70,22 @@ internal class ConnectionMenu
 
         prevLockState = lockState;
 
-        if (!Settings.Enabled) requireEnabled.ForEach(l => l.Lock());
-        else if (!Settings.EnableHeartDoors)
-        {
-            requireEnabled.ForEach(l => l.Unlock());
-            requireHeartDoors.ForEach(l => l.Lock());
-        }
-        else requireEnabled.ForEach(l => l.Unlock());
+        if (Settings.Enabled) requireEnabled.ForEach(l => l.Unlock());
+        else requireEnabled.ForEach(l => l.Lock());
+
+        if (Settings.Enabled && Settings.EnableHeartDoors) requireHeartDoors.ForEach(m => m.Show());
+        else requireHeartDoors.ForEach(m => m.Hide());
+    }
+
+    private void UpdateAll()
+    {
+        SetEnabledColor();
+        UpdateLocks();
     }
 
     internal void ApplySettings(RandomizerSettings settings)
     {
         factory.SetMenuValues(settings);
-        SetEnabledColor();
-        UpdateLocks();
+        UpdateAll();
     }
 }

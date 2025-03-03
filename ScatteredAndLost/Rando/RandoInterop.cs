@@ -5,6 +5,7 @@ using ItemChanger;
 using Modding;
 using Newtonsoft.Json;
 using RandomizerCore.Logic;
+using RandomizerCore.StringItems;
 using RandomizerMod.Logging;
 using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
@@ -80,12 +81,16 @@ internal static class RandoInterop
 
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
-        var settings = ScatteredAndLostMod.Settings.RandomizerSettings;
-        if (settings.EnableHeartDoors)
+        lmb.GetOrAddTerm(SoulTotemsTerm);
+
+        if (LS.EnableHeartDoors)
         {
-            var (cost1, cost2) = settings.ComputeDoorCosts(gs);
-            lmb.AddWaypoint(new("BrettaHouseGate1", $"{BrettaHeart.TermName}>{cost1 - 1}"));
-            lmb.AddWaypoint(new("BrettaHouseGate2", $"{BrettaHeart.TermName}>{cost2 - 1}"));
+            lmb.GetOrAddTerm(BrettaHeart.TermName);
+            foreach (var h in BrettaHeart.All()) lmb.AddItem(new StringItemTemplate(h.name, $"{BrettaHeart.TermName}++"));
+
+            var (cost1, cost2) = LS.ComputeDoorCosts(gs);
+            lmb.AddWaypoint(new("BrettaHouseGate1", $"{BrettaHeart.TermName}>{cost1 - 1}", true));
+            lmb.AddWaypoint(new("BrettaHouseGate2", $"{BrettaHeart.TermName}>{cost2 - 1}", true));
         }
 
         foreach (var e in RandomizerData.Transitions)
@@ -99,7 +104,7 @@ internal static class RandoInterop
             lmb.AddLogicDef(new(e.Key, e.Value));
         }
 
-        foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value));
+        foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value, true));
     }
 
     private static void ModifyRequestBuilder(RequestBuilder rb)
@@ -116,9 +121,12 @@ internal static class RandoInterop
 
         foreach (var e in RandomizerData.Transitions)
         {
+            var def = e.Value.Def!;
+
+            rb.AddToVanilla(def.VanillaTarget, e.Key);
             rb.EditTransitionRequest(e.Key, info =>
             {
-                info.getTransitionDef = () => e.Value.Def!;
+                info.getTransitionDef = () => def;
             });
         }
 
@@ -171,10 +179,13 @@ internal static class RandoInterop
         }
     }
 
+    private const string SoulTotemsTerm = "BRETTAHOUSESOULTOTEMS";
+
     private static void OnCreateProgressionInitializer(LogicManager lm, GenerationSettings gs, ProgressionInitializer prog)
     {
         if (!LS.Enabled || !LS.EnableHeartDoors) return;
 
         prog.Setters.Add(new(lm.GetTermStrict(BrettaHeart.TermName), -LS.HeartTolerance));
+        prog.Setters.Add(new(lm.GetTermStrict(SoulTotemsTerm), LS.RandomizeSoulTotems ? 0 : 1));
     }
 }
