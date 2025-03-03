@@ -7,6 +7,20 @@ internal static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
 
+    [BindableMethod(name = "Gear up for Content", category = "Scattered and Lost")]
+    public static void GearUpForContent()
+    {
+        Console.AddLine("Rescuing Bretta and granting late game gear");
+
+        PlayerData.instance.SetBool(nameof(PlayerData.brettaRescued), true);
+        BindableFunctions.GiveAllSkills();
+        BindableFunctions.GiveAllCharms();
+        while (PlayerData.instance.maxHealthBase < 8) BindableFunctions.GiveMask();
+        while (PlayerData.instance.MPReserveMax < 66) BindableFunctions.GiveVessel();
+        while (PlayerData.instance.nailDamage < 17) BindableFunctions.IncreaseNailDamage();
+        PlayerData.instance.charmSlots = 9;
+    }
+
     [BindableMethod(name = "Give Heart", category = "Scattered and Lost")]
     public static void GiveHeart() => ++BrettasHouse.Get().Hearts;
 
