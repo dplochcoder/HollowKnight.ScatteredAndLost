@@ -2,3 +2,4 @@ PurenailCore
 RandomizerCore
 Randomizer 4
 RandoSettingsManager
+ItemChanger

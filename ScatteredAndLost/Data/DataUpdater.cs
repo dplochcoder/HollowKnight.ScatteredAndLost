@@ -39,9 +39,13 @@ public static class DataUpdater
         DebugData debugData = new() { LocalAssetBundlesPath = $"{root}/ScatteredAndLost/Unity/Assets/AssetBundles" };
         JsonUtil.RewriteJsonFile(debugData, $"{root}/ScatteredAndLost/Resources/Data/debug.json");
 
+        FixLocations(RandomizerData.Locations);
         JsonUtil.RewriteJsonFile(RandomizerData.Locations, $"{root}/ScatteredAndLost/Resources/Data/locations.json");
+
         JsonUtil.RewriteJsonFile(RandomizerData.Logic, $"{root}/ScatteredAndLost/Resources/Data/logic.json");
+
         JsonUtil.RewriteJsonFile(RandomizerData.Transitions, $"{root}/ScatteredAndLost/Resources/Data/transitions.json");
+
         JsonUtil.RewriteJsonFile(RandomizerData.Waypoints, $"{root}/ScatteredAndLost/Resources/Data/waypoints.json");
 
         // Code generation.
@@ -199,5 +203,10 @@ public static class DataUpdater
         baseName = baseName.Substring(0, baseName.IndexOf('`'));
         List<string> types = t.GenericTypeArguments.Select(t => PrintType(ns, t)).ToList();
         return $"{baseName}<{string.Join(", ", types)}>";
+    }
+
+    private static void FixLocations(SortedDictionary<string, LocationData> locations)
+    {
+        foreach (var e in locations) e.Value.Location.name = e.Key;
     }
 }

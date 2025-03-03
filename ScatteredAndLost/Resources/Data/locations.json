@@ -8,7 +8,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBubbles_SoulTotem1",
       "sceneName": "BrettaHouseBubbles",
       "flingType": "Everywhere",
       "tags": null
@@ -24,7 +24,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBubbles_SoulTotem2",
       "sceneName": "BrettaHouseBubbles",
       "flingType": "Everywhere",
       "tags": null
@@ -40,7 +40,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBubbles_SoulTotem3",
       "sceneName": "BrettaHouseBubbles",
       "flingType": "Everywhere",
       "tags": [
@@ -62,7 +62,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBubbles_SoulTotem4",
       "sceneName": "BrettaHouseBubbles",
       "flingType": "Everywhere",
       "tags": [
@@ -84,7 +84,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBubbles_SoulTotem5",
       "sceneName": "BrettaHouseBubbles",
       "flingType": "StraightUp",
       "tags": null
@@ -100,7 +100,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBumpers_SoulTotem1",
       "sceneName": "BrettaHouseBumpers",
       "flingType": "Everywhere",
       "tags": null
@@ -116,7 +116,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBumpers_SoulTotem2",
       "sceneName": "BrettaHouseBumpers",
       "flingType": "Everywhere",
       "tags": [
@@ -138,7 +138,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseBumpers_SoulTotem3",
       "sceneName": "BrettaHouseBumpers",
       "flingType": "Everywhere",
       "tags": null
@@ -147,12 +147,34 @@
   },
   "BrettaHouseEntry_Gate1": {
     "Checkpoint": "Entrance",
-    "Location": null,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 81.0,
+      "y": 4.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BrettaHouseEntry_Gate1",
+      "sceneName": "BrettaHouseEntry",
+      "flingType": "Everywhere",
+      "tags": null
+    },
     "Logic": "BrettaHouseEntry[left1] + BrettaHouseGate2 | BrettaHouseEntry[right1] + BrettaHouseGate1"
   },
   "BrettaHouseEntry_Gate2": {
     "Checkpoint": "Entrance",
-    "Location": null,
+    "Location": {
+      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "x": 22.0,
+      "y": 4.0,
+      "elevation": 0.0,
+      "managed": false,
+      "forceShiny": false,
+      "name": "BrettaHouseEntry_Gate2",
+      "sceneName": "BrettaHouseEntry",
+      "flingType": "Everywhere",
+      "tags": null
+    },
     "Logic": "BrettaHouseEntry[left1] | BrettaHouseEntry[right1] + BrettaHouseGate1 + BrettaHouseGate2"
   },
   "BrettaHouseSwitches_SoulTotem1": {
@@ -164,7 +186,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseSwitches_SoulTotem1",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
@@ -180,7 +202,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseSwitches_SoulTotem2",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
@@ -196,7 +218,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseSwitches_SoulTotem3",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
@@ -212,7 +234,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseSwitches_SoulTotem4",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
@@ -228,7 +250,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseSwitches_SoulTotem5",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
@@ -244,7 +266,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseZippers_SoulTotem1",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": [
@@ -266,7 +288,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseZippers_SoulTotem2",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": null
@@ -282,7 +304,7 @@
       "MapY": 0.0,
       "managed": false,
       "forceShiny": false,
-      "name": null,
+      "name": "BrettaHouseZippers_SoulTotem3",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": null
