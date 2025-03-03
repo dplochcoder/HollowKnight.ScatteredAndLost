@@ -182,7 +182,7 @@ internal static class RandoInterop
 
         foreach (var loc in RandomizerData.Locations)
         {
-            if (LS.EnableHeartDoors || loc.Value.Checkpoint > CheckpointLevel.Entrance)
+            if ((LS.EnableHeartDoors && loc.Value.Checkpoint == CheckpointLevel.Entrance) || LS.RandomizeSoulTotems)
             {
                 rb.EditLocationRequest(loc.Key, info =>
                 {

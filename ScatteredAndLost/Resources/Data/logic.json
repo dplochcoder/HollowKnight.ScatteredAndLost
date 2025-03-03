@@ -13,5 +13,5 @@
   "BrettaHouseZippers2": "BrettaHouseZippers[right1] + RIGHTDASH + RIGHTCLAW + LEFTSUPERDASH + WINGS",
   "BrettaHouseZippers2Reverse": "BrettaHouseZippers3Reverse + WINGS + LEFTDASH",
   "BrettaHouseZippers3": "BrettaHouseZippers2 + RIGHTDASH + FULLCLAW + WINGS",
-  "BrettaHouseZippers3Reverse": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | OBSCURESKIPS + RIGHTDASH)"
+  "BrettaHouseZippers3Reverse": "BrettaHouseZippers[left1] + (RIGHTSUPERDASH | RIGHTDASH | )"
 }

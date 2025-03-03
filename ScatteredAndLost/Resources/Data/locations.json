@@ -148,7 +148,7 @@
   "BrettaHouseEntry_Gate1": {
     "Checkpoint": "Entrance",
     "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "$type": "HK8YPlando.Rando.HeartDoorRewardLocation, HK8YPlando",
       "x": 81.0,
       "y": 4.0,
       "elevation": 0.0,
@@ -164,7 +164,7 @@
   "BrettaHouseEntry_Gate2": {
     "Checkpoint": "Entrance",
     "Location": {
-      "$type": "ItemChanger.Locations.CoordinateLocation, ItemChanger",
+      "$type": "HK8YPlando.Rando.HeartDoorRewardLocation, HK8YPlando",
       "x": 22.0,
       "y": 4.0,
       "elevation": 0.0,
