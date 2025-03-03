@@ -75,9 +75,6 @@ internal class TraitorLords : MonoBehaviour
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
 
-        var ggBattleTransitions = GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
-            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
-
         var transitions = Instantiate(ggBattleTransitions);
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION OUT");
@@ -357,11 +354,11 @@ internal class TraitorLords : MonoBehaviour
         foreach (var action in waves.GetActionsOfType<SetVelocity2d>()) action.x.Value = Mathf.Sign(action.x.Value) * RageWaveSpeed;
     }
 
-    private void FinishGodhomeTransition(Scene scene)
-    {
-        var ggBattleTransitions = GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
+    private static GameObject ggBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
             .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
 
+    private void FinishGodhomeTransition(Scene scene)
+    {
         var transitions = Instantiate(ggBattleTransitions);
         transitions.AddComponent<OnDestroyHook>().Action = () => Events.OnSceneChange -= FinishGodhomeTransition;
         transitions.SetActive(true);
