@@ -152,7 +152,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
                 var mod = ItemChangerMod.Modules.Add<BrettasHouse>();
 
                 mod.EnabledHeartDoors = false;
-                if (Settings.EnableCheckpoints) mod.Checkpoint = Data.CheckpointLevel.Entrance;
+                if (Settings.EnableCheckpoints) mod.Checkpoint = Data.CheckpointLevel.Zippers;
             }
 
             orig(self, pd, br);

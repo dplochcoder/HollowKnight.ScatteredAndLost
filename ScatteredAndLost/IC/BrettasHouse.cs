@@ -64,6 +64,7 @@ internal class BrettasHouse : Module
     public override void Initialize()
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
+        Events.AddSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.AddFsmEdit(shadeId, ForceShadeSpawn);
         Events.AddFsmEdit(dreamNailId, EditDreamNail);
@@ -77,6 +78,7 @@ internal class BrettasHouse : Module
     public override void Unload()
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
+        Events.RemoveSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoor);
         Events.RemoveFsmEdit(shadeId, ForceShadeSpawn);
         Events.RemoveFsmEdit(dreamNailId, EditDreamNail);
@@ -93,6 +95,16 @@ internal class BrettasHouse : Module
             sb.AppendLine();
             sb.Append($"You have collected {Hearts} Heart{(Hearts == 1 ? "" : "s")}");
         }
+    }
+
+    private void MaybeSkipEntrance(Scene scene)
+    {
+        if (EnabledHeartDoors) return;
+
+        var gate = GameObjectExtensions.FindChild(scene.FindGameObject("_Transitions")!, "right1");
+        var tp = gate.GetComponent<TransitionPoint>();
+        tp.targetScene = "Town";
+        tp.entryPoint = "door_bretta";
     }
 
     private (string, string) GetBrettaDoorTarget()

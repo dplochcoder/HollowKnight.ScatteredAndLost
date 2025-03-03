@@ -60,7 +60,7 @@ internal static class RandoInterop
             mod.DoorData[1].Total = c2;
         }
         if (LS.RandomizeSoulTotems) mod.RandomizeSoulTotems = true;
-        if (LS.EnableCheckpoints) mod.Checkpoint = CheckpointLevel.Entrance;
+        if (LS.EnableCheckpoints) mod.Checkpoint = LS.EnableHeartDoors ? CheckpointLevel.Entrance : CheckpointLevel.Zippers;
     }
 
     private static void LogSettings(LogArguments args, TextWriter tw)
