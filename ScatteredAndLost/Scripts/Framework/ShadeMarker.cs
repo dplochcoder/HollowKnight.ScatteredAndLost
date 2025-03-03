@@ -6,5 +6,9 @@ namespace HK8YPlando.Scripts.Framework;
 [Shim]
 internal class ShadeMarker : MonoBehaviour
 {
-    private void Awake() => Instantiate(ScatteredAndLostPreloader.Instance.ShadeMarker, transform.position, Quaternion.identity);
+    private void Awake()
+    {
+        var obj = Instantiate(ScatteredAndLostPreloader.Instance.ShadeMarker, transform.position, Quaternion.identity);
+        obj.SetActive(true);
+    }
 }
