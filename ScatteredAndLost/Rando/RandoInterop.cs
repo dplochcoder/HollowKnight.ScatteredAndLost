@@ -98,12 +98,7 @@ internal static class RandoInterop
             if (e.Value.Logic != null) lmb.AddTransition(new(e.Key, e.Value.Logic));
         }
 
-        foreach (var e in RandomizerData.Logic)
-        {
-            lmb.GetOrAddTerm(e.Key, TermType.State);
-            lmb.AddLogicDef(new(e.Key, e.Value));
-        }
-
+        foreach (var e in RandomizerData.Logic) lmb.AddWaypoint(new(e.Key, e.Value, false));
         foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value, true));
     }
 
@@ -121,12 +116,9 @@ internal static class RandoInterop
 
         foreach (var e in RandomizerData.Transitions)
         {
-            var def = e.Value.Def!;
-
-            rb.AddToVanilla(def.VanillaTarget, e.Key);
             rb.EditTransitionRequest(e.Key, info =>
             {
-                info.getTransitionDef = () => def;
+                info.getTransitionDef = () => e.Value.Def!;
             });
         }
 
@@ -157,6 +149,9 @@ internal static class RandoInterop
         }
         else
         {
+            rb.RemoveTransitionByName("BrettaHouseEntry[left1]");
+            rb.RemoveTransitionByName("BrettaHouseEntry[right1]");
+
             rb.EditTransitionRequest("Town[door_bretta]", info =>
             {
                 info.AddGetTransitionDefModifier("Town[door_bretta]", def => def with { VanillaTarget = "BrettaHouseZippers[right1]" });
