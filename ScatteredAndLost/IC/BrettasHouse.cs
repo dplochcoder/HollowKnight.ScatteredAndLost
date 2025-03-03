@@ -161,8 +161,7 @@ internal class BrettasHouse : Module
                 pd.SetFloat(nameof(PlayerData.shadePositionX), marker.transform.position.x);
                 pd.SetFloat(nameof(PlayerData.shadePositionY), marker.transform.position.y);
 
-                fsm.ForceSetState("Check MP");
-                return;
+                fsm.SetState("Check MP");
             }
         }));
     }

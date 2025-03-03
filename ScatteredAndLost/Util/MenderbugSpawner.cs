@@ -15,7 +15,7 @@ internal static class MenderbugSpawner
         var fsm = mender.LocateMyFSM("Mender Bug Ctrl");
         var init = fsm.GetState("Init");
         init.ClearActions();
-        init.AddLastAction(new Lambda(() => fsm.ForceSetState("Idle")));
+        init.AddLastAction(new Lambda(() => fsm.SetState("Idle")));
 
         // Shrink alert range
         mender.FindChild("Hero Detect")!.GetComponent<BoxCollider2D>().size = new(16.23f, 7.4687f);

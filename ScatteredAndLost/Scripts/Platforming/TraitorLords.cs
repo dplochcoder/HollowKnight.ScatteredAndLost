@@ -146,7 +146,7 @@ internal class TraitorLords : MonoBehaviour
         {
             if (sickleCooldown > 0 && lastSickler != null && lastSickler != this)
             {
-                fsm.ForceSetState("Cooldown");
+                fsm.SetState("Cooldown");
                 return;
             }
 
@@ -158,7 +158,7 @@ internal class TraitorLords : MonoBehaviour
         {
             if (slamCooldown > 0 && lastSlammer != null && lastSlammer != this)
             {
-                fsm.ForceSetState("Idle");
+                fsm.SetState("Idle");
                 return;
             }
 
@@ -173,7 +173,7 @@ internal class TraitorLords : MonoBehaviour
             {
                 if (attackCooldown > 0 && lastAttacker != null && lastAttacker != this)
                 {
-                    fsm.ForceSetState("Cooldown");
+                    fsm.SetState("Cooldown");
                     return;
                 }
 
@@ -183,7 +183,7 @@ internal class TraitorLords : MonoBehaviour
         }
 
         obj.SetActive(true);
-        fsm.ForceSetState("Fall");
+        fsm.SetState("Fall");
 
         // Shorten death anim.
         this.StartLibCoroutine(ModifyCorpseFsm(fsm));
@@ -276,7 +276,7 @@ internal class TraitorLords : MonoBehaviour
             if (!raged.Value)
             {
                 raged.Value = true;
-                fsm.ForceSetState("Roar");
+                fsm.SetState("Roar");
 
                 this.StartLibCoroutine(DelayedRoarAnim(fsm));
                 ActualRageMode(fsm);
