@@ -30,8 +30,8 @@ internal class SuperSoulTotem : MonoBehaviour
 
         totem.transform.position = transform.position;
         totem.transform.localScale = transform.localScale;
-        EnhanceTotem(totem);
         totem.SetActive(true);
+        EnhanceTotem(totem);
 
         Destroy(gameObject);
     }
