@@ -22,13 +22,13 @@ If you just want to play the DLC rooms, then after installing the mod you need t
 2)  Create a new classic HK save file
 3)  Rescue Bretta from Fungal Wastes and acquire full movement, including Nail Arts, to access the DLC.
 
-For quick set up, install [DebugMod](https://github.com/TheMulhima/HollowKnight.DebugMod). Once your new save is loaded, activate the "Gear up" hook on the "Scattered and Lost" page of debug bindings, then warp to Dirtmouth bench. This will tick the 'saved Bretta' flag, give all necessary movement, spells, and combat upgrades intended for the DLC.
+For quick set up, install [DebugMod](https://github.com/TheMulhima/HollowKnight.DebugMod). Once your new save is loaded, activate the "Gear up for content" hook on the "Scattered and Lost" page of debug bindings, then warp to Dirtmouth bench. This will tick the 'saved Bretta' flag, give all necessary movement, spells, and combat upgrades intended for the DLC.
 
 Bretta's House: C-Side implements a checkpointing system, where re-entering Bretta's house will always put you directly into the furthest room of the DLC you have reached. You can use DebugMod bindings to reset this checkpoint to replay the content without creating a new save file.
 
 ## The Plando
 
-To get the same experience as the HK8Y runners, download the HK8Y Plando in addition to the Scattered and Lost mod. See [SHO](https://www.smallhomothetyorganization.org/rando/plandoguide) for detailed instructions on installing plandos.
+To get the same experience as the HK8Y runners, download the HK8Y Plando (TODO: Link) in addition to the Scattered and Lost mod. See [SHO](https://www.smallhomothetyorganization.org/rando/plandoguide) for detailed instructions on installing plandos.
 
 The plando is a challenging experience crafted specifically for the best of HK's rando runners, and requires executing many difficult shade skips and other techniques to complete. The plando is also specifically designed to be played by two players in a cooperative [ItemSync](https://github.com/Shadudev/HollowKnight.MultiWorld/blob/master/ItemSyncMod/README.md) and cannot be experienced by a single player, so make sure you have a buddy to play with.
 
@@ -52,6 +52,6 @@ Bretta's House: C-Side is full of infinite, super-powered soul totems that immed
 
 ### Transition Rando
 
-Bretta's House: C-Side does not support transition rando in general. Map-area rando and Title-area rando are fine, as they do not affect the Bretta's Door transition, but all other forms (room rando, door rando) will either error immediately or result in broken behavior.
+Bretta's House: C-Side supports all manners of transition rando, so long as the checkpoint system is disabled. Dreamgates can be placed all throughout the rooms for ease of re-access. All DLC rooms are considered to lie within a separate titled area, a sub-area within Dirtmouth, for the purpose of map & full-area rando.
 
-The mod may be updated in the future to support room rando, but it is unlikely. No room in the DLC can be completed backwards.
+For your sanity, a shortcut gate exists at the end of the final room, allowing you to skip the final gauntlet and battle after it has been completed once.
