@@ -2,17 +2,27 @@
 using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Items;
+using ItemChanger.UIDefs;
 using UnityEngine;
 
 namespace HK8YPlando.Rando;
 
 internal class SuperSoulTotemItem : SoulTotemItem
 {
+    public const string NAME = "C-Side Soul Refill";
+
     public SuperSoulTotemItem()
     {
-        name = "C-Side Soul Refill";
+        name = NAME;
         soulTotemSubtype = SoulTotemSubtype.C;
         hitCount = -1;
+
+        UIDef = new MsgUIDef()
+        {
+            name = new BoxedString(NAME),
+            shopDesc = new BoxedString("This one's got a little extra juice in it"),
+            sprite = new ItemChangerSprite("ShopIcons.Soul"),
+        };
     }
 
     private const int FULL_SOUL = 33 * 6;
@@ -20,9 +30,15 @@ internal class SuperSoulTotemItem : SoulTotemItem
 
     public override string GetPreferredContainer() => SuperSoulTotemContainer.ContainerName;
 
+    public override bool GiveEarly(string containerType) => base.GiveEarly(containerType) || containerType == SuperSoulTotemContainer.ContainerName;
+
     public override void GiveImmediate(GiveInfo info)
     {
-        if (info.Container == Container.Totem) return;
+        if (info.Container != SuperSoulTotemContainer.ContainerName)
+        {
+            base.GiveImmediate(info);
+            return;
+        }
 
         if (HeroController.SilentInstance == null)
         {

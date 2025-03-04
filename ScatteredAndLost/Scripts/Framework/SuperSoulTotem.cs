@@ -31,12 +31,14 @@ internal class SuperSoulTotem : MonoBehaviour
         totem.transform.position = transform.position;
         totem.transform.localScale = transform.localScale;
         totem.SetActive(true);
+
+        EnhanceVanillaTotem(totem);
         EnhanceTotem(totem);
 
         Destroy(gameObject);
     }
 
-    internal static void EnhanceTotem(GameObject totem)
+    internal static void EnhanceVanillaTotem(GameObject totem)
     {
         var data = totem.GetComponent<PersistentIntItem>().persistentIntData;
         data.value = 3;
@@ -48,6 +50,12 @@ internal class SuperSoulTotem : MonoBehaviour
         fsm.GetFsmState("Close").AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
         var hit = fsm.GetFsmState("Hit");
         hit.AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
+    }
+
+    internal static void EnhanceTotem(GameObject totem)
+    {
+        var hit = totem.LocateMyFSM("soul_totem").GetFsmState("Hit");
+
         var flinger = hit.GetFirstActionOfType<FlingObjectsFromGlobalPool>();
         flinger.spawnMin.Value = 11;
         flinger.spawnMax.Value = 11;

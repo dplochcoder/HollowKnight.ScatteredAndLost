@@ -9,8 +9,6 @@ internal class SuperSoulTotemContainer : SoulTotemContainer
 {
     public const string ContainerName = "SuperSoulTotem";
 
-    static SuperSoulTotemContainer() => DefineContainer<SuperSoulTotemContainer>();
-
     public override string Name => ContainerName;
 
     public override GameObject GetNewContainer(ContainerInfo info)

@@ -6,6 +6,7 @@ using Modding;
 using Newtonsoft.Json;
 using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
+using RandomizerCore.LogicItems;
 using RandomizerCore.StringItems;
 using RandomizerMod.Logging;
 using RandomizerMod.RandomizerData;
@@ -39,9 +40,11 @@ internal static class RandoInterop
         RequestBuilder.OnUpdate.Subscribe(1000f, ModifyRequestBuilder);
         SettingsLog.AfterLogSettings += LogSettings;
 
-        // Call Finder.
+        // Register items.
         RandomizerData.Locations.Values.ForEach(l => Finder.DefineCustomLocation(l.Location!));
         BrettaHeart.All().ForEach(Finder.DefineCustomItem);
+        Finder.DefineCustomItem(new SuperSoulTotemItem());
+        Container.DefineContainer<SuperSoulTotemContainer>();
 
         if (ModHooks.GetMod("RandoSettingsManager") is Mod) SetupRSM();
     }
@@ -96,6 +99,7 @@ internal static class RandoInterop
             lmb.AddWaypoint(new("BrettaHouseGate1", $"{BrettaHeart.TermName}>{cost1 - 1}", true));
             lmb.AddWaypoint(new("BrettaHouseGate2", $"{BrettaHeart.TermName}>{cost2 - 1}", true));
         }
+        lmb.AddItem(new EmptyItem(SuperSoulTotemItem.NAME));
 
         foreach (var e in RandomizerData.Transitions)
         {
@@ -264,6 +268,17 @@ internal static class RandoInterop
             rb.AddToVanilla(new(BrettaDoorIn, "BrettaHouseZippers[right1]"));
         }
 
+        rb.EditItemRequest(SuperSoulTotemItem.NAME, info =>
+        {
+            info.getItemDef = () => new()
+            {
+                Name = SuperSoulTotemItem.NAME,
+                Pool = PoolNames.Soul,
+                MajorItem = false,
+                PriceCap = 1,
+            };
+        });
+
         foreach (var loc in RandomizerData.Locations)
         {
             if ((LS.EnableHeartDoors && loc.Value.Checkpoint == CheckpointLevel.Entrance) || LS.RandomizeSoulTotems)
@@ -274,6 +289,8 @@ internal static class RandoInterop
                 });
                 rb.AddLocationByName(loc.Key);
             }
+
+            if (LS.RandomizeSoulTotems && loc.Value.Location is SuperSoulTotemLocation) rb.AddItemByName(SuperSoulTotemItem.NAME);
         }
     }
 

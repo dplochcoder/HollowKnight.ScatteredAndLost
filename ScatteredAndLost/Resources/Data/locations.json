@@ -198,7 +198,7 @@
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
       "ObjectName": "SoulTotems/SuperSoulTotem (1)",
-      "MapX": 117,
+      "MapX": 117.0,
       "MapY": 11.4,
       "managed": false,
       "forceShiny": false,
@@ -247,7 +247,7 @@
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
       "ObjectName": "SoulTotems/SuperSoulTotem (4)",
       "MapX": 98.1,
-      "MapY": 140,
+      "MapY": 140.0,
       "managed": false,
       "forceShiny": false,
       "name": "BrettaHouseSwitches_SoulTotem5",
