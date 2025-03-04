@@ -16,17 +16,22 @@ internal class SuperSoulTotemItem : SoulTotemItem
         name = NAME;
         soulTotemSubtype = SoulTotemSubtype.C;
         hitCount = -1;
-
-        UIDef = new MsgUIDef()
-        {
-            name = new BoxedString(NAME),
-            shopDesc = new BoxedString("This one's got a little extra juice in it"),
-            sprite = new ItemChangerSprite("ShopIcons.Soul"),
-        };
     }
 
     private const int FULL_SOUL = 33 * 6;
     private const int FULL_HEAL = 11;
+
+    public override void ResolveItem(GiveEventArgs args)
+    {
+        args.Item = this;
+
+        UIDef = new MsgUIDef()
+        {
+            name = new BoxedString(NAME),
+            shopDesc = new BoxedString("This one's got a little extra juice in it."),
+            sprite = new ItemChangerSprite("ShopIcons.Soul"),
+        };
+    }
 
     public override string GetPreferredContainer() => SuperSoulTotemContainer.ContainerName;
 
@@ -34,13 +39,12 @@ internal class SuperSoulTotemItem : SoulTotemItem
 
     public override void GiveImmediate(GiveInfo info)
     {
-        if (info.Container != SuperSoulTotemContainer.ContainerName)
+        if (info.Container != SuperSoulTotemContainer.ContainerName && info.Container != Container.Totem)
         {
-            base.GiveImmediate(info);
-            return;
+            PlayerData.instance.AddMPCharge(FULL_SOUL);
+            PlayerData.instance.AddHealth(FULL_HEAL);
         }
-
-        if (HeroController.SilentInstance == null)
+        else if (HeroController.SilentInstance == null)
         {
             PlayerData.instance.AddMPCharge(FULL_SOUL);
             PlayerData.instance.AddHealth(FULL_HEAL);
