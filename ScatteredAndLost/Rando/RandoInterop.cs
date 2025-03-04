@@ -4,6 +4,7 @@ using HK8YPlando.Scripts.SharedLib;
 using ItemChanger;
 using Modding;
 using Newtonsoft.Json;
+using RandomizerCore.Extensions;
 using RandomizerCore.Logic;
 using RandomizerCore.StringItems;
 using RandomizerMod.Logging;
@@ -11,8 +12,10 @@ using RandomizerMod.RandomizerData;
 using RandomizerMod.RC;
 using RandomizerMod.Settings;
 using RandoSettingsManager;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 
 namespace HK8YPlando.Rando;
 
@@ -33,7 +36,7 @@ internal static class RandoInterop
         RandoController.OnBeginRun += CreateLocalSettings;
         RandoController.OnExportCompleted += ExportCompleted;
         RCData.RuntimeLogicOverride.Subscribe(-2000f, ModifyLogic);
-        RequestBuilder.OnUpdate.Subscribe(-2000f, ModifyRequestBuilder);
+        RequestBuilder.OnUpdate.Subscribe(1000f, ModifyRequestBuilder);
         SettingsLog.AfterLogSettings += LogSettings;
 
         // Call Finder.
@@ -111,6 +114,18 @@ internal static class RandoInterop
     private const string BrettaDoorIn = "Town[door_bretta]";
     private const string BrettaDoorOut = "Room_Bretta[right1]";
 
+    private static bool RandomizeTransition(TransitionDef def, TransitionSettings.TransitionMode mode)
+    {
+        return mode switch
+        {
+            TransitionSettings.TransitionMode.None => false,
+            TransitionSettings.TransitionMode.MapAreaRandomizer => def.IsMapAreaTransition || def.IsTitledAreaTransition,
+            TransitionSettings.TransitionMode.FullAreaRandomizer => def.IsTitledAreaTransition,
+            TransitionSettings.TransitionMode.RoomRandomizer => true,
+            _ => throw new System.ArgumentException($"Unsupported mode: {mode}")
+        };
+    }
+
     private static void ModifyRequestBuilder(RequestBuilder rb)
     {
         if (!IsEnabled) return;
@@ -125,6 +140,14 @@ internal static class RandoInterop
         rb.RemoveFromVanilla(BrettaDoorIn);
         rb.RemoveFromVanilla(BrettaDoorOut);
 
+        bool matching = rb.gs.TransitionSettings.TransitionMatching != TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
+        var dualBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.TwoWayGroup) as SelfDualTransitionGroupBuilder;
+        List<string> rights = [];
+        List<string> lefts = [];
+        List<string> tops = [];
+        List<string> bots = [];
+
+        List<string> doors = [];
         foreach (var e in RandomizerData.Transitions)
         {
             var def = e.Value.Def!;
@@ -132,7 +155,63 @@ internal static class RandoInterop
             {
                 info.getTransitionDef = () => def;
             });
-            rb.AddToVanilla(new(def.VanillaTarget, e.Key));
+
+            if (RandomizeTransition(def, rb.gs.TransitionSettings.Mode))
+            {
+                if (!matching) dualBuilder?.Transitions.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Door) doors.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Right) rights.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Left) lefts.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Bot) bots.Add(e.Key);
+                else tops.Add(e.Key);
+            }
+            else
+            {
+                rb.AddToVanilla(new(def.VanillaTarget, e.Key));
+                rb.EnsureVanillaSourceTransition(e.Key);
+            }
+        }
+
+        if (matching)
+        {
+            if (doors.Count > 0)
+            {
+                rb.rng.PermuteInPlace(doors);
+                foreach (var door in doors)
+                {
+                    switch (lefts.Count - rights.Count)
+                    {
+                        case > 0:
+                            rights.Add(door);
+                            break;
+                        case < 0:
+                            lefts.Add(door);
+                            break;
+                        case 0:
+                            switch (tops.Count - bots.Count)
+                            {
+                                case > 0:
+                                    bots.Add(door);
+                                    break;
+                                case < 0:
+                                    tops.Add(door);
+                                    break;
+                                case 0:
+                                    if (rb.rng.NextBool()) rights.Add(door);
+                                    else lefts.Add(door);
+                                    break;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            var horizontalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InLeftOutRightGroup) as SymmetricTransitionGroupBuilder;
+            var verticalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InTopOutBotGroup) as SymmetricTransitionGroupBuilder;
+            rights.ForEach(horizontalBuilder!.Group1.Add);
+            lefts.ForEach(horizontalBuilder!.Group2.Add);
+            bots.ForEach(verticalBuilder!.Group1.Add);
+            tops.ForEach(verticalBuilder!.Group2.Add);
         }
 
         if (LS.EnableHeartDoors)
