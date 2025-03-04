@@ -17,6 +17,7 @@ public class RandomizerSettings
     public bool EnableCheckpoints = true;
     public bool RandomizeSoulTotems = false;
     public bool EnableHeartDoors = true;
+    public bool EnablePreviews = true;
 
     [DynamicBound(nameof(MaxHearts), true)]
     [MenuRange(1, 50)]

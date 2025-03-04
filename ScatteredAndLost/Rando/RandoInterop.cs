@@ -63,7 +63,8 @@ internal static class RandoInterop
 
         if (LS.EnableHeartDoors)
         {
-            mod.EnabledHeartDoors = true;
+            mod.EnableHeartDoors = true;
+            mod.EnablePreviews = LS.EnablePreviews;
             var (c1, c2) = LS.ComputeDoorCosts(rc.gs);
             mod.DoorData[0].Total = c1;
             mod.DoorData[1].Total = c2;
@@ -140,7 +141,8 @@ internal static class RandoInterop
         rb.RemoveFromVanilla(BrettaDoorIn);
         rb.RemoveFromVanilla(BrettaDoorOut);
 
-        bool matching = rb.gs.TransitionSettings.TransitionMatching != TransitionSettings.TransitionMatchingSetting.NonmatchingDirections;
+        bool matching = rb.gs.TransitionSettings.TransitionMatching == TransitionSettings.TransitionMatchingSetting.MatchingDirections
+            || rb.gs.TransitionSettings.TransitionMatching == TransitionSettings.TransitionMatchingSetting.MatchingDirectionsAndNoDoorToDoor;
         var dualBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.TwoWayGroup) as SelfDualTransitionGroupBuilder;
         List<string> rights = [];
         List<string> lefts = [];
@@ -208,10 +210,13 @@ internal static class RandoInterop
 
             var horizontalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InLeftOutRightGroup) as SymmetricTransitionGroupBuilder;
             var verticalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InTopOutBotGroup) as SymmetricTransitionGroupBuilder;
-            rights.ForEach(horizontalBuilder!.Group1.Add);
-            lefts.ForEach(horizontalBuilder!.Group2.Add);
-            bots.ForEach(verticalBuilder!.Group1.Add);
-            tops.ForEach(verticalBuilder!.Group2.Add);
+            if (rights.Count > 0 || lefts.Count > 0 || bots.Count > 0 || tops.Count > 0)
+            {
+                rights.ForEach(horizontalBuilder!.Group1.Add);
+                lefts.ForEach(horizontalBuilder!.Group2.Add);
+                bots.ForEach(verticalBuilder!.Group1.Add);
+                tops.ForEach(verticalBuilder!.Group2.Add);
+            }
         }
 
         if (LS.EnableHeartDoors)

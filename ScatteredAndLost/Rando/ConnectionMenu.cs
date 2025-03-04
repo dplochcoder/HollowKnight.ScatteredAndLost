@@ -31,7 +31,8 @@ internal class ConnectionMenu
     private RandomizerSettings Settings => ScatteredAndLostMod.Settings.RandomizerSettings;
 
     private List<ILockable> requireEnabled = [];
-    private List<IMenuElement> requireHeartDoors = [];
+    private List<ILockable> requireHeartDoorsLockables = [];
+    private List<IMenuElement> requireHeartDoorsElements = [];
 
     private ConnectionMenu(MenuPage connectionsPage)
     {
@@ -46,13 +47,17 @@ internal class ConnectionMenu
         MenuItem<bool> heartDoorsEnabled = (MenuItem<bool>)factory.ElementLookup[nameof(RandomizerSettings.EnableHeartDoors)];
         heartDoorsEnabled.ValueChanged += _ => UpdateLocks();
 
-        HashSet<string> heartFields = [nameof(RandomizerSettings.MinHearts), nameof(RandomizerSettings.MaxHearts), nameof(RandomizerSettings.HeartTolerance)];
+        HashSet<string> heartFields = [nameof(RandomizerSettings.EnablePreviews), nameof(RandomizerSettings.MinHearts), nameof(RandomizerSettings.MaxHearts), nameof(RandomizerSettings.HeartTolerance)];
         foreach (var e in factory.ElementLookup)
         {
             if (e.Key == nameof(RandomizerSettings.Enabled)) continue;
 
-            if (e.Value is ILockable l) requireEnabled.Add(l);
-            else if (e.Value is IMenuElement m && heartFields.Contains(e.Key)) requireHeartDoors.Add(m);
+            if (e.Value is ILockable l)
+            {
+                requireEnabled.Add(l);
+                if (heartFields.Contains(e.Key)) requireHeartDoorsLockables.Add(l);
+            }
+            else if (e.Value is IMenuElement m && heartFields.Contains(e.Key)) requireHeartDoorsElements.Add(m);
         }
 
         new VerticalItemPanel(scatteredAndLostPage, SpaceParameters.TOP_CENTER_UNDER_TITLE, SpaceParameters.VSPACE_MEDIUM, true, factory.Elements);
@@ -73,8 +78,16 @@ internal class ConnectionMenu
         if (Settings.Enabled) requireEnabled.ForEach(l => l.Unlock());
         else requireEnabled.ForEach(l => l.Lock());
 
-        if (Settings.Enabled && Settings.EnableHeartDoors) requireHeartDoors.ForEach(m => m.Show());
-        else requireHeartDoors.ForEach(m => m.Hide());
+        if (Settings.Enabled && Settings.EnableHeartDoors)
+        {
+            requireHeartDoorsLockables.ForEach(l => l.Unlock());
+            requireHeartDoorsElements.ForEach(m => m.Show());
+        }
+        else
+        {
+            requireHeartDoorsLockables.ForEach(l => l.Lock());
+            requireHeartDoorsElements.ForEach(m => m.Hide());
+        }
     }
 
     private void UpdateAll()

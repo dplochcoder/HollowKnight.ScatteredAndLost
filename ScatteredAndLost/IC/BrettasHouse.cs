@@ -4,6 +4,7 @@ using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
+using ItemChanger.Deployers;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
@@ -34,7 +35,8 @@ internal class BrettasHouse : Module
     private static readonly FsmID shadeId = new("Hero Death", "Hero Death Anim");
     private static readonly FsmID dreamNailId = new("Dream Nail");
 
-    public bool EnabledHeartDoors;
+    public bool EnableHeartDoors;
+    public bool EnablePreviews;
     public CheckpointLevel? Checkpoint;
     public bool RandomizeSoulTotems;
 
@@ -64,6 +66,7 @@ internal class BrettasHouse : Module
     public override void Initialize()
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
+        Events.AddSceneChangeEdit("BrettaHouseEntry", MaybePreviewTablet);
         Events.AddSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.AddSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
         Events.AddSceneChangeEdit("Town", RedirectBrettaDoorOutside);
@@ -79,6 +82,7 @@ internal class BrettasHouse : Module
     public override void Unload()
     {
         if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
+        Events.RemoveSceneChangeEdit("BrettaHouseEntry", MaybePreviewTablet);
         Events.RemoveSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.RemoveSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
         Events.RemoveSceneChangeEdit("Town", RedirectBrettaDoorOutside);
@@ -99,9 +103,23 @@ internal class BrettasHouse : Module
         }
     }
 
+    private void MaybePreviewTablet(Scene scene)
+    {
+        if (!EnablePreviews || !EnableHeartDoors) return;
+
+        TabletDeployer tablet = new()
+        {
+            X = 122.5f,
+            Y = 3.6f,
+            SceneName = "BrettaHouseEntry",
+            Text = new BrettaHousePreviewText(),
+        };
+        tablet.Deploy();
+    }
+
     private void MaybeSkipEntrance(Scene scene)
     {
-        if (EnabledHeartDoors) return;
+        if (EnableHeartDoors) return;
 
         var gate = GameObjectExtensions.FindChild(scene.FindGameObject("_Transition Gates")!, "right1");
         var tp = gate.GetComponent<TransitionPoint>();
@@ -111,7 +129,7 @@ internal class BrettasHouse : Module
 
     private (string, string) GetBrettaDoorTarget()
     {
-        if (Checkpoint == null) return (EnabledHeartDoors ? "BrettaHouseEntry" : "BrettaHouseZippers", "right1");
+        if (Checkpoint == null) return (EnableHeartDoors ? "BrettaHouseEntry" : "BrettaHouseZippers", "right1");
         else return Checkpoint.Value.SceneAndGate();
     }
 
