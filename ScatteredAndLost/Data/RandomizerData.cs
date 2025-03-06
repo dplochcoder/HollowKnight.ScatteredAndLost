@@ -1,5 +1,6 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
 using ItemChanger;
+using Newtonsoft.Json;
 using RandomizerMod.RandomizerData;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,9 @@ public record TransitionData
 
 public record BrettaHouseLocationDef : LocationDef
 {
+    [JsonConstructor]
+    BrettaHouseLocationDef() { }
+
     public BrettaHouseLocationDef(AbstractLocation location)
     {
         Name = location.name;
