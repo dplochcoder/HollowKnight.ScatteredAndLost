@@ -188,9 +188,9 @@ namespace HK8YPlando.Scripts.Lib
                 {
                     if (spriteRenderer.name.StartsWith(prefix))
                     {
-                        if (go.GetComponent(SPRITE_PATCHER_TYPE) == null)
+                        foreach (var comp in go.GetComponents(SPRITE_PATCHER_TYPE))
                         {
-                            go.AddComponent(SPRITE_PATCHER_TYPE);
+                            Object.DestroyImmediate(comp);
                             changed = true;
                         }
 
@@ -288,6 +288,7 @@ namespace HK8YPlando.Scripts.Lib
                     }
                 }
             }
+
 
             if (go.GetComponent(SPRITE_PATCHER_TYPE) == null)
             {
