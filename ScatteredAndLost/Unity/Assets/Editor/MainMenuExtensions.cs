@@ -294,11 +294,11 @@ public class MainMenuExtensions
     [MenuItem("HK8YPlando/Scene/Build (Linux)")]
     static void BuildSceneSpecificBundleLinux() => BuildSceneSpecificBundle(BuildTarget.StandaloneLinux64);
 
-    [MenuItem("HK8YPlando/Objects Bundle/Build")]
-    static void BuildObjectsBundle() => BuildSpecificBundle("objectsbundle", BuildTarget.StandaloneWindows);
+    [MenuItem("HK8YPlando/Core Bundle/Build")]
+    static void BuildCoreBundle() => BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneWindows);
 
-    [MenuItem("HK8YPlando/Objects Bundle/Build (Linux)")]
-    static void BuildObjectsBundleLinux() => BuildSpecificBundle("objectsbundle", BuildTarget.StandaloneLinux64);
+    [MenuItem("HK8YPlando/Core Bundle/Build (Linux)")]
+    static void BuildCoreBundleLinux() => BuildSpecificBundle("scatteredandlostcorebundle", BuildTarget.StandaloneLinux64);
 
     [MenuItem("HK8YPlando/All Scenes/Build")]
     static void BuildAllAssetBundles()
