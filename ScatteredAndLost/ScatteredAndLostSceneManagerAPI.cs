@@ -10,8 +10,6 @@ public class ScatteredAndLostSceneManagerAPI : SceneManagerAPI
 {
     internal static readonly ScatteredAndLostSceneManagerAPI Instance = new();
 
-    private const string CORE_BUNDLE = "scatteredandlostcorebundle";
-
     public static void Load() => overrideAPI = Instance;
 
     private readonly AssetBundle shared;
@@ -20,7 +18,7 @@ public class ScatteredAndLostSceneManagerAPI : SceneManagerAPI
 
     private ScatteredAndLostSceneManagerAPI()
     {
-        shared = LoadAsset(CORE_BUNDLE);
+        shared = LoadAsset("objectsbundle");
 
         foreach (var obj in shared.LoadAllAssets()) prefabs[obj.name] = obj;
 
@@ -28,7 +26,7 @@ public class ScatteredAndLostSceneManagerAPI : SceneManagerAPI
         {
             if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith(".meta")) continue;
             string name = str.Substring(PREFIX.Length);
-            if (name == "AssetBundles" || name == CORE_BUNDLE || name == "scenes") continue;
+            if (name == "AssetBundles" || name == "objectsbundle" || name == "scenes") continue;
 
             sceneBundles[name] = null;
         }
