@@ -68,8 +68,8 @@ internal static class RandoInterop
             mod.EnableHeartDoors = true;
             mod.EnablePreviews = LS.EnablePreviews;
             var (c1, c2) = LS.ComputeDoorCosts(rc.gs);
-            mod.DoorData[0].Total = c1;
-            mod.DoorData[1].Total = c2;
+            mod.DoorData.Add(new() { Total = c1 });
+            mod.DoorData.Add(new() { Total = c2 });
         }
         if (LS.RandomizeSoulTotems) mod.RandomizeSoulTotems = true;
         if (LS.EnableCheckpoints) mod.Checkpoint = LS.EnableHeartDoors ? CheckpointLevel.Entrance : CheckpointLevel.Zippers;

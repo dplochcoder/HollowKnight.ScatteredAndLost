@@ -43,7 +43,7 @@ internal class BrettasHouse : Module
     public bool RandomizeSoulTotems;
 
     public int Hearts = 0;
-    public List<HeartDoorData> DoorData = [new(), new()];
+    public List<HeartDoorData> DoorData = [];
     public bool SeenBrettasHouseAreaTitle = false;
     public bool DefeatedBrettorLords = false;
 
