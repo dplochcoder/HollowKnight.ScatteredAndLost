@@ -169,8 +169,8 @@ internal static class RandoInterop
                 else if (def.Direction == TransitionDirection.Door) doors.Add(e.Key);
                 else if (def.Direction == TransitionDirection.Right) horizontalBuilder!.Group1.Add(e.Key);
                 else if (def.Direction == TransitionDirection.Left) horizontalBuilder!.Group2.Add(e.Key);
-                else if (def.Direction == TransitionDirection.Bot) verticalBuilder!.Group2.Add(e.Key);
-                else verticalBuilder!.Group1.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Bot) verticalBuilder!.Group1.Add(e.Key);
+                else verticalBuilder!.Group2.Add(e.Key);
             }
             else
             {
