@@ -1,6 +1,7 @@
 ﻿using HK8YPlando.Data;
 using HK8YPlando.IC;
 using HK8YPlando.Scripts.SharedLib;
+using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using Modding;
 using Newtonsoft.Json;
@@ -108,7 +109,6 @@ internal static class RandoInterop
         foreach (var e in RandomizerData.Logic) lmb.AddWaypoint(new(e.Key, e.Value, false));
         foreach (var e in RandomizerData.Waypoints) lmb.AddWaypoint(new(e.Key, e.Value, true));
 
-
         foreach (var loc in RandomizerData.Locations)
         {
             if (loc.Value.Logic != null) lmb.AddLogicDef(new(loc.Key, loc.Value.Logic));
@@ -120,6 +120,8 @@ internal static class RandoInterop
 
     private static bool RandomizeTransition(TransitionDef def, TransitionSettings.TransitionMode mode)
     {
+        if (def.SceneName == "BrettaHouseEntry" && !LS.EnableHeartDoors) return false;
+
         return mode switch
         {
             TransitionSettings.TransitionMode.None => false,
@@ -139,6 +141,8 @@ internal static class RandoInterop
         if (LS.RandomizeSoulTotems && !rb.gs.PoolSettings.SoulTotems)
             throw new System.ArgumentException("Soul Totems must be randomized if randomizing Bretta House Soul Totems");
 
+        rb.RemoveTransitionByName(BrettaDoorIn);
+        rb.RemoveTransitionByName(BrettaDoorOut);
         rb.TransitionRequests.Remove(BrettaDoorIn);
         rb.TransitionRequests.Remove(BrettaDoorOut);
         rb.RemoveFromVanilla(BrettaDoorIn);
@@ -147,10 +151,8 @@ internal static class RandoInterop
         bool matching = rb.gs.TransitionSettings.TransitionMatching == TransitionSettings.TransitionMatchingSetting.MatchingDirections
             || rb.gs.TransitionSettings.TransitionMatching == TransitionSettings.TransitionMatchingSetting.MatchingDirectionsAndNoDoorToDoor;
         var dualBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.TwoWayGroup) as SelfDualTransitionGroupBuilder;
-        List<string> rights = [];
-        List<string> lefts = [];
-        List<string> tops = [];
-        List<string> bots = [];
+        var horizontalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InLeftOutRightGroup) as SymmetricTransitionGroupBuilder;
+        var verticalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InTopOutBotGroup) as SymmetricTransitionGroupBuilder;
 
         List<string> doors = [];
         foreach (var e in RandomizerData.Transitions)
@@ -163,12 +165,12 @@ internal static class RandoInterop
 
             if (RandomizeTransition(def, rb.gs.TransitionSettings.Mode))
             {
-                if (!matching) dualBuilder?.Transitions.Add(e.Key);
+                if (!matching) dualBuilder!.Transitions.Add(e.Key);
                 else if (def.Direction == TransitionDirection.Door) doors.Add(e.Key);
-                else if (def.Direction == TransitionDirection.Right) rights.Add(e.Key);
-                else if (def.Direction == TransitionDirection.Left) lefts.Add(e.Key);
-                else if (def.Direction == TransitionDirection.Bot) bots.Add(e.Key);
-                else tops.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Right) horizontalBuilder!.Group1.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Left) horizontalBuilder!.Group2.Add(e.Key);
+                else if (def.Direction == TransitionDirection.Bot) verticalBuilder!.Group2.Add(e.Key);
+                else verticalBuilder!.Group1.Add(e.Key);
             }
             else
             {
@@ -184,41 +186,31 @@ internal static class RandoInterop
                 rb.rng.PermuteInPlace(doors);
                 foreach (var door in doors)
                 {
-                    switch (lefts.Count - rights.Count)
+                    switch (horizontalBuilder!.Group2.GetTotal() - horizontalBuilder.Group1.GetTotal())
                     {
                         case > 0:
-                            rights.Add(door);
+                            horizontalBuilder.Group1.Add(door);
                             break;
                         case < 0:
-                            lefts.Add(door);
+                            horizontalBuilder.Group2.Add(door);
                             break;
                         case 0:
-                            switch (tops.Count - bots.Count)
+                            switch (verticalBuilder!.Group2.GetTotal() - verticalBuilder.Group1.GetTotal())
                             {
                                 case > 0:
-                                    bots.Add(door);
+                                    verticalBuilder.Group1.Add(door);
                                     break;
                                 case < 0:
-                                    tops.Add(door);
+                                    verticalBuilder.Group2.Add(door);
                                     break;
                                 case 0:
-                                    if (rb.rng.NextBool()) rights.Add(door);
-                                    else lefts.Add(door);
+                                    if (rb.rng.NextBool()) horizontalBuilder.Group1.Add(door);
+                                    else horizontalBuilder.Group2.Add(door);
                                     break;
                             }
                             break;
                     }
                 }
-            }
-
-            var horizontalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InLeftOutRightGroup) as SymmetricTransitionGroupBuilder;
-            var verticalBuilder = rb.EnumerateTransitionGroups().FirstOrDefault(x => x.label == RBConsts.InTopOutBotGroup) as SymmetricTransitionGroupBuilder;
-            if (rights.Count > 0 || lefts.Count > 0 || bots.Count > 0 || tops.Count > 0)
-            {
-                rights.ForEach(horizontalBuilder!.Group1.Add);
-                lefts.ForEach(horizontalBuilder!.Group2.Add);
-                bots.ForEach(verticalBuilder!.Group1.Add);
-                tops.ForEach(verticalBuilder!.Group2.Add);
             }
         }
 
@@ -249,6 +241,8 @@ internal static class RandoInterop
         }
         else
         {
+            rb.RemoveTransitionByName("BrettaHouseEntry[left1]");
+            rb.RemoveTransitionByName("BrettaHouseEntry[right1]");
             rb.RemoveFromVanilla("BrettaHouseEntry[left1]");
             rb.RemoveFromVanilla("BrettaHouseEntry[right1]");
 
