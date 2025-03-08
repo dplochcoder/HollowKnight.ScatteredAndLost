@@ -144,11 +144,13 @@ internal class BrettasHouse : Module
         vars.FindFsmString("New Scene").Value = sceneName;
         vars.FindFsmString("Entry Gate").Value = gateName;
 
+        // ItemChanger infers the bretta gate from Room_Bretta as the target scene, so we spawn a fake transition to teach it otherwise.
         GameObject spawner = new("fake_transition_spawner");
         spawner.AddComponent<Dummy>().DoAfter(0.25f, () =>
         {
             GameObject t = new("door_bretta");
             t.transform.parent = spawner.transform;
+            t.transform.position = new(-1000, -1000);
 
             var tp = t.AddComponent<TransitionPoint>();
             tp.targetScene = sceneName;
