@@ -16,7 +16,6 @@ using RandoSettingsManager;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 
 namespace HK8YPlando.Rando;
 
