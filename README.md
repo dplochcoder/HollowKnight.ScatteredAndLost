@@ -28,7 +28,7 @@ Bretta's House: C-Side implements a checkpointing system, where re-entering Bret
 
 ## The Plando
 
-To get the same experience as the HK8Y runners, download the HK8Y Plando (TODO: Link) in addition to the Scattered and Lost mod. See [SHO](https://www.smallhomothetyorganization.org/rando/plandoguide) for detailed instructions on installing plandos.
+To get the same experience as the HK8Y runners, download the [HK8Y Plando](https://github.com/dplochcoder/HollowKnight.ScatteredAndLost/blob/main/ScatteredAndLost/Plando/HK8Y%20Scattered%20and%20Lost.zip) in addition to the Scattered and Lost mod. See [SHO](https://www.smallhomothetyorganization.org/rando/plandoguide) for detailed instructions on installing plandos.
 
 The plando is a challenging experience crafted specifically for the best of HK's rando runners, and requires executing many difficult shade skips and other techniques to complete. The plando is also specifically designed to be played by two players in a cooperative [ItemSync](https://github.com/Shadudev/HollowKnight.MultiWorld/blob/master/ItemSyncMod/README.md) and cannot be experienced by a single player, so make sure you have a buddy to play with.
 
