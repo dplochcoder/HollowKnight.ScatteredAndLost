@@ -1,11 +1,11 @@
+CondensedSpoilerLogger
+DebugMod
 ItemChanger
+MenuChanger
+MoreDoors
 PurenailCore
-RandomizerCore.Json
-SFCore
 Randomizer 4
 RandomizerCore
-MoreDoors
-DebugMod
-CondensedSpoilerLogger
+RandomizerCore.Json
 RandoSettingsManager
-MenuChanger
+SFCore
