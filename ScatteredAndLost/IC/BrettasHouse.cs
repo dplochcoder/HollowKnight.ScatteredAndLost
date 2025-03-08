@@ -1,6 +1,7 @@
 ﻿using HK8YPlando.Data;
 using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Deployers;
@@ -28,6 +29,8 @@ internal record HeartDoorData
     public int NumUnlocked = 0;
     public bool Opened = false;
 }
+
+internal class Dummy : MonoBehaviour { }
 
 internal class BrettasHouse : Module
 {
@@ -140,6 +143,17 @@ internal class BrettasHouse : Module
         var (sceneName, gateName) = GetBrettaDoorTarget();
         vars.FindFsmString("New Scene").Value = sceneName;
         vars.FindFsmString("Entry Gate").Value = gateName;
+
+        GameObject spawner = new("fake_transition_spawner");
+        spawner.AddComponent<Dummy>().DoAfter(0.25f, () =>
+        {
+            GameObject t = new("door_bretta");
+            t.transform.parent = spawner.transform;
+
+            var tp = t.AddComponent<TransitionPoint>();
+            tp.targetScene = sceneName;
+            tp.entryPoint = gateName;
+        });
     }
 
     private void RedirectBrettaDoorInside(Scene scene)
