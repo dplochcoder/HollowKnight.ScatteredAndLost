@@ -105,7 +105,7 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "Logic": "BrettaHouseBumpers[right1]"
+    "Logic": "BrettaHouseBumpers[right1] + (LEFTCLAW | WINGS)"
   },
   "BrettaHouseBumpers_SoulTotem2": {
     "Checkpoint": "Bumpers",
