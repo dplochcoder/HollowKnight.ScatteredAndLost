@@ -18,6 +18,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     public ScatteredAndLostMod() : base("ScatteredAndLost")
     {
         Instance = this;
+
+        MoreDoorsInterop.MoreDoorsInterop.AddMinerDoor();
     }
 
     public static ScatteredAndLostSettings Settings = new();
@@ -48,7 +50,6 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         ScatteredAndLostSceneManagerAPI.Load();
 
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
-        if (ModHooks.GetMod("MoreDoors") is Mod) MoreDoorsInterop.MoreDoorsInterop.AddMinerDoor();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
