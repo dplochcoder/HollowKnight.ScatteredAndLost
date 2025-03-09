@@ -44,6 +44,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupRando() => RandoInterop.Setup();
 
+    private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
+
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
@@ -54,12 +56,12 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {
-            if (Settings.EnableInVanilla)
+            if (Settings.EnableInVanilla && (ModHooks.GetMod("Randomizer 4") == null || !IsRandoSave()))
             {
                 ItemChangerMod.CreateSettingsProfile(false);
-                ItemChangerMod.Modules.Add<BinocularsModule>();
-                ItemChangerMod.Modules.Add<BumperModule>();
-                var mod = ItemChangerMod.Modules.Add<BrettasHouse>();
+                ItemChangerMod.Modules.GetOrAdd<BinocularsModule>();
+                ItemChangerMod.Modules.GetOrAdd<BumperModule>();
+                var mod = ItemChangerMod.Modules.GetOrAdd<BrettasHouse>();
 
                 mod.EnableHeartDoors = false;
                 if (Settings.EnableCheckpoints) mod.Checkpoint = Data.CheckpointLevel.Zippers;
