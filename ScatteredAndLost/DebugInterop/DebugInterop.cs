@@ -45,7 +45,7 @@ internal static class DebugInterop
             data.Closed = false;
         }
 
-        if (mod.Checkpoint != null) mod.Checkpoint = Data.CheckpointLevel.Entrance;
+        if (mod.Checkpoint != null) mod.Checkpoint = mod.EnableHeartDoors ? Data.CheckpointLevel.Entrance : Data.CheckpointLevel.Zippers;
         mod.DefeatedBrettorLords = false;
     }
 }
