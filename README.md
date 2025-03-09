@@ -10,9 +10,9 @@ Bretta's House: C-Side can be enjoyed either in its original Plando form, as a [
 
 Scattered and Lost can be installed through [Lumafly](https://themulhima.github.io/Lumafly/).
 
-The intended experience involves Celeste BGM. To install music, obtain legal copies of `01 - Forsaken City (Sever the Skyline Mix).mp3` and `05 - Mirror Temple (Mirror Magic Mix).mp3`, rename them to `music1.mp3` and `music2.mp3` respectively and place them both in '.../Managed/Mods/Scattered and Lost/Music/'. Any mp3(s) will work as long as they are named correctly, if alternative music is desired.
+The intended experience involves Celeste BGM. To install music, obtain legal copies of `01 - Forsaken City (Sever the Skyline Mix).mp3` and `05 - Mirror Temple (Mirror Magic Mix).mp3`, rename them to `music1.mp3` and `music2.mp3` respectively and place them both in '.../Managed/Mods/Scattered and Lost/Music/'. Any .wav, .ogg, or .mp3 will work as long as they are named correctly. You can also use 'music1intro.mp3' and 'music1loop.mp3' for better looping if you have the segmented audio files.
 
-Celeste music can be purchased from [Bandcamp](https://radicaldreamland.bandcamp.com/album/celeste-b-sides).
+Celeste music can be purchased from [Bandcamp](https://radicaldreamland.bandcamp.com/album/celeste-b-sides).  (TODO: Fmod extraction from Celeste installation)
 
 ## DLC mode
 
