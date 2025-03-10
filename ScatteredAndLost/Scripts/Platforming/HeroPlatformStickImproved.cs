@@ -16,7 +16,7 @@ internal class HeroPlatformStickImproved : MonoBehaviour
 
     private void Awake() => On.HeroController.HazardRespawn += SetCooldown;
 
-    private const float COOLDOWN_MAX = 3f;
+    private const float COOLDOWN_MAX = 2f;
     private float cooldown = 0;
 
     private IEnumerator SetCooldown(On.HeroController.orig_HazardRespawn orig, HeroController self)
