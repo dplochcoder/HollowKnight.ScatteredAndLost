@@ -14,6 +14,7 @@ using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
 using SFCore.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -135,14 +136,27 @@ internal class BrettasHouse : Module
         else return Checkpoint.Value.SceneAndGate();
     }
 
+    // Hook for debug mod.
+    private event Action<(string, string)>? RedirectBrettaDoor;
+    internal void BrettaDoorRedirected((string, string) target) => RedirectBrettaDoor?.Invoke(target);
+
     private void RedirectBrettaDoorOutside(Scene scene)
     {
         var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
 
-        var vars = obj.LocateMyFSM("Door Control").FsmVariables;
-        var (sceneName, gateName) = GetBrettaDoorTarget();
-        vars.FindFsmString("New Scene").Value = sceneName;
-        vars.FindFsmString("Entry Gate").Value = gateName;
+        var fsmVars = obj.LocateMyFSM("Door Control").FsmVariables;
+        var targetVars = GetBrettaDoorTarget();
+
+        void RedirectCallback((string, string) vars)
+        {
+            var (sceneName, gateName) = vars;
+            fsmVars.FindFsmString("New Scene").Value = sceneName;
+            fsmVars.FindFsmString("Entry Gate").Value = gateName;
+        }
+        RedirectCallback(targetVars);
+
+        RedirectBrettaDoor += RedirectCallback;
+        obj.AddComponent<OnDestroyHook>().Action = () => RedirectBrettaDoor -= RedirectCallback;
 
         // ItemChanger infers the bretta gate from Room_Bretta as the target scene, so we spawn a fake transition to teach it otherwise.
         GameObject spawner = new("fake_transition_spawner");
@@ -153,8 +167,17 @@ internal class BrettasHouse : Module
             t.transform.position = new(-1000, -1000);
 
             var tp = t.AddComponent<TransitionPoint>();
-            tp.targetScene = sceneName;
-            tp.entryPoint = gateName;
+
+            void RedirectCallback2((string, string) vars)
+            {
+                var (sceneName, gateName) = vars;
+                tp.targetScene = sceneName;
+                tp.entryPoint = gateName;
+            }
+            RedirectCallback2(targetVars);
+
+            RedirectBrettaDoor += RedirectCallback2;
+            obj.AddComponent<OnDestroyHook>().Action = () => RedirectBrettaDoor -= RedirectCallback2;
         });
     }
 

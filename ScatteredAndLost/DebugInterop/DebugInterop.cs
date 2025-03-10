@@ -1,4 +1,5 @@
 ﻿using DebugMod;
+using HK8YPlando.Data;
 using HK8YPlando.IC;
 
 namespace HK8YPlando.DebugInterop;
@@ -45,7 +46,11 @@ internal static class DebugInterop
             data.Closed = false;
         }
 
-        if (mod.Checkpoint != null) mod.Checkpoint = mod.EnableHeartDoors ? Data.CheckpointLevel.Entrance : Data.CheckpointLevel.Zippers;
+        if (mod.Checkpoint != null)
+        {
+            mod.Checkpoint = mod.EnableHeartDoors ? Data.CheckpointLevel.Entrance : Data.CheckpointLevel.Zippers;
+            mod.BrettaDoorRedirected(mod.Checkpoint.Value.SceneAndGate());
+        }
         mod.DefeatedBrettorLords = false;
     }
 }
