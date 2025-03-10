@@ -1,150 +1,4 @@
 {
-  "BrettaHouseBubbles_SoulTotem1": {
-    "Checkpoint": "Bubbles",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (3)",
-      "MapX": 111.9,
-      "MapY": 3.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBubbles_SoulTotem1",
-      "sceneName": "BrettaHouseBubbles",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "Logic": "BrettaHouseBubbles[bot1]"
-  },
-  "BrettaHouseBubbles_SoulTotem2": {
-    "Checkpoint": "Bubbles",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (4)",
-      "MapX": 160.1,
-      "MapY": 9.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBubbles_SoulTotem2",
-      "sceneName": "BrettaHouseBubbles",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "Logic": "BrettaHouseBubbles2"
-  },
-  "BrettaHouseBubbles_SoulTotem3": {
-    "Checkpoint": "Bubbles",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
-      "MapX": 178.6,
-      "MapY": 46.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBubbles_SoulTotem3",
-      "sceneName": "BrettaHouseBubbles",
-      "flingType": "Everywhere",
-      "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Right",
-          "Loaded": false
-        }
-      ]
-    },
-    "Logic": "BrettaHouseBubbles3"
-  },
-  "BrettaHouseBubbles_SoulTotem4": {
-    "Checkpoint": "Bubbles",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (1)",
-      "MapX": 135.9,
-      "MapY": 79.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBubbles_SoulTotem4",
-      "sceneName": "BrettaHouseBubbles",
-      "flingType": "Everywhere",
-      "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Left",
-          "Loaded": false
-        }
-      ]
-    },
-    "Logic": "BrettaHouseBubbles4"
-  },
-  "BrettaHouseBubbles_SoulTotem5": {
-    "Checkpoint": "Bubbles",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem",
-      "MapX": 55.5,
-      "MapY": 123.3,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBubbles_SoulTotem5",
-      "sceneName": "BrettaHouseBubbles",
-      "flingType": "StraightUp",
-      "tags": null
-    },
-    "Logic": "BrettaHouseBubbles5"
-  },
-  "BrettaHouseBumpers_SoulTotem1": {
-    "Checkpoint": "Bumpers",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem",
-      "MapX": 114.1,
-      "MapY": 9.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBumpers_SoulTotem1",
-      "sceneName": "BrettaHouseBumpers",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "Logic": "BrettaHouseBumpers[right1] + (LEFTCLAW | WINGS)"
-  },
-  "BrettaHouseBumpers_SoulTotem2": {
-    "Checkpoint": "Bumpers",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (1)",
-      "MapX": 108.3,
-      "MapY": 80.4,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBumpers_SoulTotem2",
-      "sceneName": "BrettaHouseBumpers",
-      "flingType": "Everywhere",
-      "tags": [
-        {
-          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
-          "fling": "Left",
-          "Loaded": false
-        }
-      ]
-    },
-    "Logic": "BrettaHouseBumpers2"
-  },
-  "BrettaHouseBumpers_SoulTotem3": {
-    "Checkpoint": "Bumpers",
-    "Location": {
-      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
-      "MapX": 9.9,
-      "MapY": 117.3,
-      "managed": false,
-      "forceShiny": false,
-      "name": "BrettaHouseBumpers_SoulTotem3",
-      "sceneName": "BrettaHouseBumpers",
-      "flingType": "Everywhere",
-      "tags": null
-    },
-    "Logic": "BrettaHouseBumpers3"
-  },
   "BrettaHouseEntry_Gate1": {
     "Checkpoint": "Entrance",
     "Location": {
@@ -177,7 +31,153 @@
     },
     "Logic": "BrettaHouseEntry[left1] | BrettaHouseEntry[right1] + BrettaHouseGate1 + BrettaHouseGate2"
   },
-  "BrettaHouseSwitches_SoulTotem1": {
+  "Soul_Totem-BrettaHouseBubbles_1": {
+    "Checkpoint": "Bubbles",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (3)",
+      "MapX": 111.9,
+      "MapY": 3.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBubbles_1",
+      "sceneName": "BrettaHouseBubbles",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "Logic": "BrettaHouseBubbles[bot1]"
+  },
+  "Soul_Totem-BrettaHouseBubbles_2": {
+    "Checkpoint": "Bubbles",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (4)",
+      "MapX": 160.1,
+      "MapY": 9.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBubbles_2",
+      "sceneName": "BrettaHouseBubbles",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "Logic": "BrettaHouseBubbles2"
+  },
+  "Soul_Totem-BrettaHouseBubbles_3": {
+    "Checkpoint": "Bubbles",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
+      "MapX": 178.6,
+      "MapY": 46.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBubbles_3",
+      "sceneName": "BrettaHouseBubbles",
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
+          "fling": "Right",
+          "Loaded": false
+        }
+      ]
+    },
+    "Logic": "BrettaHouseBubbles3"
+  },
+  "Soul_Totem-BrettaHouseBubbles_4": {
+    "Checkpoint": "Bubbles",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (1)",
+      "MapX": 135.9,
+      "MapY": 79.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBubbles_4",
+      "sceneName": "BrettaHouseBubbles",
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
+          "fling": "Left",
+          "Loaded": false
+        }
+      ]
+    },
+    "Logic": "BrettaHouseBubbles4"
+  },
+  "Soul_Totem-BrettaHouseBubbles_5": {
+    "Checkpoint": "Bubbles",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem",
+      "MapX": 55.5,
+      "MapY": 123.3,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBubbles_5",
+      "sceneName": "BrettaHouseBubbles",
+      "flingType": "StraightUp",
+      "tags": null
+    },
+    "Logic": "BrettaHouseBubbles5"
+  },
+  "Soul_Totem-BrettaHouseBumpers_1": {
+    "Checkpoint": "Bumpers",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem",
+      "MapX": 114.1,
+      "MapY": 9.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBumpers_1",
+      "sceneName": "BrettaHouseBumpers",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "Logic": "BrettaHouseBumpers[right1] + (LEFTCLAW | WINGS)"
+  },
+  "Soul_Totem-BrettaHouseBumpers_2": {
+    "Checkpoint": "Bumpers",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (1)",
+      "MapX": 108.3,
+      "MapY": 80.4,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBumpers_2",
+      "sceneName": "BrettaHouseBumpers",
+      "flingType": "Everywhere",
+      "tags": [
+        {
+          "$type": "ItemChanger.Tags.ShinyFlingTag, ItemChanger",
+          "fling": "Left",
+          "Loaded": false
+        }
+      ]
+    },
+    "Logic": "BrettaHouseBumpers2"
+  },
+  "Soul_Totem-BrettaHouseBumpers_3": {
+    "Checkpoint": "Bumpers",
+    "Location": {
+      "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
+      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
+      "MapX": 9.9,
+      "MapY": 117.3,
+      "managed": false,
+      "forceShiny": false,
+      "name": "Soul_Totem-BrettaHouseBumpers_3",
+      "sceneName": "BrettaHouseBumpers",
+      "flingType": "Everywhere",
+      "tags": null
+    },
+    "Logic": "BrettaHouseBumpers3"
+  },
+  "Soul_Totem-BrettaHouseSwitches_1": {
     "Checkpoint": "Switches",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -186,14 +186,14 @@
       "MapY": 9.3,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseSwitches_SoulTotem1",
+      "name": "Soul_Totem-BrettaHouseSwitches_1",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseSwitches[right1]"
   },
-  "BrettaHouseSwitches_SoulTotem2": {
+  "Soul_Totem-BrettaHouseSwitches_2": {
     "Checkpoint": "Switches",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -202,14 +202,14 @@
       "MapY": 11.4,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseSwitches_SoulTotem2",
+      "name": "Soul_Totem-BrettaHouseSwitches_2",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseSwitches2"
   },
-  "BrettaHouseSwitches_SoulTotem3": {
+  "Soul_Totem-BrettaHouseSwitches_3": {
     "Checkpoint": "Switches",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -218,14 +218,14 @@
       "MapY": 16.3,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseSwitches_SoulTotem3",
+      "name": "Soul_Totem-BrettaHouseSwitches_3",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseSwitches3"
   },
-  "BrettaHouseSwitches_SoulTotem4": {
+  "Soul_Totem-BrettaHouseSwitches_4": {
     "Checkpoint": "Switches",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -234,14 +234,14 @@
       "MapY": 67.3,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseSwitches_SoulTotem4",
+      "name": "Soul_Totem-BrettaHouseSwitches_4",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseSwitches4"
   },
-  "BrettaHouseSwitches_SoulTotem5": {
+  "Soul_Totem-BrettaHouseSwitches_5": {
     "Checkpoint": "Switches",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -250,14 +250,14 @@
       "MapY": 140.0,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseSwitches_SoulTotem5",
+      "name": "Soul_Totem-BrettaHouseSwitches_5",
       "sceneName": "BrettaHouseSwitches",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseSwitches5"
   },
-  "BrettaHouseZippers_SoulTotem1": {
+  "Soul_Totem-BrettaHouseZippers_1": {
     "Checkpoint": "Zippers",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -266,7 +266,7 @@
       "MapY": 5.46,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseZippers_SoulTotem1",
+      "name": "Soul_Totem-BrettaHouseZippers_1",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": [
@@ -279,7 +279,7 @@
     },
     "Logic": "BrettaHouseZippers[right1]"
   },
-  "BrettaHouseZippers_SoulTotem2": {
+  "Soul_Totem-BrettaHouseZippers_2": {
     "Checkpoint": "Zippers",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -288,14 +288,14 @@
       "MapY": 86.4,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseZippers_SoulTotem2",
+      "name": "Soul_Totem-BrettaHouseZippers_2",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": null
     },
     "Logic": "BrettaHouseZippers2 | BrettaHouseZippers2Reverse"
   },
-  "BrettaHouseZippers_SoulTotem3": {
+  "Soul_Totem-BrettaHouseZippers_3": {
     "Checkpoint": "Zippers",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
@@ -304,7 +304,7 @@
       "MapY": 185.3,
       "managed": false,
       "forceShiny": false,
-      "name": "BrettaHouseZippers_SoulTotem3",
+      "name": "Soul_Totem-BrettaHouseZippers_3",
       "sceneName": "BrettaHouseZippers",
       "flingType": "Everywhere",
       "tags": null
