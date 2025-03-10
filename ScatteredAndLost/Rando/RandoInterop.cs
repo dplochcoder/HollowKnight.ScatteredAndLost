@@ -51,6 +51,7 @@ internal static class RandoInterop
     private static void CreateLocalSettings(RandoController rc)
     {
         if (!IsEnabled) return;
+
         LS = ScatteredAndLostMod.Settings.RandomizerSettings.Clone();
     }
 
@@ -87,6 +88,8 @@ internal static class RandoInterop
 
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
+        if (!IsEnabled) return;
+
         lmb.GetOrAddTerm(SoulTotemsTerm);
 
         if (LS.EnableHeartDoors)
