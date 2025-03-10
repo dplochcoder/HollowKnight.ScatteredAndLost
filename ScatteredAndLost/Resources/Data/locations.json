@@ -261,7 +261,7 @@
     "Checkpoint": "Zippers",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem",
+      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
       "MapX": 117.9,
       "MapY": 5.46,
       "managed": false,
@@ -299,7 +299,7 @@
     "Checkpoint": "Zippers",
     "Location": {
       "$type": "HK8YPlando.Rando.SuperSoulTotemLocation, HK8YPlando",
-      "ObjectName": "SoulTotems/SuperSoulTotem (2)",
+      "ObjectName": "SoulTotems/SuperSoulTotem",
       "MapX": 89.3,
       "MapY": 185.3,
       "managed": false,
