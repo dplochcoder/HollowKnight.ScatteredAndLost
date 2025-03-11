@@ -10,9 +10,14 @@ Bretta's House: C-Side can be enjoyed either in its original Plando form, as a [
 
 Scattered and Lost can be installed through [Lumafly](https://themulhima.github.io/Lumafly/).
 
-The intended experience involves Celeste BGM. To install music, obtain legal copies of `01 - Forsaken City (Sever the Skyline Mix).mp3` and `05 - Mirror Temple (Mirror Magic Mix).mp3`, rename them to `music1.mp3` and `music2.mp3` respectively and place them both in '.../Managed/Mods/Scattered and Lost/Music/'. Any .wav, .ogg, or .mp3 will work as long as they are named correctly. You can also use 'music1intro.mp3' and 'music1loop.mp3' for better looping if you have the segmented audio files.
+The intended experience involves Celeste BGM. If you have Hollow Knight _and_ Celeste installed through Steam, you can select 'Extract Celeste BGM' from the mod options menu to automatically perform the music copying outlined below. If you have a Celeste installation elsewhere, you can provide its path in the ScatteredAndLost global settings .json explicitly as well.
 
-Celeste music can be purchased from [Bandcamp](https://radicaldreamland.bandcamp.com/album/celeste-b-sides).  (TODO: Fmod extraction from Celeste installation)
+Otherwise, you can purchase the tracks from [Bandcamp](https://radicaldreamland.bandcamp.com/album/celeste-b-sides), or install custom music instead. To manually install music, create a 'Music' directory inside the Scattered and Lost mod directory, and add files named the following:
+
+  - music1.(mp3|ogg|wav) or music1intro.(mp3|ogg|wav) + music1loop.(mp3|ogg|wav)
+  - Same for music2*.*
+
+The intended tracks are `01 - Forsaken City (Sever the Skyline Mix)` (music1) and `05 - Mirror Temple (Mirror Magic Mix)` (music2)
 
 ## DLC mode
 
