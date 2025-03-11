@@ -8,17 +8,27 @@ internal static class DebugInterop
 {
     internal static void Setup() => DebugMod.DebugMod.AddToKeyBindList(typeof(DebugInterop));
 
+    private static void GiveNailUpgrade()
+    {
+        var pd = PlayerData.instance;
+        pd.SetBool(nameof(pd.honedNail), true);
+        pd.IntAdd(nameof(pd.nailDamage), 4);
+        PlayMakerFSM.BroadcastEvent("UPDATE NAIL DAMAGE");
+        pd.IncrementInt(nameof(pd.nailSmithUpgrades));
+    }
+
     [BindableMethod(name = "Gear up for Content", category = "Scattered and Lost")]
     public static void GearUpForContent()
     {
         Console.AddLine("Rescuing Bretta and granting late game gear");
+        var pd = PlayerData.instance;
 
-        PlayerData.instance.SetBool(nameof(PlayerData.brettaRescued), true);
+        pd.SetBool(nameof(PlayerData.brettaRescued), true);
         BindableFunctions.GiveAllSkills();
         BindableFunctions.GiveAllCharms();
-        while (PlayerData.instance.maxHealthBase < 8) BindableFunctions.GiveMask();
-        while (PlayerData.instance.MPReserveMax < 66) BindableFunctions.GiveVessel();
-        while (PlayerData.instance.nailDamage < 17) BindableFunctions.IncreaseNailDamage();
+        while (pd.GetInt(nameof(pd.maxHealthBase)) < 8) BindableFunctions.GiveMask();
+        while (pd.GetInt(nameof(pd.MPReserveMax)) < 66) BindableFunctions.GiveVessel();
+        while (pd.GetInt(nameof(pd.nailSmithUpgrades)) < 3) GiveNailUpgrade();
         PlayerData.instance.charmSlots = 9;
     }
 
