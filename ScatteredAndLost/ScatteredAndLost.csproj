@@ -24,10 +24,17 @@
     <ItemGroup>
       <OutputFiles Include="$(TargetPath)"/>
       <OutputFiles Include="$(TargetDir)/$(TargetName).pdb"/>
+      <OutputFiles Include="$(TargetDir)/Fmod5Sharp.dll"/>
       <OutputFiles Include="$(TargetDir)/IndexRange.dll"/>
       <OutputFiles Include="$(TargetDir)/NAudio.Core.dll"/>
       <OutputFiles Include="$(TargetDir)/OggVorbisEncoder.dll"/>
-      <OutputFiles Include="$(TargetDir)/Fmod5Sharp.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Buffers.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Memory.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Numerics.Vectors.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Runtime.CompilerServices.Unsafe.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Text.Encodings.Web.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.Text.Json.dll"/>
+      <OutputFiles Include="$(TargetDir)/System.ValueTuple.dll"/>
     </ItemGroup>
     <RemoveDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/" />

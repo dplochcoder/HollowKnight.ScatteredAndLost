@@ -7,6 +7,7 @@ public class ScatteredAndLostSettings
 {
     public bool EnableInVanilla = false;
     public bool EnableCheckpoints = true;
+    public string CelesteInstallation = "";
 
     public RandomizerSettings RandomizerSettings = new();
 }

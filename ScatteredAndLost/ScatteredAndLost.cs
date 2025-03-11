@@ -1,11 +1,21 @@
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
+using HK8YPlando.Scripts.InternalLib;
+using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
 using ItemChanger;
 using ItemChanger.Internal.Menu;
 using Modding;
+using Modding.Menu;
+using Modding.Menu.Config;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
+using static Mono.Security.X509.X520;
 
 namespace HK8YPlando;
 
@@ -71,9 +81,67 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         };
     }
 
+    internal enum ExtractState
+    {
+        Working,
+        Done,
+    };
+
+    private void ClickExtractButton(MenuButton button, Synchronized<ExtractState> state)
+    {
+        var s = state.Get();
+        if (s == ExtractState.Working) return;
+        state.Set(ExtractState.Working);
+
+        var text = button.gameObject.FindChild("Label").GetComponent<Text>();
+        text.text = "Extracting...";
+
+        Thread thread = new(() =>
+        {
+            string msg = "";
+            try
+            {
+                string outputDir = Path.Combine(Path.GetDirectoryName(typeof(ScatteredAndLostMod).Assembly.Location), "Music");
+                Directory.CreateDirectory(outputDir);
+
+                var task = FmodRipper.ExtractMusic(FmodRipper.CelesteFmodPath(), FmodRipper.CelesteFmodMapping(), outputDir);
+                task.Wait();
+                msg = task.Result;
+            }
+            catch (Exception e)
+            {
+                BUG(e.ToString());
+                msg = e.Message;
+            }
+
+            text.text = msg;
+            state.Set(ExtractState.Done);
+        });
+        thread.Start();
+    }
+
+    private void BuildExtractButton(ContentArea contentArea, MenuScreen returnScreen)
+    {
+        Synchronized<ExtractState> state = new(ExtractState.Done);
+        MenuButtonConfig config = new()
+        {
+            Label = "Extract Celeste BGM",
+            Description = new()
+            {
+                Text = "Extract OST from a Celeste installation on this machine",
+            },
+            Proceed = false,
+            SubmitAction = menuButton => ClickExtractButton(menuButton, state),
+            CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(returnScreen),
+        };
+
+        contentArea.AddMenuButton(config.Label, config);
+    }
+
     public MenuScreen GetMenuScreen(MenuScreen modListMenu, ModToggleDelegates? toggleDelegates)
     {
         ModMenuScreenBuilder builder = new("Scattered and Lost", modListMenu);
+        builder.buildActions.Add(c => BuildExtractButton(c, modListMenu));
         builder.AddHorizontalOption(new()
         {
             Name = "Enable in Vanilla",

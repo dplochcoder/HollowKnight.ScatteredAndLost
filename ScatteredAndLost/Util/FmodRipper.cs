@@ -9,23 +9,34 @@ namespace HK8YPlando.Util;
 
 internal static class FmodRipper
 {
-    // up to you how best to get this path.
-    const string CELESTE_MUSIC_PATH = @"D:\Program Files\Steam\steamapps\common\Celeste\Content\FMOD\Desktop\music.bank";
-
-    // Usage (pseudocode): ExtractMusic("path/to/ScatteredAndLost/Music", {
-    //  "mus_rmx_01_forsakencity_intro": "music1intro",
-    //  "mus_rmx_01_forsakencity_loop": "music1loop",
-    //  "mus_rmx_05_mirrortemple": "music2"
-    // });
-    public static async Task<string> ExtractMusic(string outputFolderPath, Dictionary<string, string> sampleNameMapping)
+    public static string CelesteFmodPath()
     {
-        Directory.CreateDirectory(outputFolderPath);
+        string basePath;
+        var settingsPath = ScatteredAndLostMod.Settings.CelesteInstallation;
+        if (settingsPath.Length > 0) basePath = settingsPath;
+        else
+        {
+            var steamPath = typeof(ScatteredAndLostMod).Assembly.Location;
+            // Hollow Knight/hollow_knight_Data/Managed/Mods/Scattered and Lost/file
+            for (int i = 0; i < 6; i++) steamPath = Path.GetDirectoryName(steamPath);
+            basePath = Path.Combine(steamPath, "Celeste");
+        }
 
-        byte[]? bankData = await TryReadFsb(CELESTE_MUSIC_PATH);
+        return Path.Combine(basePath, "Content", "FMOD", "Desktop", "music.bank");
+    }
 
+    public static Dictionary<string, string> CelesteFmodMapping() => new() {
+        { "mus_rmx_01_forsakencity_intro", "music1intro" },
+        { "mus_rmx_01_forsakencity_loop", "music1loop" },
+        { "mus_rmx_05_mirrortemple", "music2" }
+    };
+
+    public static async Task<string> ExtractMusic(string fmodBankPath, Dictionary<string, string> sampleNameMapping, string outputFolderPath)
+    {
+        byte[]? bankData = await TryReadFsb(fmodBankPath);
         if (bankData == null)
         {
-            return "Unable to read FSB data.";
+            return $"Unable to read FSB data from {fmodBankPath}";
         }
 
         if (FsbLoader.TryLoadFsbFromByteArray(bankData, out FmodSoundBank? bank))
