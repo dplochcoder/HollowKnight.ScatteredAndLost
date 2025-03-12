@@ -2,6 +2,7 @@
 using Fmod5Sharp.FmodTypes;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,10 +17,18 @@ internal static class FmodRipper
         if (settingsPath.Length > 0) basePath = settingsPath;
         else
         {
+            // Hacky best-effort path guesser.
+            bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+
             var steamPath = typeof(ScatteredAndLostMod).Assembly.Location;
             // Hollow Knight/hollow_knight_Data/Managed/Mods/Scattered and Lost/file
-            for (int i = 0; i < 6; i++) steamPath = Path.GetDirectoryName(steamPath);
+            int numDirs = 6;
+            if (isMacOS) numDirs += 3;  // hollow_knight.app/Contents/Resources
+
+            for (int i = 0; i < numDirs; i++) steamPath = Path.GetDirectoryName(steamPath);
+
             basePath = Path.Combine(steamPath, "Celeste");
+            if (isMacOS) basePath = Path.Combine(basePath, "Celeste.app", "Contents", "Resources");
         }
 
         return Path.Combine(basePath, "Content", "FMOD", "Desktop", "music.bank");
