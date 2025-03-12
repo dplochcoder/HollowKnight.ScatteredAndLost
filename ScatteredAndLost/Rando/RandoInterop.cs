@@ -86,6 +86,8 @@ internal static class RandoInterop
         tw.WriteLine();
     }
 
+    private const string HEART_GATE_SCENE = "BrettaHouseEntry";
+
     private static void ModifyLogic(GenerationSettings gs, LogicManagerBuilder lmb)
     {
         if (!IsEnabled) return;
@@ -105,7 +107,10 @@ internal static class RandoInterop
 
         foreach (var e in RandomizerData.Transitions)
         {
-            if (e.Value.Logic != null) lmb.AddTransition(new(e.Key, e.Value.Logic));
+            if (e.Value.Logic == null) continue;
+            if (!LS.EnableHeartDoors && e.Value.Def!.SceneName == HEART_GATE_SCENE) continue;
+            
+            lmb.AddTransition(new(e.Key, e.Value.Logic));
         }
 
         foreach (var e in RandomizerData.Logic) lmb.AddWaypoint(new(e.Key, e.Value, false));
@@ -113,7 +118,10 @@ internal static class RandoInterop
 
         foreach (var loc in RandomizerData.Locations)
         {
-            if (loc.Value.Logic != null) lmb.AddLogicDef(new(loc.Key, loc.Value.Logic));
+            if (loc.Value.Logic == null) continue;
+            if (!LS.EnableHeartDoors && loc.Value.Location!.sceneName == HEART_GATE_SCENE) continue;
+            
+            lmb.AddLogicDef(new(loc.Key, loc.Value.Logic));
         }
     }
 
@@ -122,7 +130,7 @@ internal static class RandoInterop
 
     private static bool RandomizeTransition(TransitionDef def, TransitionSettings.TransitionMode mode)
     {
-        if (def.SceneName == "BrettaHouseEntry" && !LS.EnableHeartDoors) return false;
+        if (!LS.EnableHeartDoors && def.SceneName == HEART_GATE_SCENE) return false;
 
         return mode switch
         {
@@ -132,6 +140,12 @@ internal static class RandoInterop
             TransitionSettings.TransitionMode.RoomRandomizer => true,
             _ => throw new System.ArgumentException($"Unsupported mode: {mode}")
         };
+    }
+
+    private static bool RandomizeLocation(LocationData loc)
+    {
+        if (loc.Location!.sceneName == HEART_GATE_SCENE) return LS.EnableHeartDoors;
+        else return LS.RandomizeSoulTotems;
     }
 
     private static void ModifyRequestBuilder(RequestBuilder rb)
@@ -276,7 +290,7 @@ internal static class RandoInterop
 
         foreach (var loc in RandomizerData.Locations)
         {
-            if ((LS.EnableHeartDoors && loc.Value.Checkpoint == CheckpointLevel.Entrance) || LS.RandomizeSoulTotems)
+            if (RandomizeLocation(loc.Value))
             {
                 rb.EditLocationRequest(loc.Key, info =>
                 {
