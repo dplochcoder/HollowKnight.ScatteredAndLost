@@ -5,6 +5,7 @@ using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using ItemChanger;
 using ItemChanger.Internal.Menu;
+using MenuChanger;
 using Modding;
 using Modding.Menu;
 using Modding.Menu.Config;
@@ -87,11 +88,10 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         Done,
     };
 
-    private void ClickExtractButton(MenuButton button, Synchronized<ExtractState> state)
+    private void ClickExtractButton(MenuButton button, Wrapped<ExtractState> state)
     {
-        var s = state.Get();
-        if (s == ExtractState.Working) return;
-        state.Set(ExtractState.Working);
+        if (state.Value == ExtractState.Working) return;
+        state.Value = ExtractState.Working;
 
         var text = button.gameObject.FindChild("Label").GetComponent<Text>();
         text.text = "Extracting...";
@@ -114,15 +114,18 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
                 msg = e.Message;
             }
 
-            text.text = msg;
-            state.Set(ExtractState.Done);
+            ThreadSupport.BeginInvoke(() =>
+            {
+                text.text = msg;
+                state.Value = ExtractState.Done;
+            });
         });
         thread.Start();
     }
 
     private void BuildExtractButton(ContentArea contentArea, MenuScreen returnScreen)
     {
-        Synchronized<ExtractState> state = new(ExtractState.Done);
+        Wrapped<ExtractState> state = new(ExtractState.Done);
         MenuButtonConfig config = new()
         {
             Label = "Extract Celeste BGM",
