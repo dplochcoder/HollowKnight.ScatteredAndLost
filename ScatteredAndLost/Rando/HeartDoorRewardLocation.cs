@@ -6,6 +6,9 @@ namespace HK8YPlando.Rando;
 
 internal class HeartDoorRewardLocation : CoordinateLocation
 {
+    public float PinX;
+    public float PinY;
+
     protected override void OnLoad()
     {
         base.OnLoad();
@@ -13,8 +16,9 @@ internal class HeartDoorRewardLocation : CoordinateLocation
         var tag = AddTag<InteropTag>();
         tag.Message = "RandoSupplementalMetadata";
         tag.Properties["ModSource"] = nameof(ScatteredAndLostMod);
-        tag.Properties["PinSpriteKey"] = PoolNames.Skill;
-        tag.Properties["PoolGroup"] = PoolNames.Skill;
+        (string, float, float)[] mapLocs = [("Town", PinX, PinY)];
+        tag.Properties["MapLocations"] = mapLocs;
+        tag.Properties["PinSpriteKey"] = "Skills";
 
         var riTag = AddTag<InteropTag>();
         riTag.Message = "RecentItems";

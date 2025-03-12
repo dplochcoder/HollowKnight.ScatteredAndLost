@@ -14,6 +14,9 @@ public class SuperSoulTotemLocation : PlaceableLocation
     public string? ObjectName;
     public float MapX;
     public float MapY;
+    public float PinX;
+    public float PinY;
+
     private Scene? loadedScene;
 
     public override void PlaceContainer(GameObject obj, string containerType)
@@ -31,9 +34,10 @@ public class SuperSoulTotemLocation : PlaceableLocation
 
         var tag = AddTag<InteropTag>();
         tag.Message = "RandoSupplementalMetadata";
+        (string, float, float)[] mapLocs = [("Town", PinX, PinY)];
+        tag.Properties["MapLocations"] = mapLocs;
         tag.Properties["ModSource"] = nameof(ScatteredAndLostMod);
-        tag.Properties["PinSpriteKey"] = PoolNames.Soul;
-        tag.Properties["PoolGroup"] = PoolNames.Soul;
+        tag.Properties["PinSpriteKey"] = "Soul Totems";
         tag.Properties["WorldMapLocations"] = WorldMapLocations().ToArray();
 
         var riTag = AddTag<InteropTag>();
