@@ -39,6 +39,18 @@ The plando is a challenging experience crafted specifically for the best of HK's
 
 The goal of the plando is to check Bretta's mask shard. The plando is compatible with [RMM](https://github.com/syyePhenomenol/RandoMapMod) for logic tracking.
 
+### Required Mods
+
+In addition to ScatteredAndLost and its dependencies, to play the plando you will need to install the following mods as well:
+
+- AccessRandomizer
+- ItemChangerDataLoader
+- ItemSync
+- MoreDoors
+- RainbowEggs
+- ReopenCityDoor
+- Scatternest
+
 ## Randomizer Connection
 
 Bretta's House: C-Side can be experienced as a randomizer connection with various configurable settings. It is integrated with [RSM](https://github.com/BadMagic100/RandoSettingsManager) for ease of sharing.
