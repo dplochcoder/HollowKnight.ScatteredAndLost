@@ -11,7 +11,7 @@ public class SettingsProxy : RandoSettingsProxy<RandomizerSettings, string>
 
     public override bool TryProvideSettings(out RandomizerSettings? settings)
     {
-        settings = ScatteredAndLostMod.Settings.RandomizerSettings.Clone();
+        settings = ScatteredAndLostMod.Settings.RandomizerSettings;
         return settings.Enabled;
     }
 

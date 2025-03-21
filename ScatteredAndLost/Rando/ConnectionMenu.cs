@@ -43,7 +43,7 @@ internal class ConnectionMenu
         factory = new(scatteredAndLostPage, Settings);
 
         MenuItem<bool> enabled = (MenuItem<bool>)factory.ElementLookup[nameof(RandomizerSettings.Enabled)];
-        enabled.ValueChanged += _ => UpdateLocks();
+        enabled.ValueChanged += _ => UpdateAll();
         MenuItem<bool> heartDoorsEnabled = (MenuItem<bool>)factory.ElementLookup[nameof(RandomizerSettings.EnableHeartDoors)];
         heartDoorsEnabled.ValueChanged += _ => UpdateLocks();
 

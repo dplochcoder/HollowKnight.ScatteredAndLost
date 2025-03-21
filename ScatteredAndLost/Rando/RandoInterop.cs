@@ -52,7 +52,7 @@ internal static class RandoInterop
     {
         if (!IsEnabled) return;
 
-        LS = ScatteredAndLostMod.Settings.RandomizerSettings.Clone();
+        LS = ScatteredAndLostMod.Settings.RandomizerSettings;
     }
 
     private static void ExportCompleted(RandoController rc)

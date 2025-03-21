@@ -44,6 +44,4 @@ public class RandomizerSettings
         int b = d2 + MinHearts;
         return a < b ? (a, b) : (b, a);
     }
-
-    public RandomizerSettings Clone() => (RandomizerSettings)MemberwiseClone();
 }
