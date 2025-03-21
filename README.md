@@ -44,6 +44,7 @@ The goal of the plando is to check Bretta's mask shard. The plando is compatible
 In addition to ScatteredAndLost and its dependencies, to play the plando you will need to install the following mods as well:
 
 - AccessRandomizer
+- ICExtraDeployers
 - ItemChangerDataLoader
 - ItemSync
 - MoreDoors
