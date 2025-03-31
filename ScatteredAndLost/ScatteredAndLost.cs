@@ -1,5 +1,6 @@
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
@@ -61,6 +62,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
+        BumperHooks.Load();
 
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
@@ -71,7 +73,6 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
             {
                 ItemChangerMod.CreateSettingsProfile(false);
                 ItemChangerMod.Modules.GetOrAdd<BinocularsModule>();
-                ItemChangerMod.Modules.GetOrAdd<BumperModule>();
                 var mod = ItemChangerMod.Modules.GetOrAdd<BrettasHouse>();
 
                 mod.EnableHeartDoors = false;

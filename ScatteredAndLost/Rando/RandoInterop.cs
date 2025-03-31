@@ -1,5 +1,6 @@
 ﻿using HK8YPlando.Data;
 using HK8YPlando.IC;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
 using ItemChanger;
 using Modding;
@@ -61,7 +62,6 @@ internal static class RandoInterop
 
         ItemChangerMod.CreateSettingsProfile(false);
         ItemChangerMod.Modules.Add<BinocularsModule>();
-        ItemChangerMod.Modules.Add<BumperModule>();
         var mod = ItemChangerMod.Modules.Add<BrettasHouse>();
 
         if (LS.EnableHeartDoors)

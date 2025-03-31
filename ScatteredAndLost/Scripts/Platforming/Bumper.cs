@@ -1,4 +1,4 @@
-﻿using HK8YPlando.IC;
+﻿using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using System.Collections.Generic;
@@ -24,17 +24,12 @@ internal class Bumper : MonoBehaviour, IHitResponder
     [ShimField] public float OscillateRadius;
     [ShimField] public float OscillatePeriod;
 
-    private BumperModule? module;
     private Vector3 origPos;
 
     private float oscillateTimer;
     private float cooldown;
 
-    private void Awake()
-    {
-        module = BumperModule.Get();
-        origPos = transform.position;
-    }
+    private void Awake() => origPos = transform.position;
 
     public void Hit(HitInstance damageInstance)
     {
@@ -49,12 +44,12 @@ internal class Bumper : MonoBehaviour, IHitResponder
         if (KnightUtil.IsNailArtActive()) return;
 
         var cState = HeroController.instance.cState;
-        if (cState.downAttacking) module?.BumpUp(VerticalScale);
-        else if (cState.upAttacking) module?.BumpDown();
+        if (cState.downAttacking) BumperHooks.BumpUp(VerticalScale);
+        else if (cState.upAttacking) BumperHooks.BumpDown();
         else
         {
             var kPos = HeroController.instance.gameObject.transform.position;
-            module?.BumpHorizontal(HorizontalBumpX, HorizontalDecel, (transform.position.y - kPos.y > YForgiveness) ? 0 : HorizontalBumpY, HorizontalBumpYMax);
+            BumperHooks.BumpHorizontal(HorizontalBumpX, HorizontalDecel, (transform.position.y - kPos.y > YForgiveness) ? 0 : HorizontalBumpY, HorizontalBumpYMax);
         }
     }
 

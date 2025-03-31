@@ -1,4 +1,4 @@
-﻿using HK8YPlando.IC;
+﻿using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
@@ -121,7 +121,7 @@ internal class BubbleController : MonoBehaviour
 
                 heroRb2d.velocity = Vector2.zero;
                 hc.AffectedByGravity(false);
-                BumperModule.Get().CancelBump();
+                BumperHooks.CancelBump();
 
                 renderer.enabled = false;
 
