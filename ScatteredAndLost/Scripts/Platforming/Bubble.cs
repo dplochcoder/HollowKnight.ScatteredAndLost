@@ -1,4 +1,7 @@
-﻿using HK8YPlando.Scripts.Framework;
+﻿using DecorationMaster;
+using DecorationMaster.Attr;
+using DecorationMaster.MyBehaviour;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
@@ -241,4 +244,16 @@ internal class Bubble : MonoBehaviour
 
         BubbleController!.FinishMoving(pos, wallCling);
     }
+}
+
+[Description("Celeste Bumper", "en-us")]
+[Decoration("scattered_and_lost_bubble")]
+internal class BubbleDecoration : CustomDecoration
+{
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<BubbleDecoration, ItemDef.DefaultItem>(
+        "scattered_and_lost_bubble",
+        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("BubbleController"),
+        "bubble");
+
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 }

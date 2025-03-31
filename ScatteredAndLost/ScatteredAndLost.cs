@@ -61,6 +61,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     private static void SetupDecorationMaster()
     {
         BumperDecoration.Register();
+        BubbleDecoration.Register();
+
         DecorationMasterUtil.RefreshItemManager();
     }
 

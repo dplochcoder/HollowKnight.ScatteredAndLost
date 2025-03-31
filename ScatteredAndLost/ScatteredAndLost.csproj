@@ -71,6 +71,7 @@
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Resources\Sprites\bubble.png" />
     <None Remove="Resources\Sprites\bumper.png" />
   </ItemGroup>
   <ItemGroup>
