@@ -183,6 +183,8 @@ internal class BrettasHouse : Module
 
     private void RedirectBrettaDoorInside(Scene scene)
     {
+        if (Checkpoint != null) return;
+
         var tp = scene.FindGameObject("right1")!.GetComponent<TransitionPoint>();
         tp.targetScene = "BrettaHouseBubbles";
         tp.entryPoint = "left1";
