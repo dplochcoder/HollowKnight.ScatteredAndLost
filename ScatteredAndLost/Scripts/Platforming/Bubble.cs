@@ -174,6 +174,7 @@ internal class BubbleController : MonoBehaviour
                 return false;
             });
 
+            Bubble.gameObject.StopSound();
             if (owningBubbleController == this)
             {
                 Bubble.gameObject.PlaySound((!damageHeroEvent && dashed) ? DashClip! : WallClip!);

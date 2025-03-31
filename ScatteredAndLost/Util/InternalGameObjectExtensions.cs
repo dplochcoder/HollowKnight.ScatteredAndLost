@@ -27,6 +27,8 @@ internal static class InternalGameObjectExtensions
 
     public static void PlaySound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, false);
 
+    public static void StopSound(this GameObject self) => self.GetComponent<AudioSource>()?.Stop();
+
     public static void LoopSound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, true);
 
     private static void PlaySoundImpl(this GameObject self, AudioClip clip, float volume, bool global, bool loop)
