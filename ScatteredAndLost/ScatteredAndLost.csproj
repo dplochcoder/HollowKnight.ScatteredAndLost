@@ -22,19 +22,19 @@
   <Import Project="../LocalOverrides.targets" Condition="Exists('../LocalOverrides.targets')" />
   <Target Name="CopyMod" AfterTargets="PostBuildEvent">
     <ItemGroup>
-      <OutputFiles Include="$(TargetPath)"/>
-      <OutputFiles Include="$(TargetDir)/$(TargetName).pdb"/>
-      <OutputFiles Include="$(TargetDir)/Fmod5Sharp.dll"/>
-      <OutputFiles Include="$(TargetDir)/IndexRange.dll"/>
-      <OutputFiles Include="$(TargetDir)/NAudio.Core.dll"/>
-      <OutputFiles Include="$(TargetDir)/OggVorbisEncoder.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Buffers.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Memory.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Numerics.Vectors.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Runtime.CompilerServices.Unsafe.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Text.Encodings.Web.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.Text.Json.dll"/>
-      <OutputFiles Include="$(TargetDir)/System.ValueTuple.dll"/>
+      <OutputFiles Include="$(TargetPath)" />
+      <OutputFiles Include="$(TargetDir)/$(TargetName).pdb" />
+      <OutputFiles Include="$(TargetDir)/Fmod5Sharp.dll" />
+      <OutputFiles Include="$(TargetDir)/IndexRange.dll" />
+      <OutputFiles Include="$(TargetDir)/NAudio.Core.dll" />
+      <OutputFiles Include="$(TargetDir)/OggVorbisEncoder.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Buffers.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Memory.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Numerics.Vectors.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Runtime.CompilerServices.Unsafe.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Text.Encodings.Web.dll" />
+      <OutputFiles Include="$(TargetDir)/System.Text.Json.dll" />
+      <OutputFiles Include="$(TargetDir)/System.ValueTuple.dll" />
     </ItemGroup>
     <RemoveDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/" />
@@ -71,7 +71,10 @@
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fmod5Sharp" Version="3.0.1"/>
+    <None Remove="Resources\Sprites\bumper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fmod5Sharp" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -85,6 +88,9 @@
     </Reference>
     <Reference Include="DebugMod">
       <HintPath>$(HollowKnightRefs)/Mods/DebugMod/DebugMod.dll</HintPath>
+    </Reference>
+    <Reference Include="DecorationMaster">
+      <HintPath>$(HollowKnightRefs)/Mods/DecorationMaster/DecorationMaster.dll</HintPath>
     </Reference>
     <Reference Include="GalaxyCSharp">
       <HintPath>$(HollowKnightRefs)/GalaxyCSharp.dll</HintPath>

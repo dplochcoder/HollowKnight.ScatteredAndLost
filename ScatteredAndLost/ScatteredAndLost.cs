@@ -1,7 +1,9 @@
+using DecorationMaster;
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
 using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.InternalLib;
+using HK8YPlando.Scripts.Platforming;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using ItemChanger;
@@ -56,6 +58,12 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupRando() => RandoInterop.Setup();
 
+    private static void SetupDecorationMaster()
+    {
+        BumperDecoration.Register();
+        DecorationMasterUtil.RefreshItemManager();
+    }
+
     private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
@@ -66,6 +74,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
+        if (ModHooks.GetMod("DecorationMaster") is Mod) SetupDecorationMaster();
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {

@@ -1,4 +1,6 @@
-﻿using HK8YPlando.Scripts.SharedLib;
+﻿using DecorationMaster.Attr;
+using DecorationMaster.MyBehaviour;
+using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger;

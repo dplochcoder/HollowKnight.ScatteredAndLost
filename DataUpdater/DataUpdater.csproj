@@ -10,6 +10,9 @@
     <ProjectReference Include="..\ScatteredAndLost\ScatteredAndLost.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="DecorationMaster">
+      <HintPath>$(HollowKnightRefs)/Mods/DecorationMaster/DecorationMaster.dll</HintPath>
+    </Reference>
     <Reference Include="ItemChanger">
       <HintPath>$(HollowKnightRefs)/Mods/ItemChanger/ItemChanger.dll</HintPath>
     </Reference>

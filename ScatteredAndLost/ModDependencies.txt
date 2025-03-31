@@ -1,5 +1,6 @@
 CondensedSpoilerLogger
 DebugMod
+DecorationMaster
 ItemChanger
 MenuChanger
 MoreDoors

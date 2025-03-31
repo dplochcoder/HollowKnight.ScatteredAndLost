@@ -1,7 +1,11 @@
-﻿using HK8YPlando.Scripts.Framework;
+﻿using DecorationMaster;
+using DecorationMaster.Attr;
+using DecorationMaster.MyBehaviour;
+using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -25,6 +29,8 @@ internal class Bumper : MonoBehaviour, IHitResponder
     [ShimField] public float OscillatePeriod;
 
     private Vector3 origPos;
+
+    internal void SetOrigPos(Vector2 pos) => origPos = pos;
 
     private float oscillateTimer;
     private float cooldown;
@@ -69,4 +75,18 @@ internal class Bumper : MonoBehaviour, IHitResponder
         Vector3 delta = new(OscillateRadius * Mathf.Sin(2 * oscillateTimer * Mathf.PI / OscillatePeriod), 0, 0);
         transform.position = origPos + delta;
     }
+}
+
+[Description("Celeste Bumper", "en-us")]
+[Decoration("scattered_and_lost_bumper")]
+public class BumperDecoration : CustomDecoration
+{
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<BumperDecoration, ItemDef.DefaultItem>(
+        "scattered_and_lost_bumper",
+        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Bumper"),
+        "bumper");
+
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+
+    public override void HandlePos(Vector2 val) => gameObject.GetComponent<Bumper>().SetOrigPos(val);
 }
