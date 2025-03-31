@@ -42,7 +42,19 @@ internal class BubbleController : MonoBehaviour
     {
         ModHooks.TakeDamageHook += OnTakeDamage;
 
-        Trigger!.Ignore(Bubble!.GetComponent<Collider2D>());
+        var self = Bubble!.GetComponent<Collider2D>();
+        Trigger!.Ignore(c =>
+        {
+            if (c == self) return true;
+
+            var b = c.GetComponent<Bubble>();
+            if (b == null) return false;
+
+            // Ignore the collider if it doesn't own the player currently.
+            var controller = b.BubbleController!;
+            return owningBubbleController != controller;
+        });
+
         this.StartLibCoroutine(Run());
     }
 
@@ -97,8 +109,6 @@ internal class BubbleController : MonoBehaviour
     
     private IEnumerator<CoroutineElement> Run()
     {
-        var origPos = transform.position;
-
         var hc = HeroController.instance;
         var knight = hc.gameObject;
         var renderer = knight.GetComponent<MeshRenderer>();
@@ -196,7 +206,7 @@ internal class BubbleController : MonoBehaviour
             yield return Coroutines.SleepSeconds(RespawnDelay);
 
             Bubble.gameObject.PlaySound(RespawnClip!, 1, false);
-            Bubble!.transform.position = origPos;
+            Bubble!.transform.position = transform.position;
             BubbleAnimator!.runtimeAnimatorController = RespawnController;
             yield return Coroutines.SleepSeconds(RespawnCooldown);
         }
