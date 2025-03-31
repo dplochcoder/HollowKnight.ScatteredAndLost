@@ -48,6 +48,7 @@ In addition to ScatteredAndLost and its dependencies, to play the plando you wil
 - ItemChangerDataLoader
 - ItemSync
 - MoreDoors
+- RandoPlus
 - RainbowEggs
 - ReopenCityDoor
 - Scatternest
