@@ -74,3 +74,40 @@ Bretta's House: C-Side is full of infinite, super-powered soul totems that immed
 Bretta's House: C-Side supports all manners of transition rando, so long as the checkpoint system is disabled. Dreamgates can be placed all throughout the rooms for ease of re-access. All DLC rooms are considered to lie within a separate titled area, a sub-area within Dirtmouth, for the purpose of map & full-area rando.
 
 For your sanity, a shortcut gate exists at the end of the final room, allowing you to skip the final gauntlet and battle after it has been completed once.
+
+## Decoration Master Integration
+
+Scattered and Lost integrates with [Decoration Master](https://github.com/ygsbzr/HollowKnight.Decoration/tree/master), allowing you to place custom Celeste assets in Hollow Knight levels.
+
+Some assets have complicated interactions, which are documented here.
+
+### Zippers
+
+Zippers must have their path and spikes configured.
+
+- Use "Size X" and "Size Y" to set the direction and distance the zipper moves once activated.
+- Use "Set Note" to set spikes, using 1 for no spikes and 2 for spikes in clockwise order from the top.
+    - 1111 is no spikes.
+    - 2222 is all spikes.
+    - 2121 is spikes top and bottom.
+    - 1212 is spikes left and right.
+    - etc.
+
+### Switches
+
+Switches and Switch-Doors must have the same "Gate" set to function as a group.
+
+- Switch-Doors must also have "Size X" and "Size Y" set to set the direction and distance the gate moves when opened.
+- Doors will never open unless at least one Switch is assigned to them, with the same group number.
+    - If multiple doors are assigned to the same group, they will all open only when all switches are activated.
+    - Switches de-activate, and doors close, if the player takes hazard damage.
+
+### Bumpers
+
+Bumpers have no special requirements, and can be placed freely.
+
+### Bubbles
+
+Bubbles can be placed freely, but it is strongly recommended not to make them overlap. This can lead to buggy interactions.
+
+Bw careful not to place bubbles on top of the player while in noclip, and do not noclip into bubbles. It is rather buggy.
