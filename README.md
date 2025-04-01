@@ -89,9 +89,9 @@ Zippers must have their path and spikes configured.
 - Use "Set Note" to set spikes, using 1 for no spikes and 2 for spikes in clockwise order from the top.
     - 1111 is no spikes.
     - 2222 is all spikes.
-    - 2121 is spikes top and bottom.
-    - 1212 is spikes left and right.
-    - etc.
+    - 2112 is spikes top and left.
+    - 1221 is spikes right and bottom.
+    - If an invalid number is used, no spikes will appear.
 
 ### Switches
 
