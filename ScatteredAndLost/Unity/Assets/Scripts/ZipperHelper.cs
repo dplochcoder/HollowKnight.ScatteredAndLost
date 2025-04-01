@@ -1,4 +1,5 @@
 using HK8YPlando.Scripts.Lib;
+using HK8YPlando.Scripts.Platforming;
 using HK8YPlando.Scripts.SharedLib;
 using UnityEngine;
 
@@ -23,6 +24,23 @@ public class ZipperHelper : SceneDataOptimizer
 
         UnityEditorShims.MarkDirty(this);
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("FixTarget")]
+#endif
+    public void FixTarget()
+    {
+        var zipper = GetComponent<Zipper>();
+
+        var targetPos = gameObject.FindChild("TargetPos");
+        targetPos.transform.position = zipper.TargetPosition.position;
+        UnityEditorShims.MarkDirty(targetPos);
+
+        DestroyImmediate(zipper.TargetPosition.gameObject);
+        zipper.TargetPosition = targetPos.transform;
+        UnityEditorShims.MarkDirty(this);
+    }
+
 
 #if UNITY_EDITOR
     [ContextMenu("Apply")]

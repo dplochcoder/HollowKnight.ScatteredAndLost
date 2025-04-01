@@ -159,6 +159,36 @@ MonoBehaviour:
   hazardType: 2
   shadowDashHazard: 0
   resetOnEnable: 0
+--- !u!1 &1076659408016622612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7135683185205717827}
+  m_Layer: 0
+  m_Name: TargetPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7135683185205717827
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076659408016622612}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1680270584225353228}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1901026226089876639
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,6 +320,7 @@ Transform:
   - {fileID: 7516379411806430202}
   - {fileID: 5231119263664390903}
   - {fileID: 494263007077143930}
+  - {fileID: 7135683185205717827}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -318,8 +349,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 76fa35d1bbb21194c99d07ceadb48fec, type: 3}
   - {fileID: 21300000, guid: 5ec8a86b60365414abc7b84509e6f266, type: 3}
   - {fileID: 21300000, guid: 747dd02f386b16442957a1eb5abfdb47, type: 3}
-  CogFpsFast: 30
-  CogFpsSlow: 12
   RedLightSprite: {fileID: 21300000, guid: 058a93c61b65b4a47b41e66e5a89a6d4, type: 3}
   YellowLightSprite: {fileID: 21300000, guid: d88cbb6b191bd424f8ca4ae4523b7f33, type: 3}
   GreenLightSprite: {fileID: 21300000, guid: 5fa7ee2be3832c641a0c3f4c97f50da2, type: 3}
@@ -344,7 +373,7 @@ MonoBehaviour:
   Platform: {fileID: 8978783085545065232}
   BottomHurtBox: {fileID: 1099015753345659232}
   RestPosition: {fileID: 1680270584225353228}
-  TargetPosition: {fileID: 0}
+  TargetPosition: {fileID: 7135683185205717827}
   ShakeRadius: 0.15
   ShakeTime: 0.3
   StartSpeed: 40
