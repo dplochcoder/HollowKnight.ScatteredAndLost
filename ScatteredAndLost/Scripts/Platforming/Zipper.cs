@@ -37,15 +37,14 @@ internal class Zipper : MonoBehaviour
     [ShimField] public float RewindSpeed;
     [ShimField] public float RewindCooldown;
 
-    private Vector3 restPos;
-    private Vector3 targetPos;
+    private Vector3 RestPos() => RestPosition!.position;
+    private Vector3 TargetPos() => TargetPosition!.position;
+
     private List<SpriteRenderer> lineCogs = [];
     private List<GameObject> platCogs = [];
 
     private void Awake()
     {
-        restPos = RestPosition!.position;
-        targetPos = TargetPosition!.position;
         lineCogs = gameObject.FindComponentsRecursive<ZipperLineCog>().Select(b => b.gameObject.GetComponent<SpriteRenderer>()).ToList();
         platCogs = gameObject.FindComponentsRecursive<ZipperPlatformCog>().Select(b => b.gameObject).ToList();
 
@@ -54,7 +53,7 @@ internal class Zipper : MonoBehaviour
 
     private void Update()
     {
-        var pos = (Platform!.transform.position - restPos).magnitude;
+        var pos = (Platform!.transform.position - RestPos()).magnitude;
         var spriteIndex = Mathf.RoundToInt(pos * SpritesPerUnit) % CogSprites.Count;
         var rot = Quaternion.Euler(0, 0, pos * RotationPerUnit);
 
@@ -68,17 +67,18 @@ internal class Zipper : MonoBehaviour
         var audio = Platform.gameObject.AddComponent<AudioSource>();
         audio.outputAudioMixerGroup = AudioMixerGroups.Actors();
 
-        var travelDist = (targetPos - restPos).magnitude;
-        var rewindTime = travelDist / RewindSpeed;
-        var shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
-
-        bool disableBottomSpikes = BottomHurtBox!.gameObject.activeSelf && (targetPos.y - restPos.y) >= -0.1f;
         Platform.Light!.sprite = RedLightSprite!;
-
         while (true)
         {
             yield return Coroutines.SleepUntil(() => stick.PlayerAttached);
             Platform.gameObject.PlaySound(TouchClips.Random(), 0.6f);
+
+            var restPos = RestPos();
+            var targetPos = TargetPos();
+            var travelDist = (targetPos - restPos).magnitude;
+            var rewindTime = travelDist / RewindSpeed;
+            var shootTime = (Mathf.Sqrt(2 * Accel * travelDist + StartSpeed * StartSpeed) - StartSpeed) / Accel;
+            bool disableBottomSpikes = BottomHurtBox!.gameObject.activeSelf && (targetPos.y - restPos.y) >= -0.1f;
 
             Platform.Light.sprite = GreenLightSprite;
             yield return Coroutines.SleepSecondsUpdateDelta(ShakeTime, _ =>
