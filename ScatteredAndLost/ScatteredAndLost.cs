@@ -57,6 +57,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupDecorationMaster()
     {
+        SuperSoulTotemDecoration.Register();
         ZipperDecoration.Register();
         CoinDecoration.Register();
         CoinDoorDecoration.Register();
@@ -72,6 +73,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
+        SuperSoulTotemHooks.Hook();
         BumperHooks.Load();
 
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();

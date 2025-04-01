@@ -1,8 +1,9 @@
-﻿using HK8YPlando.IC;
+﻿using HK8YPlando.Scripts.Framework;
 using ItemChanger;
 using ItemChanger.Internal;
 using ItemChanger.Items;
 using ItemChanger.UIDefs;
+using PurenailCore.SystemUtil;
 using UnityEngine;
 
 namespace HK8YPlando.Rando;
@@ -70,10 +71,9 @@ internal class SuperSoulTotemItem : SoulTotemItem
                 AngleMin = 0,
                 AngleMax = 360,
             };
-            var objects = FlingUtils.SpawnAndFling(config, info.Transform ?? HeroController.SilentInstance.transform, Vector3.zero);
 
-            var mod = BrettasHouse.Get();
-            foreach (var go in objects) mod.BuffSoulOrb(go);
+            var objects = FlingUtils.SpawnAndFling(config, info.Transform ?? HeroController.SilentInstance.transform, Vector3.zero);
+            objects.ForEach(SuperSoulTotemHooks.BuffSoulOrb);
 
             prefab.SetActive(false);
         }
