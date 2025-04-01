@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace HK8YPlando.Scripts.InternalLib;
+﻿namespace HK8YPlando.Scripts.InternalLib;
 
 // Simple class for captures that wraps a primitive.
 internal class Wrapped<T>

@@ -97,7 +97,10 @@ Zippers must have their path and spikes configured.
 
 Switches and Switch-Doors must have the same "Gate" set to function as a group.
 
-- Switch-Doors must also have "Size X" and "Size Y" set to set the direction and distance the gate moves when opened.
+- Switch-Doors have a configurable size, and a configurable offset to move when opened.
+    - The distance in x-units is configured using "Color: Red"
+    - The distance in y-units is configured using "Color: Green"
+    - Decoration Master doesn't support generic property names, don't blame me
 - Doors will never open unless at least one Switch is assigned to them, with the same group number.
     - If multiple doors are assigned to the same group, they will all open only when all switches are activated.
     - Switches de-activate, and doors close, if the player takes hazard damage.

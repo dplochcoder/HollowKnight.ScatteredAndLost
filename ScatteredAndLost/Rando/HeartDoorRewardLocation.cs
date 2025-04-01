@@ -1,6 +1,5 @@
 ﻿using ItemChanger.Locations;
 using ItemChanger.Tags;
-using RandomizerMod.RandomizerData;
 
 namespace HK8YPlando.Rando;
 

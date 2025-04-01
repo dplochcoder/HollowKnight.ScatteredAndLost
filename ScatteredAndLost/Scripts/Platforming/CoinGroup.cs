@@ -1,56 +1,140 @@
-﻿using GlobalEnums;
+﻿using DecorationMaster;
+using DecorationMaster.Attr;
+using DecorationMaster.MyBehaviour;
+using GlobalEnums;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using Modding;
 using PurenailCore.GOUtil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
 
-[Shim]
-internal class CoinGroup : MonoBehaviour
+internal class CoinGroupController
 {
-    [ShimField] public AudioClip? FinishedClip;
+    private bool doorsOpened = false;
+    private bool tookDamage = false;
 
-    private List<CoinDoor> doors = [];
-    private List<Coin> coins = [];
-
-    private void Awake()
+    internal CoinGroupController()
     {
-        doors = gameObject.FindComponentsRecursive<CoinDoor>().ToList();
-        coins = gameObject.FindComponentsRecursive<Coin>().ToList();
-
         ModHooks.TakeDamageHook += OnTakeDamage;
     }
 
-    private void OnDestroy() => ModHooks.TakeDamageHook -= OnTakeDamage;
-
     private int OnTakeDamage(ref int hazardType, int damage)
     {
-        if (damage > 0 && hazardType == (int)HazardType.SPIKES + 1)
-        {
-            coins.ForEach(c => c.Deactivate());
-            doors.ForEach(d => d.Close());
-            doorsOpened = false;
-        }
-
+        if (damage > 0 && hazardType == (int)HazardType.SPIKES + 1) tookDamage = true;
         return damage;
     }
 
-    private bool doorsOpened = false;
-
-    private void Update()
+    internal void Update(IEnumerable<Coin> coins, IEnumerable<CoinDoor> coinDoors)
     {
-        if (doorsOpened) return;
-        if (coins.Any(c => !c.IsActivated())) return;
+        if (tookDamage || coins.Count() == 0)
+        {
+            tookDamage = false;
 
-        doors.ForEach(d => d.Open());
-        doors.FirstOrDefault()?.gameObject.PlaySound(FinishedClip!, 0.7f);
-        doorsOpened = true;
+            coins.ForEach(c => c.Deactivate());
+            coinDoors.ForEach(d => d.Close());
+            doorsOpened = false;
+        }
+        else if (coins.Any(c => !c.IsActivated()))
+        {
+            if (doorsOpened)
+            {
+                coinDoors.ForEach(d => d.Close());
+                doorsOpened = false;
+            }
+        }
+        else
+        {
+            if (!doorsOpened) coinDoors.FirstOrDefault()?.gameObject.PlaySound(ScatteredAndLostSceneManagerAPI.LoadPrefab<AudioClip>("game_gen_touchswitch_last"), 0.7f);
+
+            coinDoors.ForEach(d => d.Open());
+            doorsOpened = true;
+        }
     }
+
+    internal void Release() => ModHooks.TakeDamageHook -= OnTakeDamage;
+}
+
+internal class NumberedCoinGroup
+{
+    public HashSet<Coin> Coins = [];
+    public HashSet<CoinDoor> CoinDoors = [];
+    private CoinGroupController controller = new();
+
+    public bool Empty() => Coins.Count == 0 && CoinDoors.Count == 0;
+
+    public void Update() => controller.Update(Coins, CoinDoors);
+
+    public void Release() => controller.Release();
+}
+
+internal class NumberedCoinGroups : MonoBehaviour
+{
+    private Dictionary<int, NumberedCoinGroup> groups = [];
+
+    internal static NumberedCoinGroups Get()
+    {
+        var go = GameObject.Find("NumberedCoinGroups");
+        if (go == null)
+        {
+            go = new("NumberedCoinGroups");
+            go.AddComponent<NumberedCoinGroups>();
+        }
+        return go.GetComponent<NumberedCoinGroups>();
+    }
+
+    private void Update() => groups.Values.ForEach(v => v.Update());
+
+    internal void AddCoin(Coin coin) => groups.GetOrAddNew(coin.GateNumber).Coins.Add(coin);
+
+    internal void AddCoinDoor(CoinDoor coinDoor) => groups.GetOrAddNew(coinDoor.GateNumber).CoinDoors.Add(coinDoor);
+
+    internal void RemoveCoin(Coin coin)
+    {
+        if (!groups.TryGetValue(coin.GateNumber, out var group)) return;
+
+        group.Coins.Remove(coin);
+        if (group.Empty())
+        {
+            group.Release();
+            groups.Remove(coin.GateNumber);
+        }
+    }
+
+    internal void RemoveCoinDoor(CoinDoor coinDoor)
+    {
+        if (!groups.TryGetValue(coinDoor.GateNumber, out var group)) return;
+
+        group.CoinDoors.Remove(coinDoor);
+        if (group.Empty())
+        {
+            group.Release();
+            groups.Remove(coinDoor.GateNumber);
+        }
+    }
+}
+
+[Shim]
+internal class CoinGroup : MonoBehaviour
+{
+    private List<Coin> coins = [];
+    private List<CoinDoor> coinDoors = [];
+    private CoinGroupController controller = new();
+
+    private void Awake()
+    {
+        coins = gameObject.FindComponentsRecursive<Coin>().ToList();
+        coinDoors = gameObject.FindComponentsRecursive<CoinDoor>().ToList();
+    }
+
+    private void OnDestroy() => controller.Release();
+
+    private void Update() => controller.Update(coins, coinDoors);
 }
 
 [Shim]
@@ -74,6 +158,25 @@ internal class Coin : MonoBehaviour
     [ShimField] public float FlashHangTime;
     [ShimField] public float FlashAnimationSpeed;
     [ShimField] public float ActiveTransitionTime;
+
+    // Used by decoration master
+    private int? _gateNumber;
+    internal int GateNumber
+    {
+        get { return _gateNumber!.Value; }
+        set {
+            var singleton = NumberedCoinGroups.Get();
+
+            if (_gateNumber.HasValue) singleton.RemoveCoin(this);
+            _gateNumber = value;
+            singleton.AddCoin(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_gateNumber.HasValue) NumberedCoinGroups.Get().RemoveCoin(this);
+    }
 
     private Color _currentColor;
     private Color currentColor
@@ -185,6 +288,55 @@ internal class CoinDoor : MonoBehaviour
     [ShimField] public float ResetDelay;
     [ShimField] public float ResetDuration;
 
+    // Used by decoration master
+    private int? _gateNumber;
+    internal int GateNumber
+    {
+        get { return _gateNumber!.Value; }
+        set
+        {
+            var singleton = NumberedCoinGroups.Get();
+
+            if (_gateNumber.HasValue) singleton.RemoveCoinDoor(this);
+            _gateNumber = value;
+            singleton.AddCoinDoor(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_gateNumber.HasValue) NumberedCoinGroups.Get().RemoveCoinDoor(this);
+    }
+
+    private Vector3? _decoMasterPos;
+    internal void DecoMasterSetPos(Vector3 newPos)
+    {
+        if (!_decoMasterPos.HasValue)
+        {
+            _decoMasterPos = newPos;
+            srcPos = newPos;
+            destPos = srcPos + MoveOffset;
+            transform.position = srcPos;
+            return;
+        }
+
+        var delta = newPos - _decoMasterPos.Value;
+        _decoMasterPos = newPos;
+
+        srcPos += delta;
+        destPos += delta;
+        transform.position += delta;
+    }
+
+    internal void DecoMasterSetMoveOffset(Vector3 offset)
+    {
+        var dist = (transform.position - srcPos).magnitude / MoveOffset.magnitude;
+
+        MoveOffset = offset;
+        destPos = srcPos + offset;
+        transform.position = srcPos + dist * offset.normalized;
+    }
+
     private Vector3 srcPos;
     private Vector3 destPos;
 
@@ -262,5 +414,135 @@ internal class CoinDoor : MonoBehaviour
             transform.position = srcPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), destPos);
             return false;
         });
+    }
+}
+
+[Serializable]
+internal class CoinDecorationItem : Item
+{
+    [Description("Group number for switch(es) + door(s)", "en-us")]
+    [Handle(Operation.SetGate)]
+    [IntConstraint(1, 9)]
+    public int Gate { get; set; } = 1;
+}
+
+[Description("Celeste Switch", "en-us")]
+[Decoration("scattered_and_lost_switch")]
+internal class CoinDecoration : CustomDecoration
+{
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<CoinDecoration, CoinDecorationItem>(
+        "scattered_and_lost_switch",
+        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Switch"),
+        "switch");
+
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+
+    private void Start() => SetGate(((CoinDecorationItem)item).Gate);
+
+    [Handle(Operation.SetGate)]
+    public void SetGate(int gate) => gameObject.GetComponent<Coin>().GateNumber = gate;
+}
+
+[Serializable]
+internal class CoinDoorDecorationItem : Item
+{
+    [Description("Group number for switch(es) + door(s)", "en-us")]
+    [Handle(Operation.SetGate)]
+    [IntConstraint(1, 9)]
+    public int Gate { get; set; } = 1;
+
+    [Description("X-Size of block in units", "en-us")]
+    [Handle(Operation.SetSizeX)]
+    [FloatConstraint(1f, 8f)]
+    public float XScale { get; set; } = 2;
+
+    [Description("Y-Size of block in units", "en-us")]
+    [Handle(Operation.SetSizeY)]
+    [FloatConstraint(1f, 8f)]
+    public float YScale { get; set; } = 2;
+
+    [Description("Distance moved on x-axis when opened", "en-us")]
+    [Handle(Operation.SetColorR)]
+    [FloatConstraint(-20f, 20f)]
+    public float XMove { get; set; } = 0;
+
+    [Description("Distance moved on y-axis when opened", "en-us")]
+    [Handle(Operation.SetColorG)]
+    [FloatConstraint(-20f, 20f)]
+    public float YMove { get; set; } = 2;
+}
+
+[Description("Celeste Switch Door", "en-us")]
+[Decoration("scattered_and_lost_switch_door")]
+internal class CoinDoorDecoration : CustomDecoration
+{
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<CoinDoorDecoration, CoinDoorDecorationItem>(
+        "scattered_and_lost_switch_door",
+        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("SSwitchDoor"),
+        "switchdoor");
+
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+
+    private const float SCALE_MULTIPLIER = 5f / 12;
+
+    private (GameObject, BoxCollider2D) GetBlockAndTerrain()
+    {
+        var block = gameObject.FindChild("ShakeBase").FindChild("Block");
+        var terrain = gameObject.FindChild("Terrain").GetComponent<BoxCollider2D>();
+        return (block, terrain);
+    }
+
+    private void Start()
+    {
+        var itemTyped = (CoinDoorDecorationItem)item;
+
+        var coinDoor = gameObject.GetComponent<CoinDoor>();
+        coinDoor.GateNumber = itemTyped.Gate;
+        coinDoor.DecoMasterSetMoveOffset(new(itemTyped.XMove, itemTyped.YMove));
+
+        var (block, terrain) = GetBlockAndTerrain();
+        block.transform.localScale = new(itemTyped.XScale * SCALE_MULTIPLIER, itemTyped.YScale * SCALE_MULTIPLIER);
+        terrain.size = new(itemTyped.XScale, itemTyped.YScale);
+    }
+
+    public override void HandlePos(Vector2 val) => gameObject.GetComponent<CoinDoor>().DecoMasterSetPos(val);
+
+    [Handle(Operation.SetGate)]
+    public void SetGate(int gate) => gameObject.GetComponent<CoinDoor>().GateNumber = gate;
+
+    [Handle(Operation.SetSizeX)]
+    public void SetXScale(float x)
+    {
+        var (block, terrain) = GetBlockAndTerrain();
+        block.transform.SetScaleX(x * 5f / 12f);
+        terrain.size = new(2 * x, terrain.size.y);
+    }
+
+    [Handle(Operation.SetSizeY)]
+    public void SetYScale(float y)
+    {
+        var (block, terrain) = GetBlockAndTerrain();
+        block.transform.SetScaleY(y * 5f / 12f);
+        terrain.size = new(terrain.size.x, y);
+    }
+
+    [Handle(Operation.SetColorR)]
+    public void SetXMove(float x)
+    {
+        var coinDoor = gameObject.GetComponent<CoinDoor>();
+
+        var offset = coinDoor.MoveOffset;
+        offset.x = x;
+        coinDoor.DecoMasterSetMoveOffset(offset);
+    }
+
+    [Handle(Operation.SetColorG)]
+    public void SetYMove(float y)
+    {
+        var coinDoor = gameObject.GetComponent<CoinDoor>();
+
+        var offset = coinDoor.MoveOffset;
+        offset.y = y;
+        coinDoor.DecoMasterSetMoveOffset(offset);
     }
 }

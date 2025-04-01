@@ -1,4 +1,3 @@
-using DecorationMaster;
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
 using HK8YPlando.Scripts.Framework;
@@ -18,8 +17,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using static Mono.Security.X509.X520;
 
 namespace HK8YPlando;
 
@@ -60,6 +57,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupDecorationMaster()
     {
+        CoinDecoration.Register();
+        CoinDoorDecoration.Register();
         BumperDecoration.Register();
         BubbleDecoration.Register();
 

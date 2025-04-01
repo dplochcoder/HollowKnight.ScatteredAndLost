@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: e9e047b3683adc847b8a01b1ea86ed0b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 1741401796932051623}
   - component: {fileID: 2161424670637596387}
   m_Layer: 0
-  m_Name: SCoinDoor
+  m_Name: SSwitchDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
