@@ -426,7 +426,7 @@ internal class CoinDecorationItem : Item
     public int Gate { get; set; } = 1;
 }
 
-[Description("Celeste Switch", "en-us")]
+[Description("Celeste Switch\nSet gate number to match doors", "en-us")]
 [Decoration("scattered_and_lost_switch")]
 internal class CoinDecoration : CustomDecoration
 {
@@ -472,7 +472,7 @@ internal class CoinDoorDecorationItem : Item
     public float YMove { get; set; } = 2;
 }
 
-[Description("Celeste Switch Door", "en-us")]
+[Description("Celeste Switch Door\nSet gate number to match switches\nSet open direction (x, y) using R and G", "en-us")]
 [Decoration("scattered_and_lost_switch_door")]
 internal class CoinDoorDecoration : CustomDecoration
 {
