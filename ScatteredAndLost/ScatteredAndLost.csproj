@@ -75,6 +75,7 @@
     <None Remove="Resources\Sprites\bumper.png" />
     <None Remove="Resources\Sprites\switch.png" />
     <None Remove="Resources\Sprites\switchdoor.png" />
+    <None Remove="Resources\Sprites\zipper.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fmod5Sharp" Version="3.0.1" />

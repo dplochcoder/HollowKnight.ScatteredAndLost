@@ -57,6 +57,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupDecorationMaster()
     {
+        ZipperDecoration.Register();
         CoinDecoration.Register();
         CoinDoorDecoration.Register();
         BumperDecoration.Register();

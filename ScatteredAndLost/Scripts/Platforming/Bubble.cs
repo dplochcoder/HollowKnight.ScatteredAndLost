@@ -257,7 +257,7 @@ internal class Bubble : MonoBehaviour
     }
 }
 
-[Description("Celeste Bumper", "en-us")]
+[Description("Celeste Bubble\nDo not overlap with other bubbles", "en-us")]
 [Decoration("scattered_and_lost_bubble")]
 internal class BubbleDecoration : CustomDecoration
 {

@@ -1,7 +1,11 @@
-﻿using HK8YPlando.Scripts.Environment;
+﻿using DecorationMaster;
+using DecorationMaster.Attr;
+using DecorationMaster.MyBehaviour;
+using HK8YPlando.Scripts.Environment;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -137,4 +141,119 @@ internal class ZipperPlatform : MonoBehaviour
 {
     [ShimField] public GameObject? SpriteShaker;
     [ShimField] public SpriteRenderer? Light;
+}
+
+[Serializable]
+internal class ZipperDecorationItem : Item
+{
+    [Description("X-Distance to move when activated","en-us")]
+    [Handle(Operation.SetSizeX)]
+    [FloatConstraint(-40, 40)]
+    public float XMove { get; set; } = 6;
+
+    [Description("Y-Distance to move when activated", "en-us")]
+    [Handle(Operation.SetSizeY)]
+    [FloatConstraint(-40, 40)]
+    public float YMove { get; set; } = 0;
+
+    [Handle(Operation.SetColorA)]
+    [IntConstraint(0, 1)]
+    public int TopSpikes { get; set; } = 0;
+
+    [Handle(Operation.SetColorR)]
+    [IntConstraint(0, 1)]
+    public int RightSpikes { get; set; } = 1;
+
+    [Handle(Operation.SetColorG)]
+    [IntConstraint(0, 1)]
+    public int BotSpikes { get; set; } = 1;
+
+    [Handle(Operation.SetColorB)]
+    [IntConstraint(0, 1)]
+    public int LeftSpikes { get; set; } = 1;
+}
+
+[Description("Celeste Zipper\nSet distance with XMove and YMove\nSet spikes with 1", "en-us")]
+[Decoration("scattered_and_lost_zipper")]
+internal class ZipperDecoration : CustomDecoration
+{
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<ZipperDecoration, ZipperDecorationItem>(
+        "scattered_and_lost_zipper",
+        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Zipper"),
+        "zipper");
+
+    private void Awake()
+    {
+        UnVisableBehaviour.AttackReact.Create(gameObject);
+        UpdateZipline();
+    }
+
+    private void Start()
+    {
+        var itemTyped = (ZipperDecorationItem)item;
+
+        var zipper = gameObject.GetComponent<Zipper>();
+        zipper.TargetPosition!.position = new(itemTyped.XMove, itemTyped.YMove);
+        ZipperLib.UpdateZipperAssets(gameObject, itemTyped.TopSpikes == 1, itemTyped.RightSpikes == 1, itemTyped.BotSpikes == 1, itemTyped.LeftSpikes == 1, _ => { });
+    }
+
+    public override void HandlePos(Vector2 val)
+    {
+        var zipper = gameObject.GetComponent<Zipper>();
+        var delta = zipper.TargetPosition!.position - zipper.RestPosition!.position;
+
+        zipper.transform.position = val;
+        zipper.RestPosition.position = val;
+        zipper.TargetPosition.position = val.To3d() + delta;
+    }
+
+    private void UpdateZipline()
+    {
+        var (top, right, bot, left) = ZipperLib.LoadSpikes(gameObject);
+        ZipperLib.UpdateZipperAssets(gameObject, top, right, bot, left, _ => { });
+    }
+
+    [Handle(Operation.SetSizeX)]
+    public void SetXMove(float x)
+    {
+        var target = gameObject.GetComponent<Zipper>().TargetPosition!;
+        target.localPosition = new(x, target.localPosition.y, target.localPosition.z);
+        UpdateZipline();
+    }
+
+    [Handle(Operation.SetSizeY)]
+    public void SetYMove(float y)
+    {
+        var target = gameObject.GetComponent<Zipper>().TargetPosition!;
+        target.localPosition = new(target.localPosition.x, y, target.localPosition.z);
+        UpdateZipline();
+    }
+
+    [Handle(Operation.SetColorA)]
+    public void SetTopSpikes(int value)
+    {
+        var (_, right, bot, left) = ZipperLib.LoadSpikes(gameObject);
+        ZipperLib.UpdateZipperAssets(gameObject, value == 1, right, bot, left, _ => { });
+    }
+
+    [Handle(Operation.SetColorR)]
+    public void SetRightSpikes(int value)
+    {
+        var (top, _, bot, left) = ZipperLib.LoadSpikes(gameObject);
+        ZipperLib.UpdateZipperAssets(gameObject, top, value == 1, bot, left, _ => { });
+    }
+
+    [Handle(Operation.SetColorG)]
+    public void SetBotSpikes(int value)
+    {
+        var (top, right, _, left) = ZipperLib.LoadSpikes(gameObject);
+        ZipperLib.UpdateZipperAssets(gameObject, top, right, value == 1, left, _ => { });
+    }
+
+    [Handle(Operation.SetColorB)]
+    public void SetLeftSpikes(int value)
+    {
+        var (top, right, bot, _) = ZipperLib.LoadSpikes(gameObject);
+        ZipperLib.UpdateZipperAssets(gameObject, top, right, bot, value == 1, _ => { });
+    }
 }

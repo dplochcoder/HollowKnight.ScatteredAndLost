@@ -464,15 +464,15 @@ internal class CoinDoorDecorationItem : Item
     [Description("Distance moved on x-axis when opened", "en-us")]
     [Handle(Operation.SetColorR)]
     [FloatConstraint(-20f, 20f)]
-    public float XMove { get; set; } = 0;
+    public float XOpen { get; set; } = 0;
 
     [Description("Distance moved on y-axis when opened", "en-us")]
     [Handle(Operation.SetColorG)]
     [FloatConstraint(-20f, 20f)]
-    public float YMove { get; set; } = 2;
+    public float YOpen { get; set; } = 2;
 }
 
-[Description("Celeste Switch Door\nSet gate number to match switches\nSet open direction (x, y) using R and G", "en-us")]
+[Description("Celeste Switch Door\nSet gate number to match switches\nSet XOpen and YOpen for gate direction\nWill not open without switches", "en-us")]
 [Decoration("scattered_and_lost_switch_door")]
 internal class CoinDoorDecoration : CustomDecoration
 {
@@ -498,7 +498,7 @@ internal class CoinDoorDecoration : CustomDecoration
 
         var coinDoor = gameObject.GetComponent<CoinDoor>();
         coinDoor.GateNumber = itemTyped.Gate;
-        coinDoor.DecoMasterSetMoveOffset(new(itemTyped.XMove, itemTyped.YMove));
+        coinDoor.DecoMasterSetMoveOffset(new(itemTyped.XOpen, itemTyped.YOpen));
 
         var (block, terrain) = GetBlockAndTerrain();
         block.transform.localScale = new(itemTyped.XScale * SCALE_MULTIPLIER, itemTyped.YScale * SCALE_MULTIPLIER);
@@ -514,15 +514,15 @@ internal class CoinDoorDecoration : CustomDecoration
     public void SetXScale(float x)
     {
         var (block, terrain) = GetBlockAndTerrain();
-        block.transform.SetScaleX(x * 5f / 12f);
-        terrain.size = new(2 * x, terrain.size.y);
+        block.transform.SetScaleX(x * SCALE_MULTIPLIER);
+        terrain.size = new(x, terrain.size.y);
     }
 
     [Handle(Operation.SetSizeY)]
     public void SetYScale(float y)
     {
         var (block, terrain) = GetBlockAndTerrain();
-        block.transform.SetScaleY(y * 5f / 12f);
+        block.transform.SetScaleY(y * SCALE_MULTIPLIER);
         terrain.size = new(terrain.size.x, y);
     }
 

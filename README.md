@@ -79,38 +79,6 @@ For your sanity, a shortcut gate exists at the end of the final room, allowing y
 
 Scattered and Lost integrates with [Decoration Master](https://github.com/ygsbzr/HollowKnight.Decoration/tree/master), allowing you to place custom Celeste assets in Hollow Knight levels.
 
-Some assets have complicated interactions, which are documented here.
+See in-game documentation for how to make more complex objects like Zippers and Switches+Doors work. Bubbles, Bumpers, and Super Soul Totems have no customizable properties.
 
-### Zippers
-
-Zippers must have their path and spikes configured.
-
-- Use "Size X" and "Size Y" to set the direction and distance the zipper moves once activated.
-- Use "Set Note" to set spikes, using 1 for no spikes and 2 for spikes in clockwise order from the top.
-    - 1111 is no spikes.
-    - 2222 is all spikes.
-    - 2112 is spikes top and left.
-    - 1221 is spikes right and bottom.
-    - If an invalid number is used, no spikes will appear.
-
-### Switches
-
-Switches and Switch-Doors must have the same "Gate" set to function as a group.
-
-- Switch-Doors have a configurable size, and a configurable offset to move when opened.
-    - The distance in x-units is configured using "Color: Red"
-    - The distance in y-units is configured using "Color: Green"
-    - Decoration Master doesn't support generic property names, don't blame me
-- Doors will never open unless at least one Switch is assigned to them, with the same group number.
-    - If multiple doors are assigned to the same group, they will all open only when all switches are activated.
-    - Switches de-activate, and doors close, if the player takes hazard damage.
-
-### Bumpers
-
-Bumpers have no special requirements, and can be placed freely.
-
-### Bubbles
-
-Bubbles can be placed freely, but it is strongly recommended not to make them overlap. This can lead to buggy interactions.
-
-Bw careful not to place bubbles on top of the player while in noclip, and do not noclip into bubbles. It is rather buggy.
+Expect buggy behavior if you do weird things, like making Bubbles or Bumpers overlap.

@@ -76,7 +76,7 @@ internal class Bumper : MonoBehaviour, IHitResponder
     }
 }
 
-[Description("Celeste Bumper", "en-us")]
+[Description("Celeste Bumper\nEnjoy Bouncy Knight", "en-us")]
 [Decoration("scattered_and_lost_bumper")]
 public class BumperDecoration : CustomDecoration
 {
