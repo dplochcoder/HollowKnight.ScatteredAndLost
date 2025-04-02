@@ -79,6 +79,6 @@ For your sanity, a shortcut gate exists at the end of the final room, allowing y
 
 Scattered and Lost integrates with [Decoration Master](https://github.com/ygsbzr/HollowKnight.Decoration/tree/master), allowing you to place custom Celeste assets in Hollow Knight levels.
 
-See in-game documentation for how to make more complex objects like Zippers and Switches+Doors work. Bubbles, Bumpers, and Super Soul Totems have no customizable properties.
+See in-game documentation for how to make more complex objects like Zippers and Switches+Doors work. Bubbles, Bumpers, and Super Soul Totems have no customizable properties. Expect buggy behavior if you do weird things, like making Bubbles or Bumpers overlap.
 
-Expect buggy behavior if you do weird things, like making Bubbles or Bumpers overlap.
+See [the showcase](https://www.youtube.com/watch?v=cADrYRvhaxI) for a demonstration of how to place Celeste assets.  See [fireb0rn's video](https://www.youtube.com/watch?v=-04JcalmOtg) for how to set up Decoration Master in general.
