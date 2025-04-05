@@ -182,11 +182,7 @@ internal class ZipperDecoration : CustomDecoration
         ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Zipper"),
         "zipper");
 
-    private void Awake()
-    {
-        UnVisableBehaviour.AttackReact.Create(gameObject);
-        UpdateZipline();
-    }
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 
     private void Start()
     {
