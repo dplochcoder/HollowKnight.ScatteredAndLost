@@ -40,12 +40,7 @@ internal class SuperSoulTotemItem : SoulTotemItem
 
     public override void GiveImmediate(GiveInfo info)
     {
-        if (info.Container != SuperSoulTotemContainer.ContainerName && info.Container != Container.Totem)
-        {
-            PlayerData.instance.AddMPCharge(FULL_SOUL);
-            PlayerData.instance.AddHealth(FULL_HEAL);
-        }
-        else if (HeroController.SilentInstance == null)
+        if (HeroController.SilentInstance == null || (info.Container != SuperSoulTotemContainer.ContainerName && info.Container != Container.Totem))
         {
             PlayerData.instance.AddMPCharge(FULL_SOUL);
             PlayerData.instance.AddHealth(FULL_HEAL);
