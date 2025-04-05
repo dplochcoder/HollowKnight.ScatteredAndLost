@@ -73,7 +73,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
-        SuperSoulTotemHooks.Hook();
+        SuperSoulTotemHooks.Load();
         BumperHooks.Load();
 
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();

@@ -39,11 +39,11 @@ internal class BumperSpeedBehaviour : MonoBehaviour
 
     public void BumpHorizontal(float velocity, float decel)
     {
-        // TODO: grounded
-
         var cState = HeroController.instance.cState;
         horzVelocity = velocity * (cState.facingRight ? -1 : 1);
         this.decel = decel;
+
+        BumperHooks.UpdateVelocity(gameObject.GetComponent<Rigidbody2D>());
     }
 
     internal void Reset() => horzVelocity = 0;
@@ -76,14 +76,26 @@ internal static class BumperHooks
 
     private static void OverrideMethod(ILContext il)
     {
+        int gets = 0;
+        int sets = 0;
         ILCursor cursor = new(il);
 
         cursor.Goto(0);
         do
         {
-            if (cursor.Next.MatchCallvirt<Rigidbody2D>("get_velocity")) cursor.Remove().EmitDelegate(OverrideGetVelocity);
-            else if (cursor.Next.MatchCallvirt<Rigidbody2D>("set_velocity")) cursor.Remove().EmitDelegate(OverrideSetVelocity);
+            if (cursor.Next.MatchCallvirt<Rigidbody2D>("get_velocity"))
+            {
+                cursor.Remove().EmitDelegate(OverrideGetVelocity);
+                gets++;
+            }
+            else if (cursor.Next.MatchCallvirt<Rigidbody2D>("set_velocity"))
+            {
+                cursor.Remove().EmitDelegate(OverrideSetVelocity);
+                sets++;
+            }
         } while (cursor.TryGotoNext(i => true));
+
+        ScatteredAndLostMod.LogError($"BUG-HUNT: {il.Method.Name}: ({gets}, {sets})");
     }
 
     internal static void BumpUp(float scale)
@@ -122,6 +134,8 @@ internal static class BumperHooks
         behaviour?.BumpHorizontal(velocity, decel);
     }
 
+    // Last recorded delta between dictated velocity and actual velocity.
+    // Dictated + delta = actual
     private static Vector2 previousDelta = Vector2.zero;
 
     private static Vector2 CalculateDelta() => behaviour?.VelocityDelta() ?? Vector2.zero;
@@ -147,7 +161,6 @@ internal static class BumperHooks
         orig(self);
         if (self.space == Space.World && self.Owner.name == "Knight")
         {
-            var prevVel = self.vector.Value;
             var newVel = self.vector.Value - previousDelta;
 
             self.vector.Value = newVel;
