@@ -264,7 +264,7 @@ internal class BubbleDecorationItem : Item
 {
     [Handle(Operation.SetColorA)]
     [Description("Bubble movement speed", "en-us")]
-    [FloatConstraint(4, 60)]
+    [FloatConstraint(4, 40)]
     public float Velocity { get; set; } = 24;
 }
 
