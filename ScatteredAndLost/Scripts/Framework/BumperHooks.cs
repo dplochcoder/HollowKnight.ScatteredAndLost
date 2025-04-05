@@ -95,7 +95,7 @@ internal static class BumperHooks
             }
         } while (cursor.TryGotoNext(i => true));
 
-        ScatteredAndLostMod.LogError($"BUG-HUNT: {il.Method.Name}: ({gets}, {sets})");
+        if (gets > 0 || sets > 0) ScatteredAndLostMod.LogError($"BUG-HUNT: {il.Method.Name}: ({gets}, {sets})");
     }
 
     internal static void BumpUp(float scale)
