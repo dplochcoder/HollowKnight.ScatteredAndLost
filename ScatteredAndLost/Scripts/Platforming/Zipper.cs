@@ -189,7 +189,7 @@ internal class ZipperDecoration : CustomDecoration
         var itemTyped = (ZipperDecorationItem)item;
 
         var zipper = gameObject.GetComponent<Zipper>();
-        zipper.TargetPosition!.position = new(itemTyped.XMove, itemTyped.YMove);
+        zipper.TargetPosition!.localPosition = new(itemTyped.XMove, itemTyped.YMove);
         ZipperLib.UpdateZipperAssets(gameObject, itemTyped.TopSpikes == 1, itemTyped.RightSpikes == 1, itemTyped.BotSpikes == 1, itemTyped.LeftSpikes == 1, _ => { });
     }
 
