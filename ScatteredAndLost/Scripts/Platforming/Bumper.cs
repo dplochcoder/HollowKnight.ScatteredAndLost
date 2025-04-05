@@ -4,6 +4,7 @@ using DecorationMaster.MyBehaviour;
 using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -76,11 +77,14 @@ internal class Bumper : MonoBehaviour, IHitResponder
     }
 }
 
+[Serializable]
+public class BumperDecorationItem : Item { }
+
 [Description("Celeste Bumper\nEnjoy Bouncy Knight", "en-us")]
 [Decoration("scattered_and_lost_bumper")]
 public class BumperDecoration : CustomDecoration
 {
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<BumperDecoration, ItemDef.DefaultItem>(
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<BumperDecoration, BumperDecorationItem>(
         "scattered_and_lost_bumper",
         ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Bumper"),
         "bumper");
