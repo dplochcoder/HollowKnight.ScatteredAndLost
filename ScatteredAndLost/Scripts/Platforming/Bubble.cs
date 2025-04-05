@@ -7,6 +7,7 @@ using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using Modding;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -226,6 +227,7 @@ internal class BubbleController : MonoBehaviour
     private void FixedUpdate()
     {
         if (owningBubbleController == this) HeroController.instance.gameObject.transform.position = Bubble!.transform.position + KnightOffset;
+        if (RigidBody!.simulated) RigidBody.velocity = RigidBody.velocity.normalized * Speed;
     }
 }
 
@@ -257,14 +259,28 @@ internal class Bubble : MonoBehaviour
     }
 }
 
+[Serializable]
+internal class BubbleDecorationItem : Item
+{
+    [Handle(Operation.SetColorA)]
+    [Description("Bubble movement speed", "en-us")]
+    [FloatConstraint(4, 60)]
+    public float Velocity { get; set; } = 24;
+}
+
 [Description("Celeste Bubble\nDo not overlap with other bubbles", "en-us")]
 [Decoration("scattered_and_lost_bubble")]
 internal class BubbleDecoration : CustomDecoration
 {
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<BubbleDecoration, ItemDef.DefaultItem>(
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<BubbleDecoration, BubbleDecorationItem>(
         "scattered_and_lost_bubble",
         ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("BubbleController"),
         "bubble");
 
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+
+    private void Start() => SetVelocity(((BubbleDecorationItem)item).Velocity);
+
+    [Handle(Operation.SetColorA)]
+    public void SetVelocity(float v) => gameObject.GetComponent<BubbleController>().Speed = v;
 }
