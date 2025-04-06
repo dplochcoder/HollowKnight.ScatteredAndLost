@@ -30,7 +30,7 @@ internal class SuperSoulTotemItem : SoulTotemItem
         {
             name = new BoxedString(NAME),
             shopDesc = new BoxedString("This one's got a little extra juice in it."),
-            sprite = new ItemChangerSprite("ShopIcons.Soul"),
+            sprite = new IC.EmbeddedSprite("soul"),
         };
     }
 

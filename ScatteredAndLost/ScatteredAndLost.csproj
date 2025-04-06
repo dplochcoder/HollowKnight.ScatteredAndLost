@@ -71,14 +71,6 @@
     <EmbeddedResource Include="Resources\**\*.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Resources\Sprites\bubble.png" />
-    <None Remove="Resources\Sprites\bumper.png" />
-    <None Remove="Resources\Sprites\super_soul_totem.png" />
-    <None Remove="Resources\Sprites\switch.png" />
-    <None Remove="Resources\Sprites\switchdoor.png" />
-    <None Remove="Resources\Sprites\zipper.png" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Fmod5Sharp" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
