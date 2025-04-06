@@ -6,7 +6,7 @@
   "BrettaHouseBubbles6": "BrettaHouseBubbles5 + FULLDASH + RIGHTSUPERDASH + RIGHTCLAW + WINGS + LEFTSLASH + UPSLASH",
   "BrettaHouseBumpers2": "BrettaHouseBumpers[right1] + FULLDASH + FULLCLAW + WINGS",
   "BrettaHouseBumpers3": "BrettaHouseBumpers2 + LEFTDASH + ANYCLAW + WINGS + RIGHTSLASH",
-  "BrettaHouseSwitches2": "BrettaHouseSwitches[right1] + WINGS",
+  "BrettaHouseSwitches2": "BrettaHouseSwitches[right1] + (WINGS | LEFTCLAW + RIGHTDASH)",
   "BrettaHouseSwitches3": "BrettaHouseSwitches2 + WINGS + (UPSLASH | $SHRIEKPOGO[1])",
   "BrettaHouseSwitches4": "BrettaHouseSwitches3 + (MARKOFPRIDE + SIDESLASH | GREATSLASH | CYCLONE | ANYDASHSLASH) + ANYCLAW + WINGS",
   "BrettaHouseSwitches5": "BrettaHouseSwitches4 + FULLCLAW + WINGS + (LEFTDASH | LEFTSUPERDASH)",

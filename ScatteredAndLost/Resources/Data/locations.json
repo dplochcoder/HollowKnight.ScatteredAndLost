@@ -213,7 +213,7 @@
       "flingType": "Everywhere",
       "tags": null
     },
-    "Logic": "BrettaHouseSwitches[right1]"
+    "Logic": "BrettaHouseSwitches[right1] + (ANYCLAW | WINGS)"
   },
   "Soul_Totem-BrettaHouseSwitches_2": {
     "Checkpoint": "Switches",
