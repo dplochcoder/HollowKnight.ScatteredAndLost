@@ -81,7 +81,10 @@ internal class TraitorLords : MonoBehaviour
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION OUT");
 
-        Events.OnSceneChange += FinishGodhomeTransition;
+        // Self deleting subscriber.
+        Deferred<Action<Scene>> finishGodhomeTransition = new();
+        finishGodhomeTransition.Do(a => Events.OnSceneChange += a);
+        finishGodhomeTransition.Set(scene => FinishGodhomeTransition(finishGodhomeTransition, scene));
         yield return Coroutines.SleepSeconds(1.5f);
 
         // Finish the transition in the next scene.
@@ -359,11 +362,12 @@ internal class TraitorLords : MonoBehaviour
     private static GameObject ggBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
             .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
 
-    private void FinishGodhomeTransition(Scene scene)
+    private void FinishGodhomeTransition(Deferred<Action<Scene>> self, Scene scene)
     {
         var transitions = Instantiate(ggBattleTransitions);
-        transitions.AddComponent<OnDestroyHook>().Action = () => Events.OnSceneChange -= FinishGodhomeTransition;
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION IN");
+
+        self.Do(a => Events.OnSceneChange -= a);
     }
 }
