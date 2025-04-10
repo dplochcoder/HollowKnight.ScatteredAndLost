@@ -37,9 +37,9 @@ internal class TraitorLords : MonoBehaviour
 
     private void Awake() => this.StartLibCoroutine(Run());
 
-    private PlayMakerFSM? traitor1;
+    private Deferred<PlayMakerFSM> traitor1 = new();
     private bool traitor1Dead;
-    private PlayMakerFSM? traitor2;
+    private Deferred<PlayMakerFSM> traitor2 = new();
     private bool traitor2Dead;
 
     private IEnumerator<CoroutineElement> Run()
@@ -55,18 +55,18 @@ internal class TraitorLords : MonoBehaviour
 
         yield return Coroutines.SleepSeconds(StartDelay);
 
-        traitor1 = SpawnTraitorLord(Spawn1!.transform.position, Spawn1FacingRight, () =>
+        traitor1.Set(SpawnTraitorLord(Spawn1!.transform.position, Spawn1FacingRight, () =>
         {
             traitor1Dead = true;
-            if (!traitor2Dead && traitor2 != null) RageMode(traitor2);
-        });
+            if (!traitor2Dead) traitor2.Do(RageMode);
+        }));
 
         yield return Coroutines.SleepSeconds(SpawnDelay);
-        traitor2 = SpawnTraitorLord(Spawn2!.transform.position, Spawn2FacingRight, () =>
+        traitor2.Set(SpawnTraitorLord(Spawn2!.transform.position, Spawn2FacingRight, () =>
         {
             traitor2Dead = true;
-            if (!traitor1Dead) RageMode(traitor1);
-        });
+            if (!traitor1Dead) traitor1.Do(RageMode);
+        }));
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
         PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
