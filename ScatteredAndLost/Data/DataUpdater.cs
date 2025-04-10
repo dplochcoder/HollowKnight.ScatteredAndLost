@@ -91,13 +91,28 @@ public static class DataUpdater
 
     private static void GenerateUnityShimsImpl(string root)
     {
-        typeof(DataUpdater).Assembly.GetTypes().Where(t => t.IsDefined(typeof(Shim), false)).ForEach(type => GenerateShimFile(type, root));
+        typeof(DataUpdater).Assembly.GetTypes().Where(t => t.IsDefined(typeof(Shim), false)).ForEach(type =>
+        {
+            try { GenerateShimFile(type, root); }
+            catch (Exception ex) { throw new Exception($"Failed to generate {type.Name}", ex); }
+        });
     }
 
     private static Func<string> DeferredGenerateUnityShims(string root)
     {
         var path = $"{root}/UnityScriptShims/Scripts/Generated";
         return DeferredGenerateDirectory(path, GenerateUnityShimsImpl);
+    }
+
+    private static HashSet<Type> validTypes = [];
+
+    private static void ValidateType(Type type)
+    {
+        if (validTypes.Contains(type)) return;
+
+        if (type.Assembly.GetName().Name == "Assembly-CSharp") throw new ArgumentException($"Cannot reference Assembly-CSharp type {type.Name} directly");
+        type.GenericTypeArguments.ForEach(ValidateType);
+        validTypes.Add(type);
     }
 
     private static void GenerateShimFile(Type type, string dir)
@@ -111,6 +126,8 @@ public static class DataUpdater
         string path = $"{pathDir}/{type.Name}.cs";
 
         var baseType = type.GetCustomAttribute<Shim>()?.baseType ?? typeof(MonoBehaviour);
+        ValidateType(baseType);
+
         string header;
         List<string> fieldStrs = [];
         List<string> attrStrs = [];
@@ -160,7 +177,11 @@ public static class DataUpdater
         WriteSourceCode(path, content);
     }
 
-    private static string RequireComponentStr(string ns, Type type) => $"[UnityEngine.RequireComponent(typeof({PrintType(ns, type)}))]";
+    private static string RequireComponentStr(string ns, Type type)
+    {
+        ValidateType(type);
+        return $"[UnityEngine.RequireComponent(typeof({PrintType(ns, type)}))]";
+    }
 
     private static void WriteSourceCode(string path, string content)
     {
@@ -181,6 +202,7 @@ public static class DataUpdater
 
     private static string PrintType(string ns, Type t)
     {
+        ValidateType(t);
         string s = PrintTypeImpl(ns, t);
 
         if (s.ConsumePrefix($"{ns}.", out string trimmed)) return trimmed;
@@ -189,6 +211,7 @@ public static class DataUpdater
 
     private static string PrintTypeImpl(string ns, Type t)
     {
+        ValidateType(t);
         if (!t.IsGenericType)
         {
             if (t == typeof(bool)) return "bool";

@@ -14,7 +14,7 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.AudioClip RewindLoop;
         public System.Collections.Generic.List<UnityEngine.AudioClip> ResetClips;
         public ZipperPlatform Platform;
-        public DamageHero BottomHurtBox;
+        public UnityEngine.GameObject BottomHurtBox;
         public UnityEngine.Transform RestPosition;
         public UnityEngine.Transform TargetPosition;
         public float ShakeRadius;

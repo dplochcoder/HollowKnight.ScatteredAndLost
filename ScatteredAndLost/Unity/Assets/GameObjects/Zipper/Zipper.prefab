@@ -371,7 +371,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 15a3339f4fb9e6b4b8e783b35dc12ac0, type: 3}
   - {fileID: 8300000, guid: 565e8cf535205d747af56a65537e25a0, type: 3}
   Platform: {fileID: 8978783085545065232}
-  BottomHurtBox: {fileID: 1099015753345659232}
+  BottomHurtBox: {fileID: 8795364364724622660}
   RestPosition: {fileID: 1680270584225353228}
   TargetPosition: {fileID: 7135683185205717827}
   ShakeRadius: 0.15
@@ -394,9 +394,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TopSpikes: 0
-  LeftSpikes: 0
   RightSpikes: 0
   BotSpikes: 0
+  LeftSpikes: 0
 --- !u!114 &3687425187559273390
 MonoBehaviour:
   m_ObjectHideFlags: 0
