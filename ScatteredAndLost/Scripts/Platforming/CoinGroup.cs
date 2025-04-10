@@ -450,7 +450,7 @@ internal class CoinDoorDecorationItem : Item
 {
     [Description("Group number for switch(es) + door(s)", "en-us")]
     [Handle(Operation.SetGate)]
-    [IntConstraint(1, MAX_GROUP)]
+    [IntConstraint(1, CoinDecorationItem.MAX_GROUP)]
     public int Gate { get; set; } = 1;
 
     [Description("X-Size of block in units", "en-us")]
