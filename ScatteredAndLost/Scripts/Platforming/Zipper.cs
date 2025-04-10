@@ -148,12 +148,12 @@ internal class ZipperDecorationItem : Item
 {
     [Description("X-Distance to move when activated","en-us")]
     [Handle(Operation.SetSizeX)]
-    [FloatConstraint(-40, 40)]
+    [FloatConstraint(-50, 50)]
     public float XMove { get; set; } = 6;
 
     [Description("Y-Distance to move when activated", "en-us")]
     [Handle(Operation.SetSizeY)]
-    [FloatConstraint(-40, 40)]
+    [FloatConstraint(-50, 50)]
     public float YMove { get; set; } = 0;
 
     [Handle(Operation.SetColorA)]
