@@ -48,6 +48,7 @@ internal class TraitorLords : MonoBehaviour
         Destroy(GameObject.Find("/_Transition Gates/top1")!);
 
         yield return Coroutines.SleepUntil(() => Trigger!.Detected());
+        PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
 
         var mod = BrettasHouse.Get();
         mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
@@ -68,6 +69,7 @@ internal class TraitorLords : MonoBehaviour
         });
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
+        PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
         TempleMusicManager.Get()?.FadeOut(5f);
 
         mod.DefeatedBrettorLords = true;
