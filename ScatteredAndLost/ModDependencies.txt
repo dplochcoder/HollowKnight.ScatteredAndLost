@@ -3,7 +3,6 @@ DebugMod
 DecorationMaster
 ItemChanger
 MenuChanger
-MoreDoors
 PurenailCore
 Randomizer 4
 RandomizerCore

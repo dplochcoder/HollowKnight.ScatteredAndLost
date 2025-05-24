@@ -26,12 +26,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public override string GetVersion() => PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
 
-    public ScatteredAndLostMod() : base("ScatteredAndLost")
-    {
-        Instance = this;
-
-        MoreDoorsInterop.MoreDoorsInterop.AddMinerDoor();
-    }
+    public ScatteredAndLostMod() : base("ScatteredAndLost") { Instance = this; }
 
     public static ScatteredAndLostSettings Settings = new();
 
