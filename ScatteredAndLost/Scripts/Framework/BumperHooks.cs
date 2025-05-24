@@ -76,26 +76,14 @@ internal static class BumperHooks
 
     private static void OverrideMethod(ILContext il)
     {
-        int gets = 0;
-        int sets = 0;
         ILCursor cursor = new(il);
 
         cursor.Goto(0);
         do
         {
-            if (cursor.Next.MatchCallvirt<Rigidbody2D>("get_velocity"))
-            {
-                cursor.Remove().EmitDelegate(OverrideGetVelocity);
-                gets++;
-            }
-            else if (cursor.Next.MatchCallvirt<Rigidbody2D>("set_velocity"))
-            {
-                cursor.Remove().EmitDelegate(OverrideSetVelocity);
-                sets++;
-            }
+            if (cursor.Next.MatchCallvirt<Rigidbody2D>("get_velocity")) cursor.Remove().EmitDelegate(OverrideGetVelocity);
+            else if (cursor.Next.MatchCallvirt<Rigidbody2D>("set_velocity")) cursor.Remove().EmitDelegate(OverrideSetVelocity);
         } while (cursor.TryGotoNext(i => true));
-
-        if (gets > 0 || sets > 0) ScatteredAndLostMod.LogError($"BUG-HUNT: {il.Method.Name}: ({gets}, {sets})");
     }
 
     internal static void BumpUp(float scale)
