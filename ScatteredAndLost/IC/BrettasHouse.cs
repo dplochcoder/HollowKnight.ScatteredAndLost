@@ -41,8 +41,10 @@ internal class BrettasHouse : Module
     public int Hearts = 0;
     public List<HeartDoorData> DoorData = [];
     public bool SeenBrettasHouseAreaTitle = false;
-    public bool SpawnedBrettorLords = false;
     public bool DefeatedBrettorLords = false;
+
+    public bool GhostCoinsSpawnedBrettorLords = false;
+    public bool GhostCoinsDefeatedBrettorLords = false;
 
     public static BrettasHouse Get() => ItemChangerMod.Modules.Get<BrettasHouse>()!;
 

@@ -50,12 +50,13 @@ internal class TraitorLords : MonoBehaviour
         yield return Coroutines.SleepUntil(() => Trigger!.Detected());
 
         var mod = BrettasHouse.Get();
-        if (!mod.SpawnedBrettorLords)
+        mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
+
+        if (!mod.GhostCoinsSpawnedBrettorLords)
         {
             PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
-            mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
-
-            mod.SpawnedBrettorLords = true;
+            mod.GhostCoinsSpawnedBrettorLords = true;
+            mod.GhostCoinsDefeatedBrettorLords = false;
         }
 
         yield return Coroutines.SleepSeconds(StartDelay);
@@ -79,6 +80,10 @@ internal class TraitorLords : MonoBehaviour
 
         mod.DefeatedBrettorLords = true;
         mod.UpdateCheckpoint(Data.CheckpointLevel.Bretta);
+
+        PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
+        mod.GhostCoinsDefeatedBrettorLords = true;
+        mod.GhostCoinsSpawnedBrettorLords = false;
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
 
