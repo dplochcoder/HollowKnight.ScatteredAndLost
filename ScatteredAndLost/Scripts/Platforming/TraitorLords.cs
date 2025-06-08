@@ -48,10 +48,15 @@ internal class TraitorLords : MonoBehaviour
         Destroy(GameObject.Find("/_Transition Gates/top1")!);
 
         yield return Coroutines.SleepUntil(() => Trigger!.Detected());
-        PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
 
         var mod = BrettasHouse.Get();
-        mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
+        if (!mod.SpawnedBrettorLords)
+        {
+            PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
+            mod.UpdateCheckpoint(Data.CheckpointLevel.Boss);
+
+            mod.SpawnedBrettorLords = true;
+        }
 
         yield return Coroutines.SleepSeconds(StartDelay);
 
