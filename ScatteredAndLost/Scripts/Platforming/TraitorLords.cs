@@ -37,9 +37,9 @@ internal class TraitorLords : MonoBehaviour
 
     private void Awake() => this.StartLibCoroutine(Run());
 
-    private Deferred<PlayMakerFSM> traitor1 = new();
+    private readonly Deferred<PlayMakerFSM> traitor1 = new();
     private bool traitor1Dead;
-    private Deferred<PlayMakerFSM> traitor2 = new();
+    private readonly Deferred<PlayMakerFSM> traitor2 = new();
     private bool traitor2Dead;
 
     private IEnumerator<CoroutineElement> Run()
@@ -87,14 +87,14 @@ internal class TraitorLords : MonoBehaviour
 
         yield return Coroutines.SleepSeconds(PostDeathWait);
 
-        var transitions = Instantiate(ggBattleTransitions);
+        var transitions = Instantiate(GGBattleTransitions);
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION OUT");
 
         // Self deleting subscriber.
         Deferred<Action<Scene>> finishGodhomeTransition = new();
         finishGodhomeTransition.Do(a => Events.OnSceneChange += a);
-        finishGodhomeTransition.Set(scene => FinishGodhomeTransition(finishGodhomeTransition, scene));
+        finishGodhomeTransition.Set(_ => FinishGodhomeTransition(finishGodhomeTransition));
         yield return Coroutines.SleepSeconds(1.5f);
 
         // Finish the transition in the next scene.
@@ -371,12 +371,12 @@ internal class TraitorLords : MonoBehaviour
         foreach (var action in waves.GetActionsOfType<SetVelocity2d>()) action.x.Value = Mathf.Sign(action.x.Value) * RageWaveSpeed;
     }
 
-    private static GameObject ggBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
+    private static GameObject GGBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
             .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
 
-    private void FinishGodhomeTransition(Deferred<Action<Scene>> self, Scene scene)
+    private void FinishGodhomeTransition(Deferred<Action<Scene>> self)
     {
-        var transitions = Instantiate(ggBattleTransitions);
+        var transitions = Instantiate(GGBattleTransitions);
         transitions.SetActive(true);
         transitions.LocateMyFSM("Transitions").SendEvent("GG TRANSITION IN");
 
