@@ -58,8 +58,6 @@ internal static class BumperHooks
 
     public static void CancelBump() => behaviour?.Reset();
 
-    private static readonly FsmID KnightFsmID = new("Knight", "ProxyFSM");
-
     private static List<ILHook>? hooks;
 
     public static void Load()
@@ -69,10 +67,14 @@ internal static class BumperHooks
         On.HutongGames.PlayMaker.Actions.SetVelocity2d.DoSetVelocity += OverrideSetVelocity2d;
         ModHooks.TakeDamageHook += OnTakeDamage;
 
-        Events.AddFsmEdit(KnightFsmID, ModifyVelocity);
+        On.PlayMakerFSM.OnEnable += ModifyVelocity;
     }
 
-    private static void ModifyVelocity(PlayMakerFSM fsm) => behaviour = fsm.gameObject.GetOrAddComponent<BumperSpeedBehaviour>();
+    private static void ModifyVelocity(On.PlayMakerFSM.orig_OnEnable orig, PlayMakerFSM fsm)
+    {
+        orig(fsm);
+        if (fsm.gameObject.name == "Knight" && fsm.FsmName == "ProxyFSM") behaviour = fsm.gameObject.GetOrAddComponent<BumperSpeedBehaviour>();
+    }
 
     private static void OverrideMethod(ILContext il)
     {
