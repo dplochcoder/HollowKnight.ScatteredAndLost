@@ -1,4 +1,5 @@
-﻿using DecorationMaster;
+﻿using Architect.Content.Elements;
+using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
 using HK8YPlando.Scripts.Framework;
@@ -92,4 +93,9 @@ public class BumperDecoration : CustomDecoration
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 
     public override void HandlePos(Vector2 val) => gameObject.GetComponent<Bumper>().SetOrigPos(val);
+}
+
+public static class BumperArchitectObject
+{
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", "bumper", ArchitectUtil.Generic);
 }

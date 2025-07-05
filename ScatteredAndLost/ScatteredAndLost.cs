@@ -1,3 +1,4 @@
+using Architect.Content;
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
 using HK8YPlando.Scripts.Framework;
@@ -62,6 +63,16 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         DecorationMasterUtil.RefreshItemManager();
     }
 
+    private static void SetupArchitect() => ContentPacks.RegisterPack(new("Scattered & Lost", "Platforming assets borrowed from Celeste")
+    {
+        BubbleArchitectObject.Create(),
+        BumperArchitectObject.Create(),
+        CoinArchitectObject.Create(),
+        CoinDoorArchitectObject.Create(),
+        SuperSoulTotemArchitectObject.Create(),
+        ZipperArchitectObject.Create()
+    });
+
     private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
@@ -71,9 +82,10 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         SuperSoulTotemHooks.Load();
         BumperHooks.Load();
 
+        if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
-        if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
         if (ModHooks.GetMod("DecorationMaster") is Mod) SetupDecorationMaster();
+        if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {

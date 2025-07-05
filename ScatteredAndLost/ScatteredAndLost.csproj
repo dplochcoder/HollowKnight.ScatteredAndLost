@@ -74,6 +74,9 @@
     <PackageReference Include="Fmod5Sharp" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Architect">
+      <HintPath>$(HollowKnightRefs)/Mods/Architect/Architect.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
     </Reference>

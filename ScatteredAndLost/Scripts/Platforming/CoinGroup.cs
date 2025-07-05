@@ -1,10 +1,13 @@
-﻿using DecorationMaster;
+﻿using Architect.Attributes.Config;
+using Architect.Content.Elements;
+using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
 using GlobalEnums;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
+using IL.InControl.UnityDeviceProfiles;
 using Modding;
 using PurenailCore.GOUtil;
 using System;
@@ -445,6 +448,14 @@ internal class CoinDecoration : CustomDecoration
     public void SetGate(int gate) => gameObject.GetComponent<Coin>().GateNumber = gate;
 }
 
+public static class CoinArchitectObject
+{
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
+        "Switch", "Switch", "switch",
+        ArchitectUtil.Generic,
+        new IntConfigType("ScatteredAndLost.Switch.Group", (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()));
+}
+
 [Serializable]
 internal class CoinDoorDecorationItem : Item
 {
@@ -547,4 +558,16 @@ internal class CoinDoorDecoration : CustomDecoration
         offset.y = y;
         coinDoor.DecoMasterSetMoveOffset(offset);
     }
+}
+
+public static class CoinDoorArchitectObject
+{
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
+        "SSwitchDoor", "Switch Door", "switchdoor",
+        ArchitectUtil.Stretchable,
+        new IntConfigType("ScatteredAndLost.Door.Group", (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()),
+        new FloatConfigType("ScatteredAndLost.Door.XMove", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { x = value.GetValue() })),
+        new FloatConfigType("ScatteredAndLost.Door.YMove", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { y = value.GetValue() })));
+
+    private static void UpdateMoveOffset(this CoinDoor self, Func<Vector3, Vector3> func) => self.DecoMasterSetMoveOffset(func(self.MoveOffset));
 }

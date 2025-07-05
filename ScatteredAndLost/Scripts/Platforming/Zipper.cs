@@ -1,4 +1,6 @@
-﻿using DecorationMaster;
+﻿using Architect.Attributes.Config;
+using Architect.Content.Elements;
+using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
 using HK8YPlando.Scripts.Environment;
@@ -203,53 +205,33 @@ internal class ZipperDecoration : CustomDecoration
         zipper.TargetPosition.position = val.To3d() + delta;
     }
 
-    private void UpdateZipline()
-    {
-        var (top, right, bot, left) = ZipperLib.LoadSpikes(gameObject);
-        ZipperLib.UpdateZipperAssets(gameObject, top, right, bot, left, _ => { });
-    }
-
     [Handle(Operation.SetSizeX)]
-    public void SetXMove(float x)
-    {
-        var target = gameObject.GetComponent<Zipper>().TargetPosition!;
-        target.localPosition = new(x, target.localPosition.y, target.localPosition.z);
-        UpdateZipline();
-    }
+    public void SetXMove(float x) => gameObject.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = x });
 
     [Handle(Operation.SetSizeY)]
-    public void SetYMove(float y)
-    {
-        var target = gameObject.GetComponent<Zipper>().TargetPosition!;
-        target.localPosition = new(target.localPosition.x, y, target.localPosition.z);
-        UpdateZipline();
-    }
+    public void SetYMove(float y) => gameObject.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = y });
 
     [Handle(Operation.SetColorA)]
-    public void SetTopSpikes(int value)
-    {
-        var (_, right, bot, left) = ZipperLib.LoadSpikes(gameObject);
-        ZipperLib.UpdateZipperAssets(gameObject, value == 1, right, bot, left, _ => { });
-    }
+    public void SetTopSpikes(int value) => gameObject.GetComponent<Zipper>().SetTopSpikes(value == 1);
 
     [Handle(Operation.SetColorR)]
-    public void SetRightSpikes(int value)
-    {
-        var (top, _, bot, left) = ZipperLib.LoadSpikes(gameObject);
-        ZipperLib.UpdateZipperAssets(gameObject, top, value == 1, bot, left, _ => { });
-    }
+    public void SetRightSpikes(int value) => gameObject.GetComponent<Zipper>().SetRightSpikes(value == 1);
 
     [Handle(Operation.SetColorG)]
-    public void SetBotSpikes(int value)
-    {
-        var (top, right, _, left) = ZipperLib.LoadSpikes(gameObject);
-        ZipperLib.UpdateZipperAssets(gameObject, top, right, value == 1, left, _ => { });
-    }
+    public void SetBotSpikes(int value) => gameObject.GetComponent<Zipper>().SetBotSpikes(value == 1);
 
     [Handle(Operation.SetColorB)]
-    public void SetLeftSpikes(int value)
-    {
-        var (top, right, bot, _) = ZipperLib.LoadSpikes(gameObject);
-        ZipperLib.UpdateZipperAssets(gameObject, top, right, bot, value == 1, _ => { });
-    }
+    public void SetLeftSpikes(int value) => gameObject.GetComponent<Zipper>().SetLeftSpikes(value == 1);
+}
+
+public static class ZipperArchitectObject
+{
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
+        "Zipper", "ScatteredAndLost.Zipper", "zipper", ArchitectUtil.Generic,
+        new FloatConfigType("ScatteredAndLost.Zipper.XMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })),
+        new FloatConfigType("ScatteredAndLost.Zipper.YMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })),
+        new BoolConfigType("ScatteredAndLost.Zipper.TopSpikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())),
+        new BoolConfigType("ScatteredAndLost.Zipper.RightSpikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())),
+        new BoolConfigType("ScatteredAndLost.Zipper.BotSpikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())),
+        new BoolConfigType("ScatteredAndLost.Zipper.LeftSpikes", (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())));
 }

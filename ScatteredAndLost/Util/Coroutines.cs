@@ -149,7 +149,7 @@ internal class CoroutineSequence : CoroutineElement
         this.stopCondition = stopCondition;
     }
 
-    public static CoroutineSequence Create(IEnumerator<CoroutineElement> coroutine, CoroutineSequence.StopCondition? stopCondition = null) => new(coroutine, stopCondition);
+    public static CoroutineSequence Create(IEnumerator<CoroutineElement> coroutine, StopCondition? stopCondition = null) => new(coroutine, stopCondition);
 
     public override CoroutineUpdate Update(float deltaTime)
     {

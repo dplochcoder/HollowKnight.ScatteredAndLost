@@ -1,4 +1,5 @@
-﻿using DecorationMaster;
+﻿using Architect.Content.Elements;
+using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
 using HK8YPlando.IC;
@@ -153,9 +154,24 @@ internal static class SuperSoulTotemHooks
     }
 }
 
-[DecorationMaster.Attr.Description("Super soul totem which heals you to full", "en-us")]
+[Description("Super soul totem which heals you to full", "en-us")]
 [Decoration("scattered_and_lost_soul_totem")]
 internal class SuperSoulTotemDecoration : CustomDecoration
+{
+    private static GameObject MakePrefab()
+    {
+        var obj = SuperSoulTotem.SpawnTotemInactive();
+        DontDestroyOnLoad(obj);
+        return obj;
+    }
+
+    public static void Register() => DecorationMasterUtil.RegisterDecoration<SuperSoulTotemDecoration, ItemDef.DefatulResizeItem>(
+        "scattered_and_lost_soul_totem", MakePrefab(), "super_soul_totem");
+
+    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+}
+
+public static class SuperSoulTotemArchitectObject
 {
     private static GameObject MakePrefab()
     {
@@ -164,8 +180,5 @@ internal class SuperSoulTotemDecoration : CustomDecoration
         return obj;
     }
 
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<SuperSoulTotemDecoration, ItemDef.DefatulResizeItem>(
-        "scattered_and_lost_soul_totem", MakePrefab(), "super_soul_totem");
-
-    private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", "super_soul_totem", ArchitectUtil.Generic);
 }

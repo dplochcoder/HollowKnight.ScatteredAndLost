@@ -1,4 +1,7 @@
-﻿using DecorationMaster;
+﻿using Architect.Attributes.Config;
+using Architect.Content.Elements;
+using Architect.Content.Groups;
+using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
 using HK8YPlando.Scripts.Framework;
@@ -283,4 +286,11 @@ internal class BubbleDecoration : CustomDecoration
 
     [Handle(Operation.SetColorA)]
     public void SetVelocity(float v) => gameObject.GetComponent<BubbleController>().Speed = v;
+}
+
+public static class BubbleArchitectObject
+{
+    internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
+        "BubbleController", "Bubble", "bubble", ArchitectUtil.Generic,
+        new FloatConfigType("ScatteredAndLost.Bubble.Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()));
 }

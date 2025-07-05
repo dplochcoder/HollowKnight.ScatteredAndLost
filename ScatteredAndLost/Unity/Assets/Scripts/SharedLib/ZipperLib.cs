@@ -1,4 +1,5 @@
-﻿using HK8YPlando.Scripts.Platforming;
+﻿using DecorationMaster.Attr;
+using HK8YPlando.Scripts.Platforming;
 using System;
 using UnityEngine;
 
@@ -80,6 +81,42 @@ namespace HK8YPlando.Scripts.SharedLib
             }
 
             return false;
+        }
+
+        private static void UpdateZipline(this Zipper self)
+        {
+            var (top, right, bot, left) = LoadSpikes(self.gameObject);
+            UpdateZipperAssets(self.gameObject, top, right, bot, left, _ => { });
+        }
+
+        internal static void UpdateTargetPos(this Zipper self, Func<Vector3, Vector3> func)
+        {
+            self.TargetPosition.localPosition = func(self.TargetPosition.localPosition);
+            self.UpdateZipline();
+        }
+
+        internal static void SetTopSpikes(this Zipper self, bool value)
+        {
+            var (_, right, bot, left) = LoadSpikes(self.gameObject);
+            UpdateZipperAssets(self.gameObject, value, right, bot, left, _ => { });
+        }
+
+        internal static void SetRightSpikes(this Zipper self, bool value)
+        {
+            var (top, _, bot, left) = LoadSpikes(self.gameObject);
+            UpdateZipperAssets(self.gameObject, top, value, bot, left, _ => { });
+        }
+
+        internal static void SetBotSpikes(this Zipper self, bool value)
+        {
+            var (top, right, _, left) = LoadSpikes(self.gameObject);
+            UpdateZipperAssets(self.gameObject, top, right, value, left, _ => { });
+        }
+
+        internal static void SetLeftSpikes(this Zipper self, bool value)
+        {
+            var (top, right, bot, _) = LoadSpikes(self.gameObject);
+            UpdateZipperAssets(self.gameObject, top, right, bot, value, _ => { });
         }
     }
 }
