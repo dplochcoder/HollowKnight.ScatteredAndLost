@@ -25,7 +25,9 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 {
     public static ScatteredAndLostMod? Instance;
 
-    public override string GetVersion() => PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
+    internal static readonly string Version = PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
+
+    public override string GetVersion() => Version;
 
     public ScatteredAndLostMod() : base("ScatteredAndLost") { Instance = this; }
 
@@ -51,17 +53,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void SetupRando() => RandoInterop.Setup();
 
-    private static void SetupDecorationMaster()
-    {
-        SuperSoulTotemDecoration.Register();
-        ZipperDecoration.Register();
-        CoinDecoration.Register();
-        CoinDoorDecoration.Register();
-        BumperDecoration.Register();
-        BubbleDecoration.Register();
-
-        DecorationMasterUtil.RefreshItemManager();
-    }
+    public override int LoadPriority() => -1;
 
     private static void SetupArchitect() => ContentPacks.RegisterPack(new("Scattered & Lost", "Platforming assets borrowed from Celeste")
     {
@@ -84,7 +76,6 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
         if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
-        if (ModHooks.GetMod("DecorationMaster") is Mod) SetupDecorationMaster();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
@@ -183,5 +174,27 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
             Loader = () => Settings.EnableCheckpoints ? 1 : 0,
         });
         return builder.CreateMenuScreen();
+    }
+}
+
+public class ScatteredAndLostDecorationMasterIntegration : Mod
+{
+    public override string GetVersion() => ScatteredAndLostMod.Version;
+
+    private static void SetupDecorationMaster()
+    {
+        SuperSoulTotemDecoration.Register();
+        ZipperDecoration.Register();
+        CoinDecoration.Register();
+        CoinDoorDecoration.Register();
+        BumperDecoration.Register();
+        BubbleDecoration.Register();
+
+        DecorationMasterUtil.RefreshItemManager();
+    }
+
+    public override void Initialize()
+    {
+        if (ModHooks.GetMod("DecorationMaster") is Mod) SetupDecorationMaster();
     }
 }

@@ -10,9 +10,8 @@ internal static class ArchitectUtil
 {
     private static ConfigGroup GetConfigGroup(string name)
     {
-        var type = typeof(Architect.Attributes.ConfigManager);
-        type.GetMethod("Initialize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)?.Invoke(null, []);
-        return (type.GetField(name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null) as ConfigGroup)!;
+        typeof(ConfigGroup).GetMethod("Initialize", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).Invoke(null, []);
+        return (typeof(ConfigGroup).GetField(name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null) as ConfigGroup)!;
     }
 
     // TODO: Make ConfigGroups accessible.
