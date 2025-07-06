@@ -8,9 +8,12 @@ using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
+using PurenailCore.ICUtil;
 using SFCore.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -46,6 +49,9 @@ internal class BrettasHouse : Module
     public bool GhostCoinsSpawnedBrettorLords = false;
     public bool GhostCoinsDefeatedBrettorLords = false;
 
+    private readonly Dictionary<string, AssetBundle?> sceneBundles = [];
+    private SceneLoaderModule? coreModule;
+
     public static BrettasHouse Get() => ItemChangerMod.Modules.Get<BrettasHouse>()!;
 
     private static bool GetTracker(out InventoryTracker tracker)
@@ -62,8 +68,23 @@ internal class BrettasHouse : Module
         return false;
     }
 
+    private const string PREFIX = "HK8YPlando.Unity.Assets.AssetBundles.";
+
     public override void Initialize()
     {
+        foreach (var str in typeof(ScatteredAndLostMod).Assembly.GetManifestResourceNames())
+        {
+            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith("meta")) continue;
+            string name = str[PREFIX.Length..];
+            if (name == "AssetBundles" || name == "scenes") continue;
+
+            sceneBundles[name] = null;
+        }
+
+        coreModule = ItemChangerMod.Modules.GetOrAdd<SceneLoaderModule>();
+        coreModule.AddOnBeforeSceneLoad(OnBeforeSceneLoad);
+        coreModule.AddOnUnloadScene(OnUnloadScene);
+
         if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("BrettaHouseEntry", MaybePreviewTablet);
         Events.AddSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
@@ -88,6 +109,48 @@ internal class BrettasHouse : Module
         ModHooks.LanguageGetHook -= LanguageGetHook;
         ModHooks.GetPlayerBoolHook -= GetPlayerBoolHook;
         ModHooks.SetPlayerBoolHook -= SetPlayerBoolHook;
+    }
+
+    private static string AssetBundleName(string sceneName) => sceneName.Replace("_", "").ToLower();
+
+    private void OnBeforeSceneLoad(string sceneName, Action cb)
+    {
+        var assetBundleName = AssetBundleName(sceneName);
+        if (!sceneBundles.ContainsKey(assetBundleName))
+        {
+            cb();
+            return;
+        }
+
+        GameManager.instance.StartCoroutine(LoadSceneAsync(assetBundleName, cb));
+    }
+
+    private void OnUnloadScene(string prevSceneName, string nextSceneName)
+    {
+        if (nextSceneName == prevSceneName) return;
+
+        var assetBundleName = AssetBundleName(prevSceneName);
+        if (sceneBundles.TryGetValue(assetBundleName, out var assetBundle))
+        {
+            assetBundle?.Unload(true);
+            sceneBundles[assetBundleName] = null;
+        }
+    }
+
+    private IEnumerator LoadSceneAsync(string assetBundleName, Action callback)
+    {
+        if (sceneBundles[assetBundleName] != null)
+        {
+            callback();
+            yield break;
+        }
+
+        StreamReader sr = new(typeof(ScatteredAndLostMod).Assembly.GetManifestResourceStream($"{PREFIX}{assetBundleName}"));
+        var request = AssetBundle.LoadFromStreamAsync(sr.BaseStream);
+        yield return request;
+
+        sceneBundles[assetBundleName] = request.assetBundle;
+        callback();
     }
 
     private void ShowHeartsInInventory(StringBuilder sb)
@@ -183,7 +246,7 @@ internal class BrettasHouse : Module
         tp.entryPoint = "left1";
     }
 
-    private HashSet<BrettaCheckpoint> activeCheckpoints = [];
+    private readonly HashSet<BrettaCheckpoint> activeCheckpoints = [];
 
     internal void UpdateCheckpoint(CheckpointLevel level)
     {
@@ -232,7 +295,7 @@ internal class BrettasHouse : Module
         if (lastShadeTrigger == trigger) lastShadeTrigger = null;
     }
 
-    private HashSet<DreamgateFilter> dreamgateFilters = [];
+    private readonly HashSet<DreamgateFilter> dreamgateFilters = [];
 
     internal void RegisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Add(filter);
     internal void UnregisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Remove(filter);

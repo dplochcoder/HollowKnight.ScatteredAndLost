@@ -2,61 +2,35 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace HK8YPlando;
 
-public class ScatteredAndLostSceneManagerAPI : SceneManagerAPI
+public static class ScatteredAndLostSceneManagerAPI
 {
-    internal static readonly ScatteredAndLostSceneManagerAPI Instance = new();
+    private static AssetBundle? shared;
+    private static readonly Dictionary<string, UnityEngine.Object> prefabs = [];
 
-    private const string CORE_BUNDLE = "scatteredandlostcorebundle";
+    static ScatteredAndLostSceneManagerAPI() => Load();
 
-    public static void Load() => overrideAPI = Instance;
-
-    private readonly AssetBundle shared;
-    private readonly Dictionary<string, UnityEngine.Object> prefabs = [];
-    private readonly Dictionary<string, AssetBundle?> sceneBundles = [];
-
-    private ScatteredAndLostSceneManagerAPI()
+    private static bool loaded = false;
+    internal static void Load()
     {
-        shared = LoadAsset(CORE_BUNDLE);
+        if (loaded) return;
+        loaded = true;
 
+        shared = LoadCoreBundle();
         foreach (var obj in shared.LoadAllAssets()) prefabs[obj.name] = obj;
-
-        foreach (var str in typeof(ScatteredAndLostSceneManagerAPI).Assembly.GetManifestResourceNames())
-        {
-            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith(".meta")) continue;
-            string name = str.Substring(PREFIX.Length);
-            if (name == "AssetBundles" || name == CORE_BUNDLE || name == "scenes") continue;
-
-            sceneBundles[name] = null;
-        }
     }
 
     public static T LoadPrefab<T>(string name) where T : UnityEngine.Object
     {
-        if (Instance.prefabs.TryGetValue(name, out var obj) && obj is T typed) return typed;
+        if (prefabs.TryGetValue(name, out var obj) && obj is T typed) return typed;
         throw new ArgumentException($"Unknown Prefab: {name}");
     }
 
-    private static string AssetBundleName(string sceneName) => sceneName.Replace("_", "").ToLower();
+    private const string BUNDLE = "HK8YPlando.Unity.Assets.AssetBundles.scatteredandlostcorebundle";
 
-    protected override AsyncOperation LoadSceneAsyncByNameOrIndex(string sceneName, int sceneBuildIndex, LoadSceneParameters parameters, bool mustCompleteNextFrame)
-    {
-        MaybeLoadScene(sceneName);
-        return base.LoadSceneAsyncByNameOrIndex(sceneName, sceneBuildIndex, parameters, mustCompleteNextFrame);
-    }
-
-    protected override AsyncOperation UnloadSceneAsyncByNameOrIndex(string sceneName, int sceneBuildIndex, bool immediately, UnloadSceneOptions options, out bool outSuccess)
-    {
-        MaybeUnloadScene(sceneName);
-        return base.UnloadSceneAsyncByNameOrIndex(sceneName, sceneBuildIndex, immediately, options, out outSuccess);
-    }
-
-    private const string PREFIX = "HK8YPlando.Unity.Assets.AssetBundles.";
-
-    private AssetBundle LoadAsset(string name)
+    private static AssetBundle LoadCoreBundle()
     {
 #if DEBUG
         try
@@ -70,31 +44,7 @@ public class ScatteredAndLostSceneManagerAPI : SceneManagerAPI
         catch (Exception e) { ScatteredAndLostMod.BUG($"Failed to load {name} from local assets: {e}"); }
 #endif
 
-        using StreamReader sr = new(typeof(ScatteredAndLostSceneManagerAPI).Assembly.GetManifestResourceStream($"{PREFIX}{name}"));
+        using StreamReader sr = new(typeof(ScatteredAndLostSceneManagerAPI).Assembly.GetManifestResourceStream(BUNDLE));
         return AssetBundle.LoadFromStream(sr.BaseStream);
-    }
-
-    private void MaybeLoadScene(string sceneName)
-    {
-        var assetBundleName = AssetBundleName(sceneName);
-        if (sceneBundles.ContainsKey(assetBundleName))
-        {
-#if DEBUG
-            sceneBundles[assetBundleName]?.Unload(false);
-            sceneBundles[assetBundleName] = LoadAsset(assetBundleName);
-#else
-            sceneBundles[assetBundleName] ??= LoadAsset(assetBundleName);
-#endif
-        }
-    }
-
-    private void MaybeUnloadScene(string sceneName)
-    {
-        var assetBundleName = AssetBundleName(sceneName);
-        if (sceneBundles.ContainsKey(assetBundleName))
-        {
-            sceneBundles[assetBundleName]?.Unload(false);
-            sceneBundles[assetBundleName] = null;
-        }
     }
 }
