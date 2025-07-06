@@ -74,7 +74,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         SuperSoulTotemHooks.Load();
         BumperHooks.Load();
 
-        if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
+        // TODO: Enable Architect integration when deserialization problems are fixed.
+        // if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
 
