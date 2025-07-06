@@ -10,3 +10,4 @@ RandomizerCore.Json
 RandoSettingsManager
 SFCore
 Architect
+BugPrince

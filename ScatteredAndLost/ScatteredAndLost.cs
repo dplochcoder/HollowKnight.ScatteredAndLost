@@ -16,6 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using UnityEngine.UI;
 
@@ -65,6 +66,19 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         ZipperArchitectObject.Create()
     });
 
+    private const string SCENES = "Sprites.Scenes.";
+
+    private static void SetupBugPrince()
+    {
+        foreach (var str in typeof(ScatteredAndLostMod).Assembly.GetManifestResourceNames().Where(n => n.Contains(SCENES)))
+        {
+            var start = str.IndexOf(SCENES) + SCENES.Length;
+            var end = str.LastIndexOf(".");
+            var sceneName = str.Substring(start, end - start);
+            BugPrince.BugPrinceMod.AddSceneSprite(sceneName, new IC.EmbeddedSprite($"Scenes.{sceneName}"));
+        }
+    }
+
     private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
@@ -76,6 +90,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
         // TODO: Enable Architect integration when deserialization problems are fixed.
         // if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
+        if (ModHooks.GetMod("BugPrince") is Mod) SetupBugPrince();
         if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
         if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
 
