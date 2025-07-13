@@ -181,5 +181,5 @@ public static class SuperSoulTotemArchitectObject
         return obj;
     }
 
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", "super_soul_totem", ConfigGroup.Generic);
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", null, ConfigGroup.Generic);
 }
