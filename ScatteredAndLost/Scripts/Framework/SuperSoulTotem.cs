@@ -1,4 +1,5 @@
 ﻿using Architect.Content.Elements;
+using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -180,5 +181,5 @@ public static class SuperSoulTotemArchitectObject
         return obj;
     }
 
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", "super_soul_totem", ArchitectUtil.Generic);
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", "super_soul_totem", ConfigGroup.Generic);
 }

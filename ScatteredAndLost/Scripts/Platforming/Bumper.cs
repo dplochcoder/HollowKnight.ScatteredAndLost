@@ -1,4 +1,5 @@
 ﻿using Architect.Content.Elements;
+using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -97,5 +98,5 @@ public class BumperDecoration : CustomDecoration
 
 public static class BumperArchitectObject
 {
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", "bumper", ArchitectUtil.Generic);
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", "bumper", ConfigGroup.Generic);
 }

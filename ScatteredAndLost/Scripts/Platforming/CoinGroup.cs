@@ -1,5 +1,6 @@
 ﻿using Architect.Attributes.Config;
 using Architect.Content.Elements;
+using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -450,8 +451,7 @@ internal class CoinDecoration : CustomDecoration
 public static class CoinArchitectObject
 {
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "Switch", "Switch", "switch",
-        ArchitectUtil.Generic,
+        "Switch", "Switch", "switch", ConfigGroup.Generic,
         (new IntConfigType("Group", (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()), "sal_switch_group"));
 }
 
@@ -562,8 +562,7 @@ internal class CoinDoorDecoration : CustomDecoration
 public static class CoinDoorArchitectObject
 {
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "SSwitchDoor", "Switch Door", "switchdoor",
-        ArchitectUtil.Stretchable,
+        "SSwitchDoor", "Switch Door", "switchdoor", ConfigGroup.Stretchable,
         (new IntConfigType("Group", (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()), "sal_door_group"),
         (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { x = value.GetValue() })), "sal_door_x_move"),
         (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { y = value.GetValue() })), "sal_door_y_move"));

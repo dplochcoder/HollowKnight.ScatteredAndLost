@@ -1,5 +1,6 @@
 ﻿using Architect.Attributes.Config;
 using Architect.Content.Elements;
+using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -227,7 +228,7 @@ internal class ZipperDecoration : CustomDecoration
 public static class ZipperArchitectObject
 {
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "Zipper", "Zipper", "zipper", ArchitectUtil.Generic,
+        "Zipper", "Zipper", "zipper", ConfigGroup.Generic,
         (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })), "sal_zipper_x_move"),
         (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })), "sal_zipper_y_move"),
         (new FloatConfigType("Pause Time", (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()), "sal_zipper_pause_time"),
