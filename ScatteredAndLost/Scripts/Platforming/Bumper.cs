@@ -98,5 +98,5 @@ public class BumperDecoration : CustomDecoration
 
 public static class BumperArchitectObject
 {
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", "bumper", ConfigGroup.Generic);
+    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", null, ConfigGroup.Generic);
 }

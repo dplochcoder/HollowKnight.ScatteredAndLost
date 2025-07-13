@@ -291,7 +291,7 @@ internal class BubbleDecoration : CustomDecoration
 public static class BubbleArchitectObject
 {
     internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "BubbleController", "Bubble", "bubble", ConfigGroup.Generic,
+        "BubbleController", "Bubble", null, ConfigGroup.Generic,
         (new FloatConfigType("Bubble Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()), "sal_bubble_speed"),
         (new FloatConfigType("Bubble Respawn Delay", (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()), "sal_bubble_respawn_delay"));
 }
