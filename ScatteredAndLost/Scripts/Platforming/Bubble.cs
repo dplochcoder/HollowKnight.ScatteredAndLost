@@ -292,5 +292,5 @@ public static class BubbleArchitectObject
 {
     internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "BubbleController", "Bubble", "bubble", ArchitectUtil.Generic,
-        new FloatConfigType("ScatteredAndLost.Bubble.Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()));
+        new FloatConfigType("BubbleSpeed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()));
 }

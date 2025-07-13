@@ -227,11 +227,11 @@ internal class ZipperDecoration : CustomDecoration
 public static class ZipperArchitectObject
 {
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "Zipper", "ScatteredAndLost.Zipper", "zipper", ArchitectUtil.Generic,
-        new FloatConfigType("ScatteredAndLost.Zipper.XMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })),
-        new FloatConfigType("ScatteredAndLost.Zipper.YMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })),
-        new BoolConfigType("ScatteredAndLost.Zipper.TopSpikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())),
-        new BoolConfigType("ScatteredAndLost.Zipper.RightSpikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())),
-        new BoolConfigType("ScatteredAndLost.Zipper.BotSpikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())),
-        new BoolConfigType("ScatteredAndLost.Zipper.LeftSpikes", (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())));
+        "Zipper", "Zipper", "zipper", ArchitectUtil.Generic,
+        new FloatConfigType("Zipper.XMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })),
+        new FloatConfigType("Zipper.YMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })),
+        new BoolConfigType("Zipper.TopSpikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())),
+        new BoolConfigType("Zipper.RightSpikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())),
+        new BoolConfigType("Zipper.BotSpikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())),
+        new BoolConfigType("Zipper.LeftSpikes", (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())));
 }
