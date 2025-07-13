@@ -452,7 +452,7 @@ public static class CoinArchitectObject
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "Switch", "Switch", "switch",
         ArchitectUtil.Generic,
-        new IntConfigType("Switch.Group", (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()));
+        (new IntConfigType("Group", (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()), "sal_switch_group"));
 }
 
 [Serializable]
@@ -564,9 +564,9 @@ public static class CoinDoorArchitectObject
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "SSwitchDoor", "Switch Door", "switchdoor",
         ArchitectUtil.Stretchable,
-        new IntConfigType("SwitchDoor.Group", (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()),
-        new FloatConfigType("SwitchDoor.XMove", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { x = value.GetValue() })),
-        new FloatConfigType("SwitchDoor.YMove", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { y = value.GetValue() })));
+        (new IntConfigType("Group", (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()), "sal_door_group"),
+        (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { x = value.GetValue() })), "sal_door_x_move"),
+        (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { y = value.GetValue() })), "sal_door_y_move"));
 
     private static void UpdateMoveOffset(this CoinDoor self, Func<Vector3, Vector3> func) => self.DecoMasterSetMoveOffset(func(self.MoveOffset));
 }

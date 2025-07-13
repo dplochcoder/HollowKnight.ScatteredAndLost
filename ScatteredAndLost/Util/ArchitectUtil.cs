@@ -18,9 +18,9 @@ internal static class ArchitectUtil
     internal static readonly ConfigGroup Generic = GetConfigGroup("Generic");
     internal static readonly ConfigGroup Stretchable = GetConfigGroup("Stretchable");
 
-    internal static AbstractPackElement MakeArchitectObject(GameObject prefab, string name, string img, ConfigGroup root, params ConfigType[] types) => new SimplePackElement(
+    internal static AbstractPackElement MakeArchitectObject(GameObject prefab, string name, string img, ConfigGroup root, params (ConfigType, string)[] types) => new SimplePackElement(
         prefab, name, "Scattered & Lost", new IC.EmbeddedSprite(img).Value)
-        .WithConfigGroup(new(Generic, [.. types.Select(Architect.Attributes.ConfigManager.RegisterConfigType)]));
+        .WithConfigGroup(new(Generic, [.. types.Select(p => Architect.Attributes.ConfigManager.RegisterConfigType(p.Item1, p.Item2))]));
 
-    internal static AbstractPackElement MakeArchitectObject(string prefab, string name, string img, ConfigGroup root, params ConfigType[] types) => MakeArchitectObject(ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>(prefab), name, img, root, types);
+    internal static AbstractPackElement MakeArchitectObject(string prefab, string name, string img, ConfigGroup root, params (ConfigType, string)[] types) => MakeArchitectObject(ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>(prefab), name, img, root, types);
 }

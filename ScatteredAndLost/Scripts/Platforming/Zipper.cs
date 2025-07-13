@@ -228,12 +228,12 @@ public static class ZipperArchitectObject
 {
     public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "Zipper", "Zipper", "zipper", ArchitectUtil.Generic,
-        new FloatConfigType("Zipper.XMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })),
-        new FloatConfigType("Zipper.YMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })),
-        new FloatConfigType("Zipper.PauseTime", (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()),
-        new FloatConfigType("Zipper.RewindSpeed", (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()),
-        new BoolConfigType("Zipper.TopSpikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())),
-        new BoolConfigType("Zipper.RightSpikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())),
-        new BoolConfigType("Zipper.BotSpikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())),
-        new BoolConfigType("Zipper.LeftSpikes", (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())));
+        (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })), "sal_zipper_x_move"),
+        (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })), "sal_zipper_y_move"),
+        (new FloatConfigType("Pause Time", (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()), "sal_zipper_pause_time"),
+        (new FloatConfigType("Rewind Speed", (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()), "sal_zipper_rewing_speed"),
+        (new BoolConfigType("Top Spikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())), "sal_zipper_top_spikes"),
+        (new BoolConfigType("Right Spikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())), "sal_zipper_right_spikes"),
+        (new BoolConfigType("Bot Spikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())), "sal_zipper_bot_spikes"),
+        (new BoolConfigType("Left Spikes", (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())), "sal_zipper_left_spikes"));
 }
