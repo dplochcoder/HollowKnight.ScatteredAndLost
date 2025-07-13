@@ -1,5 +1,4 @@
-﻿using DecorationMaster.Attr;
-using HK8YPlando.Scripts.Platforming;
+﻿using HK8YPlando.Scripts.Platforming;
 using System;
 using UnityEngine;
 

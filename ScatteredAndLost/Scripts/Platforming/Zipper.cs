@@ -230,6 +230,8 @@ public static class ZipperArchitectObject
         "Zipper", "Zipper", "zipper", ArchitectUtil.Generic,
         new FloatConfigType("Zipper.XMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })),
         new FloatConfigType("Zipper.YMove", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })),
+        new FloatConfigType("Zipper.PauseTime", (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()),
+        new FloatConfigType("Zipper.RewindSpeed", (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()),
         new BoolConfigType("Zipper.TopSpikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())),
         new BoolConfigType("Zipper.RightSpikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())),
         new BoolConfigType("Zipper.BotSpikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())),

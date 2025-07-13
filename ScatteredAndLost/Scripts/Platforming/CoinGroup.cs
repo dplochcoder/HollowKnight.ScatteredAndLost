@@ -7,7 +7,6 @@ using GlobalEnums;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
-using IL.InControl.UnityDeviceProfiles;
 using Modding;
 using PurenailCore.GOUtil;
 using System;

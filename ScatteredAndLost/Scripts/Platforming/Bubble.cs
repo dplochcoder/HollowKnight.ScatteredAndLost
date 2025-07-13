@@ -1,6 +1,5 @@
 ﻿using Architect.Attributes.Config;
 using Architect.Content.Elements;
-using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -292,5 +291,6 @@ public static class BubbleArchitectObject
 {
     internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "BubbleController", "Bubble", "bubble", ArchitectUtil.Generic,
-        new FloatConfigType("BubbleSpeed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()));
+        new FloatConfigType("BubbleSpeed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()),
+        new FloatConfigType("BubbleRespawnDelay", (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()));
 }
