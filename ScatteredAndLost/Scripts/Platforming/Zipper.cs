@@ -231,7 +231,7 @@ public static class ZipperArchitectObject
         (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })), "sal_zipper_x_move"),
         (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })), "sal_zipper_y_move"),
         (new FloatConfigType("Pause Time", (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()), "sal_zipper_pause_time"),
-        (new FloatConfigType("Rewind Speed", (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()), "sal_zipper_rewing_speed"),
+        (new FloatConfigType("Rewind Speed", (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()), "sal_zipper_rewind_speed"),
         (new BoolConfigType("Top Spikes", (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())), "sal_zipper_top_spikes"),
         (new BoolConfigType("Right Spikes", (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())), "sal_zipper_right_spikes"),
         (new BoolConfigType("Bot Spikes", (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())), "sal_zipper_bot_spikes"),
