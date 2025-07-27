@@ -292,6 +292,6 @@ public static class BubbleArchitectObject
 {
     internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
         "BubbleController", "Bubble", null, ConfigGroup.Generic,
-        (new FloatConfigType("Bubble Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()), "sal_bubble_speed"),
-        (new FloatConfigType("Bubble Respawn Delay", (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()), "sal_bubble_respawn_delay"));
+        (new FloatConfigType("Bubble Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()).WithDefaultValue(24), "sal_bubble_speed"),
+        (new FloatConfigType("Bubble Respawn Delay", (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()).WithDefaultValue(2.5f), "sal_bubble_respawn_delay"));
 }
