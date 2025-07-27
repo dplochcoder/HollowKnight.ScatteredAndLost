@@ -243,20 +243,19 @@ internal class Bubble : MonoBehaviour
     {
         if (collision.collider.gameObject.layer != 8) return;
 
-        var box = collision.gameObject.GetComponent<BoxCollider2D>()?.bounds ?? collision.gameObject.GetComponent<EdgeCollider2D>().bounds;
-
         Vector3 pos;
         bool wallCling = false;
 
-        var normal = collision.GetSafeContact().Normal;
+        var contact = collision.GetSafeContact();
+        var normal = contact.Normal;
         if (Mathf.Abs(normal.y) < 0.1f)
         {
             wallCling = true;
-            if (normal.x > 0) pos = new(box.max.x + KnightUtil.WIDTH / 2, transform.position.y);
-            else pos = new(box.min.x - KnightUtil.WIDTH / 2, transform.position.y);
+            if (normal.x > 0) pos = new(contact.Point.x + KnightUtil.WIDTH / 2, transform.position.y);
+            else pos = new(contact.Point.x - KnightUtil.WIDTH / 2, transform.position.y);
         }
-        else if (normal.y > 0) pos = new(transform.position.x, box.max.y + KnightUtil.HEIGHT / 2);
-        else pos = new(transform.position.x, box.min.y - KnightUtil.HEIGHT / 2);
+        else if (normal.y > 0) pos = new(transform.position.x, contact.Point.y + KnightUtil.HEIGHT / 2);
+        else pos = new(transform.position.x, contact.Point.y - KnightUtil.HEIGHT / 2);
 
         BubbleController!.FinishMoving(pos, wallCling);
     }
