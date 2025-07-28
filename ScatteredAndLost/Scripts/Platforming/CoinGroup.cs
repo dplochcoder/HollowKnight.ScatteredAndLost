@@ -333,7 +333,7 @@ internal class CoinDoor : MonoBehaviour
 
     internal void DecoMasterSetMoveOffset(Vector3 offset)
     {
-        var dist = (transform.position - srcPos).magnitude / MoveOffset.magnitude;
+        var dist = MoveOffset.sqrMagnitude >= 0.0001f ? (transform.position - srcPos).magnitude / MoveOffset.magnitude : 0;
 
         MoveOffset = offset;
         destPos = srcPos + offset;
