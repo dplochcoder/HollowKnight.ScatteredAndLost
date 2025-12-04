@@ -28,23 +28,24 @@ public static class ScatteredAndLostSceneManagerAPI
         throw new ArgumentException($"Unknown Prefab: {name}");
     }
 
-    private const string BUNDLE = "HK8YPlando.Unity.Assets.AssetBundles.scatteredandlostcorebundle";
+    private const string CORE_BUNDLE_NAME = "scatteredandlostcorebundle";
+    private const string CORE_BUNDLE = $"HK8YPlando.Unity.Assets.AssetBundles.{CORE_BUNDLE_NAME}";
 
     private static AssetBundle LoadCoreBundle()
     {
 #if DEBUG
         try
         {
-            ScatteredAndLostMod.Log($"Loading {name} from disk");
+            ScatteredAndLostMod.Log($"Loading {CORE_BUNDLE_NAME} from disk");
             var debugData = PurenailCore.SystemUtil.JsonUtil<ScatteredAndLostMod>.DeserializeEmbedded<Data.DebugData>("HK8YPlando.Resources.Data.debug.json");
-            var bundle = AssetBundle.LoadFromFile($"{debugData.LocalAssetBundlesPath}/{name}");
-            ScatteredAndLostMod.Log($"Loading {name} from disk: success!");
+            var bundle = AssetBundle.LoadFromFile($"{debugData.LocalAssetBundlesPath}/{CORE_BUNDLE_NAME}");
+            ScatteredAndLostMod.Log($"Loading {CORE_BUNDLE_NAME} from disk: success!");
             return bundle;
         }
-        catch (Exception e) { ScatteredAndLostMod.BUG($"Failed to load {name} from local assets: {e}"); }
+        catch (Exception e) { ScatteredAndLostMod.BUG($"Failed to load {CORE_BUNDLE_NAME} from local assets: {e}"); }
 #endif
 
-        using StreamReader sr = new(typeof(ScatteredAndLostSceneManagerAPI).Assembly.GetManifestResourceStream(BUNDLE));
+        using StreamReader sr = new(typeof(ScatteredAndLostSceneManagerAPI).Assembly.GetManifestResourceStream(CORE_BUNDLE));
         return AssetBundle.LoadFromStream(sr.BaseStream);
     }
 }

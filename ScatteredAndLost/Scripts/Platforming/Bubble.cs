@@ -138,7 +138,7 @@ internal class BubbleController : MonoBehaviour
 
                 heroRb2d.velocity = Vector2.zero;
                 hc.AffectedByGravity(false);
-                BumperHooks.CancelBump();
+                BumperSpeedControl.Instance.CancelHorizontal();
 
                 renderer.enabled = false;
 

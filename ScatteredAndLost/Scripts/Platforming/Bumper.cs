@@ -52,12 +52,12 @@ internal class Bumper : MonoBehaviour, IHitResponder
         if (KnightUtil.IsNailArtActive()) return;
 
         var cState = HeroController.instance.cState;
-        if (cState.downAttacking) BumperHooks.BumpUp(VerticalScale);
-        else if (cState.upAttacking) BumperHooks.BumpDown();
+        if (cState.downAttacking) BumperSpeedControl.Instance.BumpUp(VerticalScale);
+        else if (cState.upAttacking) BumperSpeedControl.Instance.BumpDown();
         else
         {
             var kPos = HeroController.instance.gameObject.transform.position;
-            BumperHooks.BumpHorizontal(HorizontalBumpX, HorizontalDecel, (transform.position.y - kPos.y > YForgiveness) ? 0 : HorizontalBumpY, HorizontalBumpYMax);
+            BumperSpeedControl.Instance.BumpHorizontal(HorizontalBumpX, HorizontalDecel, (transform.position.y - kPos.y > YForgiveness) ? 0 : HorizontalBumpY, HorizontalBumpYMax);
         }
     }
 

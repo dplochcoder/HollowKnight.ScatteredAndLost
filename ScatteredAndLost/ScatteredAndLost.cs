@@ -72,9 +72,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         foreach (var str in typeof(ScatteredAndLostMod).Assembly.GetManifestResourceNames().Where(n => n.Contains(SCENES)))
         {
-            var start = str.IndexOf(SCENES) + SCENES.Length;
-            var end = str.LastIndexOf(".");
-            var sceneName = str.Substring(start, end - start);
+            var sceneName = str[(str.IndexOf(SCENES) + SCENES.Length)..str.LastIndexOf(".")];
             BugPrince.BugPrinceMod.AddSceneSprite(sceneName, new IC.EmbeddedSprite($"Scenes.{sceneName}"));
         }
     }
@@ -86,7 +84,6 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
         SuperSoulTotemHooks.Load();
-        BumperHooks.Load();
 
         if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
         if (ModHooks.GetMod("BugPrince") is Mod) SetupBugPrince();

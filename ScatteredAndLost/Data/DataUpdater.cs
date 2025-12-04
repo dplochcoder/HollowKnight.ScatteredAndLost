@@ -33,6 +33,8 @@ public static class DataUpdater
 
     public static void Run()
     {
+#if DEBUG
+        // Decoration master doesn't work in release mode???
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
         // Debug data
@@ -54,6 +56,7 @@ public static class DataUpdater
 
         // TODO: Make this a separate project if we can figure out how to rebuild UnityScriptShims first.
         CopyDlls();
+#endif
     }
 
     public static void CopyDlls()
