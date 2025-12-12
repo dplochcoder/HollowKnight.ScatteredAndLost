@@ -5,10 +5,10 @@ using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
+using PurenailCore.ModUtil;
 using SFCore.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -23,14 +23,12 @@ internal class Binoculars : MonoBehaviour
     [ShimField] public Transform? CameraStart;
     [ShimField] public float CameraSpeed;
 
-    private BinocularsModule? module;
     private List<BoxCollider2D> validRanges = [];
     private PlayMakerFSM? promptMarker;
 
     private void Awake()
     {
-        module = BinocularsModule.Get();
-        validRanges = CollidersParent!.FindComponentsRecursive<BoxCollider2D>().ToList();
+        validRanges = [.. CollidersParent!.FindComponentsRecursive<BoxCollider2D>()];
 
         var promptMarkerObj = Instantiate(ScatteredAndLostPreloader.Instance.KingsPassLoreTablet.LocateMyFSM("Inspection").GetFsmState("Init").GetFirstActionOfType<SpawnObjectFromGlobalPool>().gameObject.Value);
         promptMarkerObj.transform.SetParent(transform);
@@ -87,7 +85,7 @@ internal class Binoculars : MonoBehaviour
             hudAnimator.runtimeAnimatorController = hud.FadeIn;
             yield return Coroutines.SleepUntil(() => changeCamera.Value);
 
-            module!.ActiveBinoculars = this;
+            ActiveBinoculars = this;
             vignette.SetActive(false);
             activeCameraPos = ClampCameraPos(CameraStart!.position);
 
@@ -99,7 +97,7 @@ internal class Binoculars : MonoBehaviour
             yield return Coroutines.SleepUntil(() => changeCamera.Value);
             hud.DoAfter(3, () => Destroy(hudObj.gameObject));
 
-            module.ActiveBinoculars = null;
+            ActiveBinoculars = null;
             vignette.SetActive(true);
             animator.Play("TurnFromBG");
             yield return Coroutines.SleepUntil(() => !animator.Playing);
@@ -145,6 +143,7 @@ internal class Binoculars : MonoBehaviour
 
     private bool promptToggle = false;
     private bool inspectable = true;
+    private Vector2 activeCameraPos;
 
     private void Update()
     {
@@ -155,7 +154,7 @@ internal class Binoculars : MonoBehaviour
             promptMarker?.SendEvent(promptToggle ? "UP" : "DOWN");
         }
 
-        if (module!.ActiveBinoculars == this)
+        if (ActiveBinoculars == this)
         {
             var vec = InputHandler.Instance.inputActions.moveVector;
             Vector2 dir = new(vec.X, vec.Y);
@@ -203,9 +202,19 @@ internal class Binoculars : MonoBehaviour
         return pos;
     }
 
-    private Vector2 activeCameraPos;
+    private static Binoculars? ActiveBinoculars;
 
-    internal Vector3 GetCameraPos() => new(activeCameraPos.x, activeCameraPos.y, -38.1f);
+    private static bool ApplyBinoculars(Vector3 pos, out Vector3 newPos)
+    {
+        newPos = pos;
+        if (ActiveBinoculars == null) return false;
+
+        newPos.x = ActiveBinoculars.activeCameraPos.x;
+        newPos.y = ActiveBinoculars.activeCameraPos.y;
+        return true;
+    }
+
+    static Binoculars() => CameraPositionModifier.AddModifier(CameraModifierPhase.FINAL_POSITON, 1f, ApplyBinoculars);
 }
 
 [Shim]
