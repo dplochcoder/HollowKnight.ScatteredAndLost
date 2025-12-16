@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using JsonUtil = PurenailCore.SystemUtil.JsonUtil<HK8YPlando.ScatteredAndLostMod>;
 
 namespace HK8YPlando.Data;
 
