@@ -110,18 +110,14 @@ namespace HK8YPlando.Scripts.SharedLib
                 else newPoints.Add(point);
             }
 
-            poly.points = newPoints.ToArray();
+            poly.points = [.. newPoints];
             return changed;
         }
 
         public static void ResetZero(Transform transform)
         {
             var orig = transform.position;
-            foreach (Transform child in transform)
-            {
-                var cPos = child.position;
-                child.position = child.position + orig;
-            }
+            foreach (Transform child in transform) child.position += orig;
             transform.position = Vector3.zero;
         }
 
@@ -168,10 +164,7 @@ namespace HK8YPlando.Scripts.SharedLib
         private const float CAMERA_DEPTH = 38.1f;
         public static float CameraScale(float z) => CAMERA_DEPTH / (z + CAMERA_DEPTH);
 
-        public static void DepthAdjust(this Transform self)
-        {
-            self.localScale = self.localScale / CameraScale(self.position.z);
-        }
+        public static void DepthAdjust(this Transform self) => self.localScale /= CameraScale(self.position.z);
 
         public static Vector2 To2d(this Vector3 v) => new Vector2(v.x, v.y);
 
@@ -256,7 +249,7 @@ namespace HK8YPlando.Scripts.SharedLib
         public static bool CyclicFloatBetween(float test, float min, float max, float? cycle)
         {
             if (cycle == null || min <= max) return test >= min && test <= max;
-            test = test % cycle.Value;
+            test %= cycle.Value;
             return test >= min || test <= max;
         }
 

@@ -68,7 +68,7 @@ internal class SuperSoulTotemItem : SoulTotemItem
             };
 
             var objects = FlingUtils.SpawnAndFling(config, info.Transform ?? HeroController.SilentInstance.transform, Vector3.zero);
-            objects.ForEach(SuperSoulTotemHooks.BuffSoulOrb);
+            foreach (var obj in objects) if (obj.TryGetComponent<SoulOrb>(out var soulOrb)) SuperSoulTotem.BuffSoulOrb(soulOrb);
 
             prefab.SetActive(false);
         }

@@ -14,7 +14,7 @@ internal class DreamgateFilter : MonoBehaviour
 
     private void Awake()
     {
-        detectors = gameObject.FindComponentsRecursive<HeroDetectorProxy>().ToList();
+        detectors = [.. gameObject.FindComponentsRecursive<HeroDetectorProxy>()];
         BrettasHouse.Get().RegisterDreamgateFilter(this);
     }
 

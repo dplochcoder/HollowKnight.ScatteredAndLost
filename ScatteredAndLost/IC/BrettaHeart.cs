@@ -22,7 +22,7 @@ internal static class HeartTypeExtensions
 
 internal class BrettaHeart : AbstractItem
 {
-    public static List<BrettaHeart> All() => HeartTypeExtensions.All().Select(t => new BrettaHeart(t)).ToList();
+    public static List<BrettaHeart> All() => [.. HeartTypeExtensions.All().Select(t => new BrettaHeart(t))];
 
     public const string TermName = "BRETTA_HEART";
 

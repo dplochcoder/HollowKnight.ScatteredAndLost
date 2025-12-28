@@ -136,7 +136,7 @@ internal class Binoculars : MonoBehaviour
         rigidbody.velocity = new(origSign * 6, 0);
 
         yield return Coroutines.SleepUntil(() => Mathf.Sign(transform.position.x - knight.transform.position.x) != origSign);
-        rigidbody.velocity = Vector3.zero;
+        rigidbody.velocity = Vector2.zero;
         knight.transform.SetPositionX(transform.position.x);
     }
 
@@ -183,7 +183,7 @@ internal class Binoculars : MonoBehaviour
         return closest;
     }
 
-    private Vector2 ClampToCollider(BoxCollider2D range, Vector2 pos)
+    private static Vector2 ClampToCollider(BoxCollider2D range, Vector2 pos)
     {
         var min = range.bounds.min;
         var max = range.bounds.max;

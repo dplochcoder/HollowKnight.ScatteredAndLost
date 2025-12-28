@@ -7,6 +7,30 @@ using UnityEngine;
 
 namespace HK8YPlando.Util;
 
+internal class OnDestroyHelper : MonoBehaviour
+{
+    private readonly List<Action> actions = [];
+    internal event Action Action
+    {
+        add
+        {
+            if (destroyed) value();
+            else actions.Add(value);
+        }
+        remove => actions.Remove(value);
+    }
+
+    private bool destroyed = false;
+    private void OnDestroy()
+    {
+        if (destroyed) return;
+
+        destroyed = true;
+        actions.ForEach(a => a());
+        actions.Clear();
+    }
+}
+
 internal static class InternalGameObjectExtensions
 {
     internal static void StartLibCoroutine(this MonoBehaviour self, CoroutineElement co) => self.StartCoroutine(EvaluateLibCoroutine(co));
@@ -19,6 +43,8 @@ internal static class InternalGameObjectExtensions
     }
 
     public static void DoAfter(this MonoBehaviour self, float seconds, Action action) => self.StartLibCoroutine(DoAfterImpl(seconds, action));
+
+    public static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHelper>().Action += action;
 
     private static IEnumerator<CoroutineElement> DoAfterImpl(float seconds, Action action)
     {

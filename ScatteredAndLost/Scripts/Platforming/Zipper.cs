@@ -53,8 +53,8 @@ internal class Zipper : MonoBehaviour
 
     private void Awake()
     {
-        lineCogs = gameObject.FindComponentsRecursive<ZipperLineCog>().Select(b => b.gameObject.GetComponent<SpriteRenderer>()).ToList();
-        platCogs = gameObject.FindComponentsRecursive<ZipperPlatformCog>().Select(b => b.gameObject).ToList();
+        lineCogs = [.. gameObject.FindComponentsRecursive<ZipperLineCog>().Select(b => b.gameObject.GetComponent<SpriteRenderer>())];
+        platCogs = [.. gameObject.FindComponentsRecursive<ZipperPlatformCog>().Select(b => b.gameObject)];
 
         this.StartLibCoroutine(Run());
     }

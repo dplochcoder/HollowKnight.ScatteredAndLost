@@ -1,4 +1,5 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
+using PurenailCore.SystemUtil;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,16 +39,16 @@ public static class DataUpdater
 
         // Debug data
         DebugData debugData = new() { LocalAssetBundlesPath = $"{root}/ScatteredAndLost/Unity/Assets/AssetBundles" };
-        JsonUtil.RewriteJsonFile(debugData, $"{root}/ScatteredAndLost/Resources/Data/debug.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(debugData, $"{root}/ScatteredAndLost/Resources/Data/debug.json");
 
         FixLocations(RandomizerData.Locations);
-        JsonUtil.RewriteJsonFile(RandomizerData.Locations, $"{root}/ScatteredAndLost/Resources/Data/locations.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Locations, $"{root}/ScatteredAndLost/Resources/Data/locations.json");
 
-        JsonUtil.RewriteJsonFile(RandomizerData.Logic, $"{root}/ScatteredAndLost/Resources/Data/logic.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Logic, $"{root}/ScatteredAndLost/Resources/Data/logic.json");
 
-        JsonUtil.RewriteJsonFile(RandomizerData.Transitions, $"{root}/ScatteredAndLost/Resources/Data/transitions.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Transitions, $"{root}/ScatteredAndLost/Resources/Data/transitions.json");
 
-        JsonUtil.RewriteJsonFile(RandomizerData.Waypoints, $"{root}/ScatteredAndLost/Resources/Data/waypoints.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Waypoints, $"{root}/ScatteredAndLost/Resources/Data/waypoints.json");
 
         // Code generation.
         var deferredShimsDir = DeferredGenerateUnityShims(root);
@@ -62,7 +63,7 @@ public static class DataUpdater
     {
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
-        CopyDll(root, "UnityScriptShims/bin/Debug/net472/HK8YPlando.dll", "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll");
+        CopyDll(root, "UnityScriptShims/bin/Debug/net6.0/HK8YPlando.dll", "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll");
     }
 
     private static void CopyDll(string root, string src, string dst)
@@ -93,11 +94,11 @@ public static class DataUpdater
 
     private static void GenerateUnityShimsImpl(string root)
     {
-        typeof(DataUpdater).Assembly.GetTypes().Where(t => t.IsDefined(typeof(Shim), false)).ForEach(type =>
+        foreach(var type in typeof(DataUpdater).Assembly.GetTypes().Where(t => t.IsDefined(typeof(Shim), false)))
         {
             try { GenerateShimFile(type, root); }
             catch (Exception ex) { throw new Exception($"Failed to generate {type.Name}", ex); }
-        });
+        }
     }
 
     private static Func<string> DeferredGenerateUnityShims(string root)
@@ -106,14 +107,14 @@ public static class DataUpdater
         return DeferredGenerateDirectory(path, GenerateUnityShimsImpl);
     }
 
-    private static HashSet<Type> validTypes = [];
+    private static readonly HashSet<Type> validTypes = [];
 
     private static void ValidateType(Type type)
     {
         if (validTypes.Contains(type)) return;
 
         if (type.Assembly.GetName().Name == "Assembly-CSharp") throw new ArgumentException($"Cannot reference Assembly-CSharp type {type.Name} directly");
-        type.GenericTypeArguments.ForEach(ValidateType);
+        foreach (var gType in type.GenericTypeArguments) ValidateType(gType);
         validTypes.Add(type);
     }
 
@@ -225,13 +226,13 @@ public static class DataUpdater
         }
 
         string baseName = t.FullName;
-        baseName = baseName.Substring(0, baseName.IndexOf('`'));
-        List<string> types = t.GenericTypeArguments.Select(t => PrintType(ns, t)).ToList();
+        baseName = baseName[..baseName.IndexOf('`')];
+        List<string> types = [.. t.GenericTypeArguments.Select(t => PrintType(ns, t))];
         return $"{baseName}<{string.Join(", ", types)}>";
     }
 
     private static void FixLocations(SortedDictionary<string, LocationData> locations)
     {
-        foreach (var e in locations) e.Value.Location.name = e.Key;
+        foreach (var e in locations) e.Value.Location!.name = e.Key;
     }
 }
