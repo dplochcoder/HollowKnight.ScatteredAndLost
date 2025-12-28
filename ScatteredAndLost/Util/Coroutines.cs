@@ -226,9 +226,9 @@ internal static class Coroutines
     public static CoroutineSequence Sequence(IEnumerator<CoroutineElement> enumerator, CoroutineSequence.StopCondition? stopCondition = null)
         => new(enumerator, stopCondition);
 
-    public static CoroutineOneOf OneOf(params CoroutineElement[] choices) => new(choices.ToList());
+    public static CoroutineOneOf OneOf(params CoroutineElement[] choices) => new([.. choices]);
 
-    public static CoroutineAllOf AllOf(params CoroutineElement[] choices) => new(choices.ToList());
+    public static CoroutineAllOf AllOf(params CoroutineElement[] choices) => new([.. choices]);
 
     // Sleep N frames
     public static SleepFrames SleepFrames(int frames) => new(frames);

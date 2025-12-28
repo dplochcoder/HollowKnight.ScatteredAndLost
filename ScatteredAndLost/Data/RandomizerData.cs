@@ -71,11 +71,11 @@ public static class RandomizerData
 {
     private static T LoadEmbedded<T>(string name) where T : class => JsonUtil.DeserializeEmbedded<T>($"HK8YPlando.Resources.Data.{name}.json");
 
-    public static SortedDictionary<string, TransitionData> Transitions = LoadEmbedded<SortedDictionary<string, TransitionData>>("transitions");
+    public static readonly SortedDictionary<string, TransitionData> Transitions = LoadEmbedded<SortedDictionary<string, TransitionData>>("transitions");
 
-    public static SortedDictionary<string, LocationData> Locations = LoadEmbedded<SortedDictionary<string, LocationData>>("locations");
+    public static readonly SortedDictionary<string, LocationData> Locations = LoadEmbedded<SortedDictionary<string, LocationData>>("locations");
 
-    public static SortedDictionary<string, string> Logic = LoadEmbedded<SortedDictionary<string, string>>("logic");
+    public static readonly SortedDictionary<string, string> Logic = LoadEmbedded<SortedDictionary<string, string>>("logic");
 
-    public static SortedDictionary<string, string> Waypoints = LoadEmbedded<SortedDictionary<string, string>>("waypoints");
+    public static readonly SortedDictionary<string, string> Waypoints = LoadEmbedded<SortedDictionary<string, string>>("waypoints");
 }

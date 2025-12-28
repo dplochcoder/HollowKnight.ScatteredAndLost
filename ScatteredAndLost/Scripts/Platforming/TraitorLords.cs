@@ -301,7 +301,7 @@ internal class TraitorLords : MonoBehaviour
         }));
     }
 
-    private IEnumerator<CoroutineElement> DelayedRoarAnim(PlayMakerFSM fsm)
+    private static IEnumerator<CoroutineElement> DelayedRoarAnim(PlayMakerFSM fsm)
     {
         yield return Coroutines.SleepFrames(1);
         fsm.GetComponent<tk2dSpriteAnimator>().Play("Roar");
@@ -374,7 +374,7 @@ internal class TraitorLords : MonoBehaviour
     private static GameObject GGBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
             .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
 
-    private void FinishGodhomeTransition(Deferred<Action<Scene>> self)
+    private static void FinishGodhomeTransition(Deferred<Action<Scene>> self)
     {
         var transitions = Instantiate(GGBattleTransitions);
         transitions.SetActive(true);

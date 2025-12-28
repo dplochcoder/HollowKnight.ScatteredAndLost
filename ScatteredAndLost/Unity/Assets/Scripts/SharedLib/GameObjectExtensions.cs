@@ -7,31 +7,21 @@ namespace HK8YPlando.Scripts.SharedLib
 {
     public static class GameObjectExtensions
     {
-        public static void SetVelocityX(this Rigidbody2D self, float x)
-        {
-            var v = self.velocity;
-            v.x = x;
-            self.velocity = v;
-        }
-
-        public static void SetVelocityY(this Rigidbody2D self, float y)
-        {
-            var v = self.velocity;
-            v.y = y;
-            self.velocity = v;
-        }
-
         public static GameObject FindChild(this GameObject self, string name)
         {
             foreach (var child in self.Children()) if (child.name == name) return child;
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public static void SetParent(this GameObject self, GameObject parent) => self.transform.SetParent(parent.transform);
 
         public static void Unparent(this GameObject self) => self.transform.parent = null;
 
+#pragma warning disable CS8603 // Possible null reference return.
         public static GameObject Parent(this GameObject self) => self.transform.parent?.gameObject;
+#pragma warning restore CS8603 // Possible null reference return.
 
         public static bool Contains(this BoxCollider2D self, Vector2 vec, float xBuffer = 0, float yBuffer = 0)
         {
@@ -66,7 +56,9 @@ namespace HK8YPlando.Scripts.SharedLib
             foreach (Transform child in self.transform) yield return child.gameObject;
         }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public static void DestroyChildrenImmediate(this GameObject self, Func<GameObject, bool> filter = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             var children = new List<GameObject>(self.Children());
             foreach (var child in children) if (filter == null || filter(child)) UnityEngine.Object.DestroyImmediate(child, true);

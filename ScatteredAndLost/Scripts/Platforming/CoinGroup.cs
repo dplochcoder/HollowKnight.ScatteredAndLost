@@ -131,8 +131,8 @@ internal class CoinGroup : MonoBehaviour
 
     private void Awake()
     {
-        coins = gameObject.FindComponentsRecursive<Coin>().ToList();
-        coinDoors = gameObject.FindComponentsRecursive<CoinDoor>().ToList();
+        coins = [.. gameObject.FindComponentsRecursive<Coin>()];
+        coinDoors = [.. gameObject.FindComponentsRecursive<CoinDoor>()];
     }
 
     private void OnDestroy() => controller.Release();

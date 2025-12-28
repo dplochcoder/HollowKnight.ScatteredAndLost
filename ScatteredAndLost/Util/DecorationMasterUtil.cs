@@ -37,7 +37,7 @@ internal static class DecorationMasterUtil
         ItemManager.Instance.SwitchGroup(0);
     }
 
-    private static List<string> GetDecoMasterPairs() => ObjectLoader.InstantiableObjects.Where(
+    private static List<string> GetDecoMasterPairs() => [.. ObjectLoader.InstantiableObjects.Where(
         x =>
         {
             var cd = x.Value.GetComponent<CustomDecoration>();
@@ -48,6 +48,5 @@ internal static class DecorationMasterUtil
             else if (settings.MemeItem) return !cd.GetType().IsDefined(typeof(AdvanceDecoration), false);
             else return !cd.GetType().IsDefined(typeof(AdvanceDecoration), false) && !cd.GetType().IsDefined(typeof(MemeDecoration), false);
         })
-        .Select(x => x.Key)
-        .ToList();
+        .Select(x => x.Key)];
 }

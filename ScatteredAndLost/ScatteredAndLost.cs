@@ -24,7 +24,7 @@ namespace HK8YPlando;
 
 public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings>, ICustomMenuMod
 {
-    public static ScatteredAndLostMod? Instance;
+    public static ScatteredAndLostMod? Instance { get; private set; }
 
     internal static readonly string Version = PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
 
@@ -83,7 +83,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
-        SuperSoulTotemHooks.Load();
+        SuperSoulTotem.Load();
 
         if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
         if (ModHooks.GetMod("BugPrince") is Mod) SetupBugPrince();
@@ -112,7 +112,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         Done,
     };
 
-    private void ClickExtractButton(MenuButton button, Wrapped<ExtractState> state)
+    private static void ClickExtractButton(MenuButton button, Wrapped<ExtractState> state)
     {
         if (state.Value == ExtractState.Working) return;
         state.Value = ExtractState.Working;
@@ -147,7 +147,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         thread.Start();
     }
 
-    private void BuildExtractButton(ContentArea contentArea, MenuScreen returnScreen)
+    private static void BuildExtractButton(ContentArea contentArea, MenuScreen returnScreen)
     {
         Wrapped<ExtractState> state = new(ExtractState.Done);
         MenuButtonConfig config = new()

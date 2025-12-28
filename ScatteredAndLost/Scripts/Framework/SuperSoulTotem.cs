@@ -86,73 +86,48 @@ internal class SuperSoulTotem : MonoBehaviour
         flinger.spawnMin.Value = 11;
         flinger.spawnMax.Value = 11;
 
-        if (SuperSoulTotemHooks.RegisterFlinger(flinger)) totem.AddComponent<OnDestroyHook>().Action = () => SuperSoulTotemHooks.UnregisterFlinger(flinger);
+        flingers.Add(flinger);
+        totem.DoOnDestroy(() => flingers.Remove(flinger));
 
         var particles = GameObjectExtensions.FindChild(totem, "Soul Particles").GetComponent<ParticleSystem>();
-        particles.emissionRate = EMISSION_RATE;
-        particles.startSize = PARTICLE_SIZE;
-        particles.maxParticles = PARTICLE_CAP;
-        particles.startLifetime = PARTICLE_LIFETIME;
-    }
-}
-
-internal static class SuperSoulTotemHooks
-{
-    private static List<ILHook> ilHooks = [];
-
-    public static void Load()
-    {
-        ilHooks.Add(new(typeof(SoulOrb).GetMethod("Zoom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetStateMachineTarget(), HookSoulOrbZoom));
-        ilHooks.Add(new(typeof(FlingObjectsFromGlobalPool).GetMethod("OnEnter", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance), HookFlingObjectsFromGlobalPool));
+        var emission = particles.emission;
+        emission.rateOverTime = EMISSION_RATE;
+        var main = particles.main;
+        main.startSize = PARTICLE_SIZE;
+        main.maxParticles = PARTICLE_CAP;
+        main.startLifetime = PARTICLE_LIFETIME;
     }
 
-    private static void HookFlingObjectsFromGlobalPool(ILContext il)
+    private static readonly HashSet<FlingObjectsFromGlobalPool> flingers = [];
+    private static readonly HashSet<SoulOrb> orbs = [];
+
+    internal static void BuffSoulOrb(SoulOrb orb)
     {
-        ILCursor cursor = new(il);
-        cursor.Goto(0);
-        cursor.GotoNext(i => i.MatchCall<RigidBody2dActionBase>("CacheRigidBody2d"));
-        cursor.Emit(OpCodes.Ldarg_0);
-        cursor.Emit(OpCodes.Ldloc_S, (byte)4);
-        cursor.EmitDelegate(MaybeBuffSoulOrb);
+        if (orbs.Add(orb))
+            orb.gameObject.DoOnDestroy(() => orbs.Remove(orb));
     }
 
-    private static HashSet<FlingObjectsFromGlobalPool> superSoulOrbFlingers = [];
-    internal static bool RegisterFlinger(FlingObjectsFromGlobalPool flinger) => superSoulOrbFlingers.Add(flinger);
-    internal static void UnregisterFlinger(FlingObjectsFromGlobalPool flinger) => superSoulOrbFlingers.Remove(flinger);
-
-    private static void MaybeBuffSoulOrb(FlingObjectsFromGlobalPool self, GameObject go)
+    private static bool loaded = false;
+    internal static void Load()
     {
-        if (superSoulOrbFlingers.Contains(self)) BuffSoulOrb(go);
-    }
+        if (loaded) return;
+        loaded = true;
 
-    internal static void BuffSoulOrb(GameObject go)
-    {
-        var orb = go.GetComponent<SoulOrb>();
-        if (orb == null) return;
-
-        buffedSoulOrbs.Add(orb);
-        GameObjectExtensions.GetOrAddComponent<OnDestroyHook>(go).Action += () => buffedSoulOrbs.Remove(orb);
-    }
-
-    private static void HookSoulOrbZoom(ILContext il)
-    {
-        ILCursor cursor = new(il);
-        cursor.Goto(0);
-        cursor.GotoNext(i => i.MatchCallvirt<HeroController>("AddMPCharge"));
-        cursor.Emit(OpCodes.Ldloc_1);
-        cursor.EmitDelegate(MaybeSuperHeal);
-    }
-
-    private static HashSet<SoulOrb> buffedSoulOrbs = [];
-
-    private static void MaybeSuperHeal(SoulOrb orb)
-    {
-        if (buffedSoulOrbs.Remove(orb))
+        PurenailCore.ModUtil.SoulOrbModifier.OnFlingSoulOrb += (flinger, orb) =>
         {
-            HeroController.instance.AddMPCharge(16);  // (16 + 2) * 11 = 198 = max MP
-            HeroController.instance.AddHealth(1);  // 1 * 11 = max health
-        }
+            if (flingers.Contains(flinger)) BuffSoulOrb(orb);
+        };
+        PurenailCore.ModUtil.SoulOrbModifier.OnGiveSoul += orb =>
+        {
+            if (orbs.Remove(orb))
+            {
+                HeroController.instance.AddMPCharge(16);  // (16 + 2) * 11 = 198 = max MP
+                HeroController.instance.AddHealth(1);  // 1 * 11 = max health
+            }
+        };
     }
+
+    static SuperSoulTotem() => Load();
 }
 
 [Description("Super soul totem which heals you to full", "en-us")]

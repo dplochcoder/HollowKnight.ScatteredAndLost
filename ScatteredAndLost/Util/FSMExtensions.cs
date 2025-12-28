@@ -16,12 +16,12 @@ internal static class FSMExtensions
 
     internal static void InsertBefore<T>(this FsmState self, FsmStateAction action) where T : FsmStateAction
     {
-        List<FsmStateAction> actions = self.Actions.ToList();
+        List<FsmStateAction> actions = [.. self.Actions];
 
         for (int i = 0; i < actions.Count; i++) if (actions[i] is T)
         {
             actions.Insert(i + 1, action);
-            self.Actions = actions.ToArray();
+            self.Actions = [.. actions];
             return;
         }
 

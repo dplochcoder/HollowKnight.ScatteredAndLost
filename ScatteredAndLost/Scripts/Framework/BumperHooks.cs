@@ -45,10 +45,11 @@ internal class BumperSpeedControl
         if (yBump > 0)
         {
             var rb2d = hc.gameObject.GetComponent<Rigidbody2D>();
-            var origY = rb2d.velocity.y;
+            var v = rb2d.velocity;
 
             hc.ShroomBounce();
-            rb2d.SetVelocityY(Mathf.Max(origY, yBump, Mathf.Min(origY + yBump, yMax)));
+            v.y = Mathf.Max(v.y, yBump, Mathf.Min(v.y + yBump, yMax));
+            rb2d.velocity = v;
         }
 
         var cState = HeroController.instance.cState;
@@ -56,23 +57,26 @@ internal class BumperSpeedControl
         this.decel = decel;
     }
 
-    internal void BumpUp(float scale)
+    internal static void BumpUp(float scale)
     {
         var hc = HeroController.instance;
         hc.ShroomBounce();
 
         var rb2d = hc.gameObject.GetComponent<Rigidbody2D>();
         var v = rb2d.velocity;
-        rb2d.SetVelocityY(v.y * scale);
+        v.y *= scale;
+        rb2d.velocity = v;
     }
 
-    internal void BumpDown()
+    internal static void BumpDown()
     {
         var hc = HeroController.instance;
         if (hc.cState.onGround) return;
 
         var rb2d = hc.gameObject.GetComponent<Rigidbody2D>();
-        rb2d.SetVelocityY(-hc.MAX_FALL_VELOCITY);
+        var v = rb2d.velocity;
+        v.y = -hc.MAX_FALL_VELOCITY;
+        rb2d.velocity = v;
     }
 
     internal void CancelHorizontal() => horzVelocity = 0;
