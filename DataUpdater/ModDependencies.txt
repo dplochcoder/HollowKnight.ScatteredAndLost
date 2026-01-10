@@ -2,5 +2,6 @@ DecorationMaster
 ItemChanger
 PurenailCore
 RandomizerCore
+RandomizerCore.Json
 Randomizer 4
 RandoSettingsManager

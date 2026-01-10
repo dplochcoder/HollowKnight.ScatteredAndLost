@@ -5,7 +5,6 @@ using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using PurenailCore.ModUtil;
-using SFCore.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +28,7 @@ internal class Binoculars : MonoBehaviour
     {
         validRanges = [.. CollidersParent!.FindComponentsRecursive<BoxCollider2D>()];
 
-        var promptMarkerObj = Instantiate(ScatteredAndLostPreloader.Instance.KingsPassLoreTablet.LocateMyFSM("Inspection").GetFsmState("Init").GetFirstActionOfType<SpawnObjectFromGlobalPool>().gameObject.Value);
+        var promptMarkerObj = Instantiate(ScatteredAndLostPreloader.Instance.KingsPassLoreTablet.LocateMyFSM("Inspection").GetState("Init").GetFirstActionOfType<SpawnObjectFromGlobalPool>().gameObject.Value);
         promptMarkerObj.transform.SetParent(transform);
         promptMarkerObj.transform.localPosition = new(0, 1.5f, 0);
         promptMarker = promptMarkerObj.LocateMyFSM("Prompt Control");

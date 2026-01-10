@@ -9,7 +9,6 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
-using SFCore.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,7 +49,7 @@ internal class Balladrius : ItemChanger.Modules.Module
         var obj = fsm.gameObject;
 
         List<int> numFires = [0];
-        fsm.GetFsmState("Fire").AddFirstAction(new Lambda(() =>
+        fsm.GetState("Fire").AddFirstAction(new Lambda(() =>
         {
             if (++numFires[0] == 2) ReallyBuffBaldur(fsm);
         }));
@@ -68,12 +67,12 @@ internal class Balladrius : ItemChanger.Modules.Module
 
         var accel = fsm.gameObject.AddComponent<AnimationAccelerator>();
 
-        fsm.RemoveGlobalTransition("TOOK DAMAGE");
+        SFCore.Utils.FsmUtil.RemoveGlobalTransition(fsm, "TOOK DAMAGE");
 
-        fsm.GetFsmState("Close").AccelerateAnimation(accel, 3f);
-        fsm.GetFsmState("Close2").AccelerateAnimation(accel, 3f);
+        fsm.GetState("Close").AccelerateAnimation(accel, 3f);
+        fsm.GetState("Close2").AccelerateAnimation(accel, 3f);
 
-        var fire = fsm.GetFsmState("Fire");
+        var fire = fsm.GetState("Fire");
         fire.AccelerateAnimation(accel, 3.5f);
 
         Wrapped<int> bullets = new(0);
@@ -90,21 +89,21 @@ internal class Balladrius : ItemChanger.Modules.Module
             }
         }));
 
-        fsm.GetFsmState("Hit").AccelerateAnimation(accel, 3f);
+        fsm.GetState("Hit").AccelerateAnimation(accel, 3f);
 
-        var idle = fsm.GetFsmState("Idle");
+        var idle = fsm.GetState("Idle");
         idle.RemoveTransitionsOn("CLOSE");
         idle.AccelerateAnimation(accel, 3f);
         idle.GetFirstActionOfType<WaitRandom>().SetMinMax(0.075f, 0.1f);
 
-        fsm.GetFsmState("Open").AccelerateAnimation(accel, 3.5f);
+        fsm.GetState("Open").AccelerateAnimation(accel, 3.5f);
 
-        fsm.GetFsmState("Shot Anim End").RemoveTransitionsOn("CLOSE");
+        fsm.GetState("Shot Anim End").RemoveTransitionsOn("CLOSE");
 
-        fsm.GetFsmState("Shot Antic").AccelerateAnimation(accel, 3.5f);
+        fsm.GetState("Shot Antic").AccelerateAnimation(accel, 3.5f);
 
-        fsm.GetFsmState("Sleep 1").AccelerateAnimation(accel, 3.5f);
-        fsm.GetFsmState("Sleep 2").AccelerateAnimation(accel, 3.5f);
+        fsm.GetState("Sleep 1").AccelerateAnimation(accel, 3.5f);
+        fsm.GetState("Sleep 2").AccelerateAnimation(accel, 3.5f);
     }
 
     private bool OverrideIsBlockingByDirection(On.HealthManager.orig_IsBlockingByDirection orig, HealthManager self, int cardinalDirection, AttackTypes attackTypes)

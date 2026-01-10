@@ -9,7 +9,6 @@ using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
 using PurenailCore.ICUtil;
-using SFCore.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -274,7 +273,7 @@ internal class BrettasHouse : Module
 
     internal void ForceShadeSpawn(PlayMakerFSM fsm)
     {
-        fsm.GetFsmState("Set Shade").AddFirstAction(new Lambda(() =>
+        fsm.GetState("Set Shade").AddFirstAction(new Lambda(() =>
         {
             var marker = lastShadeTrigger?.ShadeMarker;
             if (marker != null)
@@ -300,7 +299,7 @@ internal class BrettasHouse : Module
     internal void RegisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Add(filter);
     internal void UnregisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Remove(filter);
 
-    internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetFsmState("Can Set?")?.AddFirstAction(new Lambda(() =>
+    internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetState("Can Set?")?.AddFirstAction(new Lambda(() =>
     {
         if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
     }));

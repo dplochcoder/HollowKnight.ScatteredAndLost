@@ -8,7 +8,6 @@ using HutongGames.PlayMaker.Actions;
 using ItemChanger;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
-using SFCore.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -149,15 +148,15 @@ internal class TraitorLords : MonoBehaviour
         var fsm = obj.LocateMyFSM("Mantis");
         fsm.FsmVariables.GetFsmGameObject("Self").Value = obj;
 
-        fsm.GetFsmState("Check L").GetFirstActionOfType<FloatCompare>().float2.Value = mid + 1.5f;
-        fsm.GetFsmState("Check R").GetFirstActionOfType<FloatCompare>().float2.Value = mid - 1.5f;
-        fsm.GetFsmState("DSlash").GetFirstActionOfType<FloatCompare>().float2.Value = MainY;
-        fsm.GetFsmState("Fall").GetFirstActionOfType<FloatCompare>().float2.Value = MainY;
-        fsm.GetFsmState("Intro Land").GetFirstActionOfType<SetPosition>().y.Value = MainY;
-        fsm.GetFsmState("Land").GetFirstActionOfType<SetPosition>().y.Value = MainY;
-        fsm.GetFsmState("Roar").GetFirstActionOfType<SetFsmString>().setValue = "BRETTOR_LORD2";
+        fsm.GetState("Check L").GetFirstActionOfType<FloatCompare>().float2.Value = mid + 1.5f;
+        fsm.GetState("Check R").GetFirstActionOfType<FloatCompare>().float2.Value = mid - 1.5f;
+        fsm.GetState("DSlash").GetFirstActionOfType<FloatCompare>().float2.Value = MainY;
+        fsm.GetState("Fall").GetFirstActionOfType<FloatCompare>().float2.Value = MainY;
+        fsm.GetState("Intro Land").GetFirstActionOfType<SetPosition>().y.Value = MainY;
+        fsm.GetState("Land").GetFirstActionOfType<SetPosition>().y.Value = MainY;
+        fsm.GetState("Roar").GetFirstActionOfType<SetFsmString>().setValue = "BRETTOR_LORD2";
 
-        fsm.GetFsmState("Sickle Antic").AddFirstAction(new Lambda(() =>
+        fsm.GetState("Sickle Antic").AddFirstAction(new Lambda(() =>
         {
             if (sickleCooldown > 0 && lastSickler != null && lastSickler != this)
             {
@@ -169,7 +168,7 @@ internal class TraitorLords : MonoBehaviour
             sickleCooldown = SickleCooldown;
         }));
 
-        fsm.GetFsmState("Too Close?").AddFirstAction(new Lambda(() =>
+        fsm.GetState("Too Close?").AddFirstAction(new Lambda(() =>
         {
             if (slamCooldown > 0 && lastSlammer != null && lastSlammer != this)
             {
@@ -184,7 +183,7 @@ internal class TraitorLords : MonoBehaviour
         List<string> attackStates = ["Feint?", "Jump Antic"];
         foreach (var attackState in attackStates)
         {
-            fsm.GetFsmState(attackState).AddFirstAction(new Lambda(() =>
+            fsm.GetState(attackState).AddFirstAction(new Lambda(() =>
             {
                 if (attackCooldown > 0 && lastAttacker != null && lastAttacker != this)
                 {
@@ -218,13 +217,13 @@ internal class TraitorLords : MonoBehaviour
                 continue;
             }
 
-            blow.GetFsmState("Init").AddFirstAction(new Lambda(() =>
+            blow.GetState("Init").AddFirstAction(new Lambda(() =>
             {
                 if (enragedFsm == fsm) return;
 
-                blow.GetFsmState("Init").GetFirstActionOfType<Wait>().time = 0.15f;
-                blow.GetFsmState("Steam").GetFirstActionOfType<Wait>().time = 0.45f;
-                blow.GetFsmState("Ready").GetFirstActionOfType<Wait>().time = 0.2f;
+                blow.GetState("Init").GetFirstActionOfType<Wait>().time = 0.15f;
+                blow.GetState("Steam").GetFirstActionOfType<Wait>().time = 0.45f;
+                blow.GetState("Ready").GetFirstActionOfType<Wait>().time = 0.2f;
             }));
             break;
         }
@@ -272,7 +271,7 @@ internal class TraitorLords : MonoBehaviour
 
         fsm.gameObject.GetComponent<HealthManager>().hp += RageHPBoost;
 
-        var roar = fsm.GetFsmState("Roar");
+        var roar = fsm.GetState("Roar");
         var audio = roar.GetFirstActionOfType<AudioPlayerOneShot>();
         audio.pitchMin.Value = 1.25f;
         audio.pitchMax.Value = 1.25f;
@@ -282,12 +281,12 @@ internal class TraitorLords : MonoBehaviour
         roar.GetFirstActionOfType<Wait>().time.Value = RageRoarTime;
         roar.RemoveActionsOfType<ActivateGameObject>();
 
-        fsm.GetFsmState("Roar End").AccelerateAnimation(accel, RageRoarSpeedup);
-        fsm.GetFsmState("Roar Recover").AccelerateAnimation(accel, RageRoarSpeedup);
+        fsm.GetState("Roar End").AccelerateAnimation(accel, RageRoarSpeedup);
+        fsm.GetState("Roar Recover").AccelerateAnimation(accel, RageRoarSpeedup);
 
         Wrapped<bool> raged = new(false);
-        var idle = fsm.GetFsmState("Idle");
-        idle.AddFsmTransition("RAGE MODE", "Roar");
+        var idle = fsm.GetState("Idle");
+        idle.AddTransition("RAGE MODE", "Roar");
         idle.AddFirstAction(new Lambda(() =>
         {
             if (!raged.Value)
@@ -315,33 +314,33 @@ internal class TraitorLords : MonoBehaviour
         fsm.FsmVariables.GetFsmFloat("DSlash Speed").Value = RageAttackSpeed;
         fsm.FsmVariables.GetFsmFloat("Sickle Speed Base").Value = RageSickleSpeed;
 
-        fsm.GetFsmState("Attack 1").AccelerateAnimation(accel, RageAttack1Speedup);
-        fsm.GetFsmState("Attack Antic").AccelerateAnimation(accel, RageAttackAnticSpeedup);
-        fsm.GetFsmState("Attack Recover").AccelerateAnimation(accel, RageAttackRecoverSpeedup);
-        fsm.GetFsmState("Attack Swipe").AccelerateAnimation(accel, RageAttackSwipeSpeedup);
-        fsm.GetFsmState("DSlash").AccelerateAnimation(accel, RageDSlashSpeedup);
-        fsm.GetFsmState("DSlash Antic").AccelerateAnimation(accel, RageDSlashAnticSpeedup);
-        fsm.GetFsmState("Jump").AccelerateAnimation(accel, RageJumpSpeedup);
-        fsm.GetFsmState("Jump Antic").AccelerateAnimation(accel, RageJumpAnticSpeedup);
-        fsm.GetFsmState("Land").AccelerateAnimation(accel, RageLandSpeedup);
-        fsm.GetFsmState("Sickle Antic").AccelerateAnimation(accel, RageSickleAnticSpeedup);
-        fsm.GetFsmState("Sickle Throw Recover").AccelerateAnimation(accel, RageSickleThrowRecoverSpeedup);
-        fsm.GetFsmState("Slam Antic").AccelerateAnimation(accel, RageSlamAnticSpeedup);
-        fsm.GetFsmState("Turn").AccelerateAnimation(accel, RageTurnSpeedup);
+        fsm.GetState("Attack 1").AccelerateAnimation(accel, RageAttack1Speedup);
+        fsm.GetState("Attack Antic").AccelerateAnimation(accel, RageAttackAnticSpeedup);
+        fsm.GetState("Attack Recover").AccelerateAnimation(accel, RageAttackRecoverSpeedup);
+        fsm.GetState("Attack Swipe").AccelerateAnimation(accel, RageAttackSwipeSpeedup);
+        fsm.GetState("DSlash").AccelerateAnimation(accel, RageDSlashSpeedup);
+        fsm.GetState("DSlash Antic").AccelerateAnimation(accel, RageDSlashAnticSpeedup);
+        fsm.GetState("Jump").AccelerateAnimation(accel, RageJumpSpeedup);
+        fsm.GetState("Jump Antic").AccelerateAnimation(accel, RageJumpAnticSpeedup);
+        fsm.GetState("Land").AccelerateAnimation(accel, RageLandSpeedup);
+        fsm.GetState("Sickle Antic").AccelerateAnimation(accel, RageSickleAnticSpeedup);
+        fsm.GetState("Sickle Throw Recover").AccelerateAnimation(accel, RageSickleThrowRecoverSpeedup);
+        fsm.GetState("Slam Antic").AccelerateAnimation(accel, RageSlamAnticSpeedup);
+        fsm.GetState("Turn").AccelerateAnimation(accel, RageTurnSpeedup);
 
-        var cooldown = fsm.GetFsmState("Cooldown");
+        var cooldown = fsm.GetState("Cooldown");
         cooldown.GetFirstActionOfType<Wait>().time = 0.25f / RageCooldownSpeedup;
         cooldown.AccelerateAnimation(accel, RageLandSpeedup);
 
-        var feint = fsm.GetFsmState("Feint");
+        var feint = fsm.GetState("Feint");
         feint.GetFirstActionOfType<Wait>().time = 0.2f / RageFeintSpeedup;
         feint.AccelerateAnimation(accel, RageFeintSpeedup);
 
-        var feint2 = fsm.GetFsmState("Feint 2");
+        var feint2 = fsm.GetState("Feint 2");
         feint2.GetFirstActionOfType<Wait>().time = 0.25f / RageFeint2Speedup;
         feint2.AccelerateAnimation(accel, RageFeint2Speedup);
 
-        var sickleThrow = fsm.GetFsmState("Sickle Throw");
+        var sickleThrow = fsm.GetState("Sickle Throw");
         sickleThrow.AccelerateAnimation(accel, RageSickleThrowSpeedup);
         sickleThrow.InsertBefore<PlayParticleEmitter>(new Lambda(() =>
         {
@@ -350,29 +349,29 @@ internal class TraitorLords : MonoBehaviour
             spawned.GetComponent<Rigidbody2D>().velocity = new(fsm.FsmVariables.GetFsmFloat("Sickle Speed Base").Value * 3.5f * fsm.gameObject.transform.localScale.x, 0);
         }));
 
-        var sickleThrowCooldown = fsm.GetFsmState("Sick Throw CD");
+        var sickleThrowCooldown = fsm.GetState("Sick Throw CD");
         sickleThrowCooldown.GetFirstActionOfType<Wait>().time = 0.9f / RageSickleThrowCooldownSpeedup;
         sickleThrowCooldown.AccelerateAnimation(accel, RageSickleThrowRecoverSpeedup);
 
-        var slamming = fsm.GetFsmState("Slamming");
+        var slamming = fsm.GetState("Slamming");
         slamming.GetFirstActionOfType<Wait>().time = 0.3f / RageSlammingSpeedup;
         slamming.AccelerateAnimation(accel, RageSlammingSpeedup);
 
-        var slamEnd = fsm.GetFsmState("Slam End");
+        var slamEnd = fsm.GetState("Slam End");
         slamEnd.GetFirstActionOfType<Wait>().time = 1.2f / RageSlamEndSpeedup;
         slamEnd.AccelerateAnimation(accel, RageSlammingSpeedup);
 
-        var walk = fsm.GetFsmState("Walk");
+        var walk = fsm.GetState("Walk");
         walk.GetFirstActionOfType<ChaseObjectGround>().speedMax.Value = RageWalkSpeed;
         walk.AccelerateAnimation(accel, RageWalkSpeedup);
 
-        var waves = fsm.GetFsmState("Waves");
+        var waves = fsm.GetState("Waves");
         waves.GetFirstActionOfType<Wait>().time = 1f / RageWavesSpeedup;
         foreach (var action in waves.GetActionsOfType<SetVelocity2d>()) action.x.Value = Mathf.Sign(action.x.Value) * RageWaveSpeed;
     }
 
     private static GameObject GGBattleTransitions => GameObjectExtensions.FindChild(ScatteredAndLostPreloader.Instance.GorbStatue, "Inspect")
-            .LocateMyFSM("GG Boss UI").GetFsmState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
+            .LocateMyFSM("GG Boss UI").GetState("Transition").GetFirstActionOfType<CreateObject>().gameObject.Value;
 
     private static void FinishGodhomeTransition(Deferred<Action<Scene>> self)
     {
