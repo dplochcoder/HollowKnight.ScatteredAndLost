@@ -43,10 +43,8 @@ internal class BrettasHouse : Module
     public int Hearts = 0;
     public List<HeartDoorData> DoorData = [];
     public bool SeenBrettasHouseAreaTitle = false;
-    public bool DefeatedBrettorLords = false;
-
     public bool GhostCoinsSpawnedBrettorLords = false;
-    public bool GhostCoinsDefeatedBrettorLords = false;
+    public bool DefeatedBrettorLords = false;
 
     private readonly Dictionary<string, AssetBundle?> sceneBundles = [];
     private SceneLoaderModule? coreModule;

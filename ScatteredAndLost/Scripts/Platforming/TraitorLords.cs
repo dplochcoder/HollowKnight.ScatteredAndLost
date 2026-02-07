@@ -55,7 +55,6 @@ internal class TraitorLords : MonoBehaviour
         {
             PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
             mod.GhostCoinsSpawnedBrettorLords = true;
-            mod.GhostCoinsDefeatedBrettorLords = false;
         }
 
         yield return Coroutines.SleepSeconds(StartDelay);
@@ -81,7 +80,6 @@ internal class TraitorLords : MonoBehaviour
         mod.UpdateCheckpoint(Data.CheckpointLevel.Bretta);
 
         PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
-        mod.GhostCoinsDefeatedBrettorLords = true;
         mod.GhostCoinsSpawnedBrettorLords = false;
 
         yield return Coroutines.SleepSeconds(PostDeathWait);

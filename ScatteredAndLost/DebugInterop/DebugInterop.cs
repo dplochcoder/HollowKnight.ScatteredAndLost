@@ -56,11 +56,13 @@ internal static class DebugInterop
             data.Closed = false;
         }
 
+        mod.SeenBrettasHouseAreaTitle = false;
         if (mod.Checkpoint != null)
         {
             mod.Checkpoint = mod.EnableHeartDoors ? Data.CheckpointLevel.Entrance : Data.CheckpointLevel.Zippers;
             mod.BrettaDoorRedirected(mod.Checkpoint.Value.SceneAndGate());
         }
         mod.DefeatedBrettorLords = false;
+        mod.GhostCoinsSpawnedBrettorLords = false;
     }
 }
