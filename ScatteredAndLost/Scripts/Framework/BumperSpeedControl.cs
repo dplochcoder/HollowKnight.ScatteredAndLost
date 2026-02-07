@@ -12,14 +12,10 @@ internal class BumperSpeedControl
     private float horzVelocity = 0;
     private float decel = 0;
 
-    private void Update(On.HeroController.orig_Update orig, HeroController self)
+    private void Update(HeroController hc)
     {
-        orig(self);
-
         if (horzVelocity == 0) return;
 
-        // TODO: Spells, recoil
-        var hc = HeroController.instance;
         var cState = hc.cState;
         var hState = hc.hero_state;
         if (hState == GlobalEnums.ActorStates.hard_landing ||
@@ -33,6 +29,13 @@ internal class BumperSpeedControl
 
         if (Mathf.Abs(horzVelocity) < decel * Time.deltaTime) horzVelocity = 0;
         else horzVelocity = Mathf.Sign(horzVelocity) * (Mathf.Abs(horzVelocity) - decel * Time.deltaTime);
+    }
+
+    private static void OnHeroControllerUpdate(On.HeroController.orig_Update orig, HeroController self)
+    {
+        orig(self);
+
+        Instance.Update(self);
     }
 
     internal void BumpHorizontal(float velocity, float decel, float yBump, float yMax)
@@ -101,6 +104,7 @@ internal class BumperSpeedControl
 
         HeroVelocityModifier.AddModifier(0, ApplyBumperVelocity);
         ModHooks.TakeDamageHook += OnTakeDamage;
+        On.HeroController.Update += OnHeroControllerUpdate;
     }
 
     static BumperSpeedControl() => Load();
