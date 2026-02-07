@@ -212,7 +212,17 @@ internal class Binoculars : MonoBehaviour
         return true;
     }
 
-    static Binoculars() => CameraPositionModifier.AddModifier(CameraModifierPhase.FINAL_POSITON, 1f, ApplyBinoculars);
+    private static bool loaded = false;
+
+    internal static void Load()
+    {
+        if (loaded) return;
+        loaded = true;
+
+        CameraPositionModifier.AddModifier(CameraModifierPhase.FINAL_POSITON, 1f, ApplyBinoculars);
+    }
+
+    static Binoculars() => Load();
 }
 
 [Shim]

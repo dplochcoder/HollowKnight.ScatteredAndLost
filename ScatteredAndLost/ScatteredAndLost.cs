@@ -81,6 +81,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
     {
+        Binoculars.Load();
+        BumperSpeedControl.Load();
         ScatteredAndLostPreloader.Instance.Initialize(preloadedObjects);
         ScatteredAndLostSceneManagerAPI.Load();
         SuperSoulTotem.Load();
@@ -95,7 +97,6 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
             if (Settings.EnableInVanilla && (ModHooks.GetMod("Randomizer 4") == null || !IsRandoSave()))
             {
                 ItemChangerMod.CreateSettingsProfile(false);
-                ItemChangerMod.Modules.GetOrAdd<BinocularsModule>();
                 var mod = ItemChangerMod.Modules.GetOrAdd<BrettasHouse>();
 
                 mod.EnableHeartDoors = false;

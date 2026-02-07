@@ -60,7 +60,6 @@ internal static class RandoInterop
         if (!IsEnabled) return;
 
         ItemChangerMod.CreateSettingsProfile(false);
-        ItemChangerMod.Modules.Add<BinocularsModule>();
         var mod = ItemChangerMod.Modules.Add<BrettasHouse>();
 
         if (LS.EnableHeartDoors)
