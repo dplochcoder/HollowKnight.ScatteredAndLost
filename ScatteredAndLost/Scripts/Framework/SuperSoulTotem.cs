@@ -9,10 +9,6 @@ using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
-using MonoMod.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
