@@ -73,15 +73,13 @@ internal class TraitorLords : MonoBehaviour
         }));
 
         yield return Coroutines.SleepUntil(() => traitor1Dead && traitor2Dead);
-        PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
-        TempleMusicManager.Get()?.FadeOut(5f);
 
         mod.DefeatedBrettorLords = true;
         mod.UpdateCheckpoint(Data.CheckpointLevel.Bretta);
-
         PlayerData.instance.IncrementInt(nameof(PlayerData.ghostCoins));
         mod.GhostCoinsSpawnedBrettorLords = false;
 
+        TempleMusicManager.Get()?.FadeOut(5f);
         yield return Coroutines.SleepSeconds(PostDeathWait);
 
         var transitions = Instantiate(GGBattleTransitions);
