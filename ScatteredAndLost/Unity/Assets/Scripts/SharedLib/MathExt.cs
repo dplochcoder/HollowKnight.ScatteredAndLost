@@ -110,7 +110,7 @@ namespace HK8YPlando.Scripts.SharedLib
                 else newPoints.Add(point);
             }
 
-            poly.points = [.. newPoints];
+            poly.points = newPoints.ToArray();
             return changed;
         }
 

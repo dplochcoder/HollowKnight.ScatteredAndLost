@@ -1,4 +1,5 @@
 ﻿using HK8YPlando.Scripts.SharedLib;
+using PurenailCore.SystemUtil;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,7 +63,7 @@ public static class DataUpdater
     {
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
-        CopyDll(root, "UnityScriptShims/bin/Debug/net6.0/HK8YPlando.dll", "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll");
+        CopyDll(root, "UnityScriptShims/bin/Debug/net472/HK8YPlando.dll", "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll");
     }
 
     private static void CopyDll(string root, string src, string dst)
