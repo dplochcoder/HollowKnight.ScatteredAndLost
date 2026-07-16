@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Architect.Content;
+using Architect.Objects.Categories;
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
 using HK8YPlando.Scripts.Framework;
@@ -63,18 +63,16 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public override int LoadPriority() => -1;
 
-    private static void SetupArchitect() =>
-        ContentPacks.RegisterPack(
-            new("Scattered & Lost", "Platforming assets borrowed from Celeste")
-            {
-                BubbleArchitectObject.Create(),
-                BumperArchitectObject.Create(),
-                CoinArchitectObject.Create(),
-                CoinDoorArchitectObject.Create(),
-                SuperSoulTotemArchitectObject.Create(),
-                ZipperArchitectObject.Create(),
-            }
-        );
+    private static void SetupArchitect()
+    {
+        var category = Categories.RegisterCategory("Scattered & Lost");
+        category.Add(BubbleArchitectObject.Create());
+        category.Add(BumperArchitectObject.Create());
+        category.Add(CoinArchitectObject.Create());
+        category.Add(CoinDoorArchitectObject.Create());
+        category.Add(SuperSoulTotemArchitectObject.Create());
+        category.Add(ZipperArchitectObject.Create());
+    }
 
     private const string SCENES = "Sprites.Scenes.";
 

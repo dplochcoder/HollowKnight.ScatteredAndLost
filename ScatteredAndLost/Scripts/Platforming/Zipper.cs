@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Architect.Attributes.Config;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+using Architect.Config.Types;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -314,71 +314,53 @@ internal class ZipperDecoration : CustomDecoration
 
 public static class ZipperArchitectObject
 {
-    public static AbstractPackElement Create() =>
+    public static PlaceableObject Create() =>
         ArchitectUtil.MakeArchitectObject(
-            "Zipper",
-            "Zipper",
-            "zipper",
+            prefab: "Zipper",
+            name: "Zipper",
+            img: "zipper",
             ConfigGroup.Generic,
-            (
-                new FloatConfigType(
-                    "X Move Distance",
-                    (o, value) =>
-                        o.GetComponent<Zipper>()
-                            .UpdateTargetPos(p => p with { x = value.GetValue() })
-                ).WithDefaultValue(4),
-                "sal_zipper_x_move"
-            ),
-            (
-                new FloatConfigType(
-                    "Y Move Distance",
-                    (o, value) =>
-                        o.GetComponent<Zipper>()
-                            .UpdateTargetPos(p => p with { y = value.GetValue() })
-                ).WithDefaultValue(2),
-                "sal_zipper_y_move"
-            ),
-            (
-                new FloatConfigType(
-                    "Pause Time",
-                    (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()
-                ).WithDefaultValue(1.25f),
-                "sal_zipper_pause_time"
-            ),
-            (
-                new FloatConfigType(
-                    "Rewind Speed",
-                    (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()
-                ).WithDefaultValue(9.25f),
-                "sal_zipper_rewind_speed"
-            ),
-            (
-                new BoolConfigType(
-                    "Top Spikes",
-                    (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())
-                ).WithDefaultValue(false),
-                "sal_zipper_top_spikes"
-            ),
-            (
-                new BoolConfigType(
-                    "Right Spikes",
-                    (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())
-                ).WithDefaultValue(true),
-                "sal_zipper_right_spikes"
-            ),
-            (
-                new BoolConfigType(
-                    "Bot Spikes",
-                    (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())
-                ).WithDefaultValue(false),
-                "sal_zipper_bot_spikes"
-            ),
-            (
-                new BoolConfigType(
-                    "Left Spikes",
-                    (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())
-                ).WithDefaultValue(true),
-                "sal_zipper_left_spikes"
-            )
+            new FloatConfigType(
+                "X Move Distance",
+                "sal_zipper_x_move",
+                (o, value) =>
+                    o.GetComponent<Zipper>().UpdateTargetPos(p => p with { x = value.GetValue() })
+            ).WithDefaultValue(4),
+            new FloatConfigType(
+                "Y Move Distance",
+                "sal_zipper_y_move",
+                (o, value) =>
+                    o.GetComponent<Zipper>().UpdateTargetPos(p => p with { y = value.GetValue() })
+            ).WithDefaultValue(2),
+            new FloatConfigType(
+                "Pause Time",
+                "sal_zipper_pause_time",
+                (o, value) => o.GetComponent<Zipper>().PauseTime = value.GetValue()
+            ).WithDefaultValue(1.25f),
+            new FloatConfigType(
+                "Rewind Speed",
+                "sal_zipper_rewind_speed",
+                (o, value) => o.GetComponent<Zipper>().RewindSpeed = value.GetValue()
+            ).WithDefaultValue(9.25f),
+            new BoolConfigType(
+                "Top Spikes",
+                "sal_zipper_top_spikes",
+                (o, value) => o.GetComponent<Zipper>().SetTopSpikes(value.GetValue())
+            ).WithDefaultValue(false),
+            new BoolConfigType(
+                "Right Spikes",
+                "sal_zipper_right_spikes",
+                (o, value) => o.GetComponent<Zipper>().SetRightSpikes(value.GetValue())
+            ).WithDefaultValue(true),
+            new BoolConfigType(
+                "Bot Spikes",
+                "sal_zipper_bot_spikes",
+                (o, value) => o.GetComponent<Zipper>().SetBotSpikes(value.GetValue())
+            ).WithDefaultValue(false),
+            new BoolConfigType(
+                "Left Spikes",
+                "sal_zipper_left_spikes",
+                (o, value) => o.GetComponent<Zipper>().SetLeftSpikes(value.GetValue())
+            ).WithDefaultValue(true)
         );
 }

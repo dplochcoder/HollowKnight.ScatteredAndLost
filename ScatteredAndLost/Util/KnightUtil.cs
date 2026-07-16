@@ -25,7 +25,7 @@ internal static class KnightUtil
         return false;
     }
 
-    private static FieldInfo airDashedField = typeof(HeroController).GetField(
+    private static readonly FieldInfo airDashedField = typeof(HeroController).GetField(
         "airDashed",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -33,7 +33,7 @@ internal static class KnightUtil
     internal static void SetAirDashed(this HeroController self, bool value) =>
         airDashedField.SetValue(self, value);
 
-    private static FieldInfo doubleJumpedField = typeof(HeroController).GetField(
+    private static readonly FieldInfo doubleJumpedField = typeof(HeroController).GetField(
         "doubleJumped",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -41,7 +41,7 @@ internal static class KnightUtil
     internal static void SetDoubleJumped(this HeroController self, bool value) =>
         doubleJumpedField.SetValue(self, value);
 
-    private static FieldInfo nailChargeTimerField = typeof(HeroController).GetField(
+    private static readonly FieldInfo nailChargeTimerField = typeof(HeroController).GetField(
         "nailChargeTimer",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -49,7 +49,7 @@ internal static class KnightUtil
     internal static void SetNailChargeTimer(this HeroController self, float value) =>
         nailChargeTimerField.SetValue(self, value);
 
-    private static MethodInfo cancelAttackMethod = typeof(HeroController).GetMethod(
+    private static readonly MethodInfo cancelAttackMethod = typeof(HeroController).GetMethod(
         "CancelAttack",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -57,7 +57,7 @@ internal static class KnightUtil
     internal static void CancelAttack(this HeroController self) =>
         cancelAttackMethod.Invoke(self, []);
 
-    private static MethodInfo cancelBounceMethod = typeof(HeroController).GetMethod(
+    private static readonly MethodInfo cancelBounceMethod = typeof(HeroController).GetMethod(
         "CancelBounce",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -65,7 +65,7 @@ internal static class KnightUtil
     internal static void CancelBounce(this HeroController self) =>
         cancelBounceMethod.Invoke(self, []);
 
-    private static MethodInfo cancelFallEffectsMethod = typeof(HeroController).GetMethod(
+    private static readonly MethodInfo cancelFallEffectsMethod = typeof(HeroController).GetMethod(
         "CancelFallEffects",
         BindingFlags.NonPublic | BindingFlags.Instance
     );
@@ -73,10 +73,11 @@ internal static class KnightUtil
     internal static void CancelFallEffects(this HeroController self) =>
         cancelFallEffectsMethod.Invoke(self, []);
 
-    private static MethodInfo cancelRecoilHorizontalMethod = typeof(HeroController).GetMethod(
-        "CancelRecoilHorizontal",
-        BindingFlags.NonPublic | BindingFlags.Instance
-    );
+    private static readonly MethodInfo cancelRecoilHorizontalMethod =
+        typeof(HeroController).GetMethod(
+            "CancelRecoilHorizontal",
+            BindingFlags.NonPublic | BindingFlags.Instance
+        );
 
     internal static void CancelRecoilHorizontal(this HeroController self) =>
         cancelRecoilHorizontalMethod.Invoke(self, []);

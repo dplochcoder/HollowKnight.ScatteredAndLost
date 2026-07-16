@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -136,6 +136,11 @@ public class BumperDecoration : CustomDecoration
 
 public static class BumperArchitectObject
 {
-    public static AbstractPackElement Create() =>
-        ArchitectUtil.MakeArchitectObject("Bumper", "Bumper", null, ConfigGroup.Generic);
+    public static PlaceableObject Create() =>
+        ArchitectUtil.MakeArchitectObject(
+            prefab: "Bumper",
+            name: "Bumper",
+            img: null,
+            ConfigGroup.Generic
+        );
 }

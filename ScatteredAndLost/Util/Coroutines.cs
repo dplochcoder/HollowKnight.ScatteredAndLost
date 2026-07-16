@@ -87,7 +87,7 @@ internal class SleepFrames : CoroutineElement
 
 internal class SleepUntil : CoroutineElement
 {
-    private Func<bool> condition;
+    private readonly Func<bool> condition;
 
     public SleepUntil(Func<bool> condition) => this.condition = condition;
 
@@ -118,7 +118,7 @@ internal class SleepUntilTimeout : CoroutineElement
 internal class SleepUntilCondHolds : CoroutineElement
 {
     private readonly Func<bool> condition;
-    private float time;
+    private readonly float time;
 
     public SleepUntilCondHolds(Func<bool> condition, float time)
     {

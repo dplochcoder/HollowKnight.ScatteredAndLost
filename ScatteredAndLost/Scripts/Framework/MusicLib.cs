@@ -20,7 +20,7 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
 
     public void AwakeWithManager(M initManager) => this.StartCoroutine(Run());
 
-    private static List<(string, AudioType)> extensions =
+    private static readonly List<(string, AudioType)> extensions =
     [
         ("mp3", AudioType.MPEG),
         ("ogg", AudioType.OGGVORBIS),

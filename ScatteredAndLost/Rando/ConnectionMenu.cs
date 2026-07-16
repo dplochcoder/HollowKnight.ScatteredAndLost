@@ -25,14 +25,14 @@ internal class ConnectionMenu
         return true;
     }
 
-    private SmallButton entryButton;
-    private MenuElementFactory<RandomizerSettings> factory;
+    private readonly SmallButton entryButton;
+    private readonly MenuElementFactory<RandomizerSettings> factory;
 
     private RandomizerSettings Settings => ScatteredAndLostMod.Settings.RandomizerSettings;
 
-    private List<ILockable> requireEnabled = [];
-    private List<ILockable> requireHeartDoorsLockables = [];
-    private List<IMenuElement> requireHeartDoorsElements = [];
+    private readonly List<ILockable> requireEnabled = [];
+    private readonly List<ILockable> requireHeartDoorsLockables = [];
+    private readonly List<IMenuElement> requireHeartDoorsElements = [];
 
     private ConnectionMenu(MenuPage connectionsPage)
     {

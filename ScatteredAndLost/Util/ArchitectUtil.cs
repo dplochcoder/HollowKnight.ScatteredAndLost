@@ -1,48 +1,43 @@
-﻿using System.Linq;
-using Architect.Attributes.Config;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Architect.Config;
+using Architect.Config.Types;
+using Architect.Objects.Placeable;
 using UnityEngine;
 
 namespace HK8YPlando.Util;
 
 internal static class ArchitectUtil
 {
-    internal static AbstractPackElement MakeArchitectObject(
+    internal static PlaceableObject MakeArchitectObject(
         GameObject prefab,
         string name,
         string? img,
-        ConfigGroup root,
-        params (ConfigType, string)[] types
+        List<ConfigType> configGroup,
+        params ConfigType[] extraTypes
     ) =>
-        new SimplePackElement(
-            prefab,
-            name,
-            "Scattered & Lost",
-            img != null ? new IC.EmbeddedSprite(img).Value : null
-        ).WithConfigGroup(
-            new(
-                root,
-                [
-                    .. types.Select(p =>
-                        Architect.Attributes.ConfigManager.RegisterConfigType(p.Item1, p.Item2)
-                    ),
-                ]
-            )
-        );
+        new CustomObject(
+            name: name,
+            id: $"ScatteredAndLost.{name}",
+            prefab: prefab,
+            sprite: img != null ? new IC.EmbeddedSprite(img).Value : null,
+            uiSprite: img != null ? new IC.EmbeddedSprite(img).Value : null
+        ).WithConfigGroup([
+            .. configGroup.Concat(extraTypes.Select(ConfigurationManager.RegisterConfigType)),
+        ]);
 
-    internal static AbstractPackElement MakeArchitectObject(
+    internal static PlaceableObject MakeArchitectObject(
         string prefab,
         string name,
         string? img,
-        ConfigGroup root,
-        params (ConfigType, string)[] types
+        List<ConfigType> configGroup,
+        params ConfigType[] extraTypes
     ) =>
         MakeArchitectObject(
             ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>(prefab),
             name,
             img,
-            root,
-            types
+            configGroup,
+            extraTypes
         );
 }

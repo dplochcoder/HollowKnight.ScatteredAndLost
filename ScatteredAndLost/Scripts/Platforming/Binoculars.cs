@@ -228,17 +228,38 @@ internal class Binoculars : MonoBehaviour
         return pos;
     }
 
-    private static Binoculars? ActiveBinoculars;
-
-    private static bool ApplyBinoculars(Vector3 pos, out Vector3 newPos)
+    private static Vector3 prevCameraPos;
+    private static Binoculars? ActiveBinoculars
     {
-        newPos = pos;
-        if (ActiveBinoculars == null)
-            return false;
+        get;
+        set
+        {
+            if (field == value)
+                return;
 
-        newPos.x = ActiveBinoculars.activeCameraPos.x;
-        newPos.y = ActiveBinoculars.activeCameraPos.y;
-        return true;
+            if (field == null)
+                prevCameraPos = GameManager.instance.cameraCtrl.transform.position;
+            else if (value == null)
+                GameManager.instance.cameraCtrl.transform.position = prevCameraPos;
+
+            field = value;
+        }
+    }
+
+    private static void OverrideCamera(
+        On.CameraController.orig_LateUpdate orig,
+        CameraController self
+    )
+    {
+        orig(self);
+        if (ActiveBinoculars == null)
+            return;
+
+        var p = self.transform.position;
+        var t = ActiveBinoculars.activeCameraPos;
+        p.x = t.x;
+        p.y = t.y;
+        self.transform.position = p;
     }
 
     private static bool loaded = false;
@@ -247,9 +268,9 @@ internal class Binoculars : MonoBehaviour
     {
         if (loaded)
             return;
-        loaded = true;
 
-        CameraPositionModifier.AddModifier(CameraModifierPhase.FINAL_POSITON, 1f, ApplyBinoculars);
+        loaded = true;
+        On.CameraController.LateUpdate += OverrideCamera;
     }
 
     static Binoculars() => Load();

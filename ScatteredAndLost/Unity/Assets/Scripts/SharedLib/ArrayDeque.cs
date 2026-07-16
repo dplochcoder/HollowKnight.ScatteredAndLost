@@ -98,7 +98,7 @@ namespace HK8YPlando.Scripts.SharedLib
     internal class HistoryWindow<T>
     {
         private int removed = 0;
-        private ArrayDeque<T> queue = new ArrayDeque<T>();
+        private readonly ArrayDeque<T> queue = new ArrayDeque<T>();
 
         public int Count => removed + queue.Count;
 
@@ -130,7 +130,7 @@ namespace HK8YPlando.Scripts.SharedLib
     internal class IndexedHistoryWindow<K, V>
         where K : IComparable<K>
     {
-        private HistoryWindow<(K, V)> tuples = new HistoryWindow<(K, V)>();
+        private readonly HistoryWindow<(K, V)> tuples = new HistoryWindow<(K, V)>();
 
         // Gets the value associated with the largest key <= the argument.
         public V LowerBound(K key) => tuples.Get(LowerBoundIndex(key)).Item2;

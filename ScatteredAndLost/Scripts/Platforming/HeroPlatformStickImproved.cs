@@ -10,7 +10,7 @@ namespace HK8YPlando.Scripts.Environment;
 [RequireComponent(typeof(Collider2D))]
 internal class HeroPlatformStickImproved : MonoBehaviour
 {
-    private HashSet<GameObject> children = [];
+    private readonly HashSet<GameObject> children = [];
 
     public bool PlayerAttached => children.Count > 0;
 

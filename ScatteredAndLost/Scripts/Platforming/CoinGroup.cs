@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Architect.Attributes.Config;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+using Architect.Config.Types;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -76,7 +76,8 @@ internal class NumberedCoinGroup
 {
     public HashSet<Coin> Coins = [];
     public HashSet<CoinDoor> CoinDoors = [];
-    private CoinGroupController controller = new();
+
+    private readonly CoinGroupController controller = new();
 
     public bool Empty() => Coins.Count == 0 && CoinDoors.Count == 0;
 
@@ -87,7 +88,7 @@ internal class NumberedCoinGroup
 
 internal class NumberedCoinGroups : MonoBehaviour
 {
-    private Dictionary<int, NumberedCoinGroup> groups = [];
+    private readonly Dictionary<int, NumberedCoinGroup> groups = [];
 
     internal static NumberedCoinGroups Get()
     {
@@ -139,7 +140,7 @@ internal class CoinGroup : MonoBehaviour
 {
     private List<Coin> coins = [];
     private List<CoinDoor> coinDoors = [];
-    private CoinGroupController controller = new();
+    private readonly CoinGroupController controller = new();
 
     private void Awake()
     {
@@ -218,13 +219,12 @@ internal class Coin : MonoBehaviour
             NumberedCoinGroups.Get().RemoveCoin(this);
     }
 
-    private Color _currentColor;
-    private Color currentColor
+    private Color CurrentColor
     {
-        get { return _currentColor; }
+        get;
         set
         {
-            _currentColor = value;
+            field = value;
             Renderers.ForEach(r => r.color = value);
         }
     }
@@ -234,7 +234,7 @@ internal class Coin : MonoBehaviour
 
     private void Awake()
     {
-        currentColor = IdleColor;
+        CurrentColor = IdleColor;
         HeroDetector?.OnDetected(MaybeHit);
 
         this.StartLibCoroutine(Run());
@@ -264,13 +264,13 @@ internal class Coin : MonoBehaviour
             yield return Coroutines.SleepUntil(() => !activated);
 
             onCooldown = true;
-            var prevColor = currentColor;
+            var prevColor = CurrentColor;
             var prevSpeed = Animator!.GetFloat(SPEED_MULTIPLIER);
             yield return Coroutines.SleepSecondsUpdatePercent(
                 CooldownTime,
                 pct =>
                 {
-                    currentColor = prevColor.Interpolate(pct, IdleColor);
+                    CurrentColor = prevColor.Interpolate(pct, IdleColor);
                     Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (prevSpeed - 1) * (1 - pct));
                     return false;
                 }
@@ -288,7 +288,7 @@ internal class Coin : MonoBehaviour
             FlashTransitionTime,
             pct =>
             {
-                currentColor = IdleColor.Interpolate(pct, FlashColor);
+                CurrentColor = IdleColor.Interpolate(pct, FlashColor);
                 Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * pct);
                 return false;
             }
@@ -300,7 +300,7 @@ internal class Coin : MonoBehaviour
             ActiveTransitionTime,
             pct =>
             {
-                currentColor = FlashColor.Interpolate(pct, ActiveColor);
+                CurrentColor = FlashColor.Interpolate(pct, ActiveColor);
                 Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * (1 - pct));
                 return false;
             }
@@ -428,7 +428,7 @@ internal class CoinDoor : MonoBehaviour
     {
         srcPos = transform.position;
         destPos = srcPos + MoveOffset;
-        currentColor = IdleColor;
+        CurrentColor = IdleColor;
 
         this.StartLibCoroutine(Run());
     }
@@ -448,13 +448,13 @@ internal class CoinDoor : MonoBehaviour
             yield return Coroutines.SleepUntil(() => !opened);
             ShakeBase!.transform.localPosition = Vector2.zero;
 
-            var prevColor = currentColor;
+            var prevColor = CurrentColor;
             var prevPos = transform.position;
             yield return Coroutines.SleepSecondsUpdatePercent(
                 ResetDelay,
                 pct =>
                 {
-                    currentColor = prevColor.Interpolate(pct, IdleColor);
+                    CurrentColor = prevColor.Interpolate(pct, IdleColor);
                     return false;
                 }
             );
@@ -476,13 +476,12 @@ internal class CoinDoor : MonoBehaviour
 
     internal void Close() => opened = false;
 
-    private Color _currentColor;
-    private Color currentColor
+    private Color CurrentColor
     {
-        get { return _currentColor; }
+        get;
         set
         {
-            _currentColor = value;
+            field = value;
             MarkerRenderer!.color = value;
         }
     }
@@ -494,7 +493,7 @@ internal class CoinDoor : MonoBehaviour
             ShakeTime,
             pct =>
             {
-                currentColor = IdleColor.Interpolate(pct, ActiveColor);
+                CurrentColor = IdleColor.Interpolate(pct, ActiveColor);
                 ShakeBase!.transform.localPosition = MathExt.RandomInCircle(
                     Vector2.zero,
                     ShakeRadius
@@ -549,19 +548,17 @@ internal class CoinDecoration : CustomDecoration
 
 public static class CoinArchitectObject
 {
-    public static AbstractPackElement Create() =>
+    public static PlaceableObject Create() =>
         ArchitectUtil.MakeArchitectObject(
-            "Switch",
-            "Switch",
-            "switch",
+            prefab: "Switch",
+            name: "Switch",
+            img: "switch",
             ConfigGroup.Generic,
-            (
-                new IntConfigType(
-                    "Group",
-                    (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()
-                ).WithDefaultValue(1),
-                "sal_switch_group"
-            )
+            new IntConfigType(
+                "Group",
+                "sal_switch_group",
+                (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()
+            ).WithDefaultValue(1)
         );
 }
 
@@ -680,37 +677,31 @@ internal class CoinDoorDecoration : CustomDecoration
 
 public static class CoinDoorArchitectObject
 {
-    public static AbstractPackElement Create() =>
+    public static PlaceableObject Create() =>
         ArchitectUtil.MakeArchitectObject(
-            "SSwitchDoor",
-            "Switch Door",
-            "switchdoor",
+            prefab: "SSwitchDoor",
+            name: "Switch Door",
+            img: "switchdoor",
             ConfigGroup.Stretchable,
-            (
-                new IntConfigType(
-                    "Group",
-                    (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()
-                ).WithDefaultValue(1),
-                "sal_door_group"
-            ),
-            (
-                new FloatConfigType(
-                    "X Move Distance",
-                    (o, value) =>
-                        o.GetComponent<CoinDoor>()
-                            .UpdateMoveOffset(m => m with { x = value.GetValue() })
-                ).WithDefaultValue(4),
-                "sal_door_x_move"
-            ),
-            (
-                new FloatConfigType(
-                    "Y Move Distance",
-                    (o, value) =>
-                        o.GetComponent<CoinDoor>()
-                            .UpdateMoveOffset(m => m with { y = value.GetValue() })
-                ).WithDefaultValue(2),
-                "sal_door_y_move"
-            )
+            new IntConfigType(
+                "Group",
+                "sal_door_group",
+                (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()
+            ).WithDefaultValue(1),
+            new FloatConfigType(
+                "X Move Distance",
+                "sal_door_x_move",
+                (o, value) =>
+                    o.GetComponent<CoinDoor>()
+                        .UpdateMoveOffset(m => m with { x = value.GetValue() })
+            ).WithDefaultValue(4),
+            new FloatConfigType(
+                "Y Move Distance",
+                "sal_door_y_move",
+                (o, value) =>
+                    o.GetComponent<CoinDoor>()
+                        .UpdateMoveOffset(m => m with { y = value.GetValue() })
+            ).WithDefaultValue(2)
         );
 
     private static void UpdateMoveOffset(this CoinDoor self, Func<Vector3, Vector3> func) =>

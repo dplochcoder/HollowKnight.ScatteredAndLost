@@ -5,7 +5,7 @@ namespace HK8YPlando.Scripts.SharedLib
 {
     internal class EmptyCollection<T>
     {
-        private static List<T> Instance = new List<T>();
+        private static readonly List<T> Instance = new List<T>();
 
         public static IReadOnlyList<T> Get() => Instance;
     }

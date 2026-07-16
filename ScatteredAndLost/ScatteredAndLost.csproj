@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Architect">
-      <HintPath>$(HollowKnightRefs)/Mods/Architect/Architect.dll</HintPath>
+      <HintPath>$(HollowKnightRefs)/Mods/Architect/Architect_HK.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>

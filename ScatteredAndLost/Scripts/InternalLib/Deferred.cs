@@ -8,7 +8,7 @@ namespace HK8YPlando.Scripts.InternalLib;
 // Actions can be delegated to it immediately or after creation.
 public class Deferred<T>
 {
-    private List<Action<T>> actions = [];
+    private readonly List<Action<T>> actions = [];
     private T? target;
 
     public Deferred() { }

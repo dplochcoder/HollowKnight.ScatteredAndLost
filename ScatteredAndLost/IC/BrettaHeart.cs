@@ -57,9 +57,9 @@ internal class BrettaHeart : AbstractItem
 
 internal class HeartUIDef : UIDef
 {
-    private static EmbeddedSprite BlueSprite = new("heart_blue");
-    private static EmbeddedSprite RedSprite = new("heart_red");
-    private static EmbeddedSprite YellowSprite = new("heart_yellow");
+    private static readonly EmbeddedSprite BlueSprite = new("heart_blue");
+    private static readonly EmbeddedSprite RedSprite = new("heart_red");
+    private static readonly EmbeddedSprite YellowSprite = new("heart_yellow");
 
     public HeartType HeartType;
     public string FlavorName = "";

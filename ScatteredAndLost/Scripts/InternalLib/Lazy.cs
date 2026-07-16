@@ -4,7 +4,7 @@ namespace HK8YPlando.Scripts.InternalLib;
 
 internal class Lazy<T>
 {
-    private Func<T> supplier;
+    private readonly Func<T> supplier;
     private T? value;
 
     public Lazy(Func<T> supplier)

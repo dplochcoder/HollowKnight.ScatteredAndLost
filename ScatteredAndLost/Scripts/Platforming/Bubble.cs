@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Architect.Attributes.Config;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+using Architect.Config.Types;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -342,25 +342,21 @@ internal class BubbleDecoration : CustomDecoration
 
 public static class BubbleArchitectObject
 {
-    internal static AbstractPackElement Create() =>
+    internal static PlaceableObject Create() =>
         ArchitectUtil.MakeArchitectObject(
-            "BubbleController",
-            "Bubble",
-            null,
-            ConfigGroup.Generic,
-            (
-                new FloatConfigType(
-                    "Bubble Speed",
-                    (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()
-                ).WithDefaultValue(24),
-                "sal_bubble_speed"
-            ),
-            (
-                new FloatConfigType(
-                    "Bubble Respawn Delay",
-                    (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()
-                ).WithDefaultValue(2.5f),
-                "sal_bubble_respawn_delay"
-            )
+            prefab: "BubbleController",
+            name: "Bubble",
+            img: null,
+            configGroup: ConfigGroup.Generic,
+            new FloatConfigType(
+                "Bubble Speed",
+                "sal_bubble_speed",
+                (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()
+            ).WithDefaultValue(24),
+            new FloatConfigType(
+                "Bubble Respawn Delay",
+                "sal_bubble_respawn_delay",
+                (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()
+            ).WithDefaultValue(2.5f)
         );
 }

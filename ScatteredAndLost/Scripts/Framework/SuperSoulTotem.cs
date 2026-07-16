@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Architect.Content.Elements;
-using Architect.Content.Groups;
+using Architect.Objects.Groups;
+using Architect.Objects.Placeable;
 using DecorationMaster;
 using DecorationMaster.Attr;
 using DecorationMaster.MyBehaviour;
@@ -160,11 +160,11 @@ public static class SuperSoulTotemArchitectObject
         return obj;
     }
 
-    public static AbstractPackElement Create() =>
+    public static PlaceableObject Create() =>
         ArchitectUtil.MakeArchitectObject(
-            MakePrefab(),
-            "SuperSoulTotem",
-            null,
+            prefab: MakePrefab(),
+            name: "SuperSoulTotem",
+            img: null,
             ConfigGroup.Generic
         );
 }

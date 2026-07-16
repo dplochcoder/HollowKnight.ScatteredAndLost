@@ -12,8 +12,8 @@ internal class HeroDetectorProxy : MonoBehaviour
     private event Action? OnDetectedEvent;
     private event Action? OnUndetectedEvent;
 
-    private HashSet<Collider2D> detected = [];
-    private List<Func<Collider2D, bool>> ignores = [];
+    private readonly HashSet<Collider2D> detected = [];
+    private readonly List<Func<Collider2D, bool>> ignores = [];
     private bool prevDetected = false;
 
     private bool ShouldIgnore(Collider2D collider) => ignores.Any(f => f(collider));
