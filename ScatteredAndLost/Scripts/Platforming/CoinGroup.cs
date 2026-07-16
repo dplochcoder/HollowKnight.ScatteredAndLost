@@ -1,4 +1,7 @@
-﻿using Architect.Attributes.Config;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Architect.Attributes.Config;
 using Architect.Content.Elements;
 using Architect.Content.Groups;
 using DecorationMaster;
@@ -10,9 +13,6 @@ using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using Modding;
 using PurenailCore.GOUtil;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -29,7 +29,8 @@ internal class CoinGroupController
 
     private int OnTakeDamage(ref int hazardType, int damage)
     {
-        if (damage > 0 && hazardType == (int)HazardType.SPIKES + 1) tookDamage = true;
+        if (damage > 0 && hazardType == (int)HazardType.SPIKES + 1)
+            tookDamage = true;
         return damage;
     }
 
@@ -53,7 +54,15 @@ internal class CoinGroupController
         }
         else
         {
-            if (!doorsOpened) coinDoors.FirstOrDefault()?.gameObject.PlaySound(ScatteredAndLostSceneManagerAPI.LoadPrefab<AudioClip>("game_gen_touchswitch_last"), 0.7f);
+            if (!doorsOpened)
+                coinDoors
+                    .FirstOrDefault()
+                    ?.gameObject.PlaySound(
+                        ScatteredAndLostSceneManagerAPI.LoadPrefab<AudioClip>(
+                            "game_gen_touchswitch_last"
+                        ),
+                        0.7f
+                    );
 
             coinDoors.ForEach(d => d.Open());
             doorsOpened = true;
@@ -95,11 +104,13 @@ internal class NumberedCoinGroups : MonoBehaviour
 
     internal void AddCoin(Coin coin) => groups.GetOrAddNew(coin.GateNumber).Coins.Add(coin);
 
-    internal void AddCoinDoor(CoinDoor coinDoor) => groups.GetOrAddNew(coinDoor.GateNumber).CoinDoors.Add(coinDoor);
+    internal void AddCoinDoor(CoinDoor coinDoor) =>
+        groups.GetOrAddNew(coinDoor.GateNumber).CoinDoors.Add(coinDoor);
 
     internal void RemoveCoin(Coin coin)
     {
-        if (!groups.TryGetValue(coin.GateNumber, out var group)) return;
+        if (!groups.TryGetValue(coin.GateNumber, out var group))
+            return;
 
         group.Coins.Remove(coin);
         if (group.Empty())
@@ -111,7 +122,8 @@ internal class NumberedCoinGroups : MonoBehaviour
 
     internal void RemoveCoinDoor(CoinDoor coinDoor)
     {
-        if (!groups.TryGetValue(coinDoor.GateNumber, out var group)) return;
+        if (!groups.TryGetValue(coinDoor.GateNumber, out var group))
+            return;
 
         group.CoinDoors.Remove(coinDoor);
         if (group.Empty())
@@ -145,32 +157,56 @@ internal class Coin : MonoBehaviour
 {
     private const string SPEED_MULTIPLIER = "SpeedMultiplier";
 
-    [ShimField] public List<SpriteRenderer> Renderers = [];
-    [ShimField] public ParticleSystem? ParticleSystem;
-    [ShimField] public Animator? Animator;
-    [ShimField] public HeroDetectorProxy? HeroDetector;
+    [ShimField]
+    public List<SpriteRenderer> Renderers = [];
 
-    [ShimField] public AudioClip? ObtainedClip;
+    [ShimField]
+    public ParticleSystem? ParticleSystem;
 
-    [ShimField] public Color IdleColor;
-    [ShimField] public Color FlashColor;
-    [ShimField] public Color ActiveColor;
-    [ShimField] public float CooldownTime;
+    [ShimField]
+    public Animator? Animator;
 
-    [ShimField] public float FlashTransitionTime;
-    [ShimField] public float FlashHangTime;
-    [ShimField] public float FlashAnimationSpeed;
-    [ShimField] public float ActiveTransitionTime;
+    [ShimField]
+    public HeroDetectorProxy? HeroDetector;
+
+    [ShimField]
+    public AudioClip? ObtainedClip;
+
+    [ShimField]
+    public Color IdleColor;
+
+    [ShimField]
+    public Color FlashColor;
+
+    [ShimField]
+    public Color ActiveColor;
+
+    [ShimField]
+    public float CooldownTime;
+
+    [ShimField]
+    public float FlashTransitionTime;
+
+    [ShimField]
+    public float FlashHangTime;
+
+    [ShimField]
+    public float FlashAnimationSpeed;
+
+    [ShimField]
+    public float ActiveTransitionTime;
 
     // Used by decoration master
     private int? _gateNumber;
     internal int GateNumber
     {
         get { return _gateNumber!.Value; }
-        set {
+        set
+        {
             var singleton = NumberedCoinGroups.Get();
 
-            if (_gateNumber.HasValue) singleton.RemoveCoin(this);
+            if (_gateNumber.HasValue)
+                singleton.RemoveCoin(this);
             _gateNumber = value;
             singleton.AddCoin(this);
         }
@@ -178,7 +214,8 @@ internal class Coin : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_gateNumber.HasValue) NumberedCoinGroups.Get().RemoveCoin(this);
+        if (_gateNumber.HasValue)
+            NumberedCoinGroups.Get().RemoveCoin(this);
     }
 
     private Color _currentColor;
@@ -209,7 +246,8 @@ internal class Coin : MonoBehaviour
 
     internal void MaybeHit()
     {
-        if (activated || onCooldown) return;
+        if (activated || onCooldown)
+            return;
         activated = true;
     }
 
@@ -221,18 +259,22 @@ internal class Coin : MonoBehaviour
 
             yield return Coroutines.OneOf(
                 Coroutines.SleepUntil(() => !activated),
-                Coroutines.Sequence(ActivateCoin()));
+                Coroutines.Sequence(ActivateCoin())
+            );
             yield return Coroutines.SleepUntil(() => !activated);
 
             onCooldown = true;
             var prevColor = currentColor;
             var prevSpeed = Animator!.GetFloat(SPEED_MULTIPLIER);
-            yield return Coroutines.SleepSecondsUpdatePercent(CooldownTime, pct =>
-            {
-                currentColor = prevColor.Interpolate(pct, IdleColor);
-                Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (prevSpeed - 1) * (1 - pct));
-                return false;
-            });
+            yield return Coroutines.SleepSecondsUpdatePercent(
+                CooldownTime,
+                pct =>
+                {
+                    currentColor = prevColor.Interpolate(pct, IdleColor);
+                    Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (prevSpeed - 1) * (1 - pct));
+                    return false;
+                }
+            );
             onCooldown = false;
         }
     }
@@ -242,54 +284,87 @@ internal class Coin : MonoBehaviour
         gameObject.PlaySound(ObtainedClip!, 0.45f);
         ParticleSystem?.Play();
 
-        yield return Coroutines.SleepSecondsUpdatePercent(FlashTransitionTime, pct =>
-        {
-            currentColor = IdleColor.Interpolate(pct, FlashColor);
-            Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * pct);
-            return false;
-        });
+        yield return Coroutines.SleepSecondsUpdatePercent(
+            FlashTransitionTime,
+            pct =>
+            {
+                currentColor = IdleColor.Interpolate(pct, FlashColor);
+                Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * pct);
+                return false;
+            }
+        );
 
         yield return Coroutines.SleepSeconds(FlashHangTime);
 
-        yield return Coroutines.SleepSecondsUpdatePercent(ActiveTransitionTime, pct =>
-        {
-            currentColor = FlashColor.Interpolate(pct, ActiveColor);
-            Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * (1 - pct));
-            return false;
-        });
+        yield return Coroutines.SleepSecondsUpdatePercent(
+            ActiveTransitionTime,
+            pct =>
+            {
+                currentColor = FlashColor.Interpolate(pct, ActiveColor);
+                Animator!.SetFloat(SPEED_MULTIPLIER, 1 + (FlashAnimationSpeed - 1) * (1 - pct));
+                return false;
+            }
+        );
     }
 }
 
 [Shim]
 internal class CoinNailDetector : MonoBehaviour, IHitResponder
 {
-    [ShimField] public Coin? Coin;
+    [ShimField]
+    public Coin? Coin;
 
     public void Hit(HitInstance damageInstance)
     {
-        if (damageInstance.AttackType == AttackTypes.Nail) Coin?.MaybeHit();
+        if (damageInstance.AttackType == AttackTypes.Nail)
+            Coin?.MaybeHit();
     }
 }
 
 [Shim]
 internal class CoinDoor : MonoBehaviour
 {
-    [ShimField] public GameObject? ShakeBase;
-    [ShimField] public SpriteRenderer? MarkerRenderer;
-    [ShimField] public Animator? MarkerAnimator;
-    [ShimField] public Sprite? InactiveMarkerSprite;
-    [ShimField] public RuntimeAnimatorController? ActiveMarkerController;
-    [ShimField] public Color IdleColor;
-    [ShimField] public Color ActiveColor;
+    [ShimField]
+    public GameObject? ShakeBase;
 
-    [ShimField] public float ShakeRadius;
-    [ShimField] public float ShakeTime;
-    [ShimField] public float AfterShakeDelay;
+    [ShimField]
+    public SpriteRenderer? MarkerRenderer;
 
-    [ShimField] public float MoveDuration;
-    [ShimField] public Vector3 MoveOffset;
-    [ShimField] public float ResetDelay;
-    [ShimField] public float ResetDuration;
+    [ShimField]
+    public Animator? MarkerAnimator;
+
+    [ShimField]
+    public Sprite? InactiveMarkerSprite;
+
+    [ShimField]
+    public RuntimeAnimatorController? ActiveMarkerController;
+
+    [ShimField]
+    public Color IdleColor;
+
+    [ShimField]
+    public Color ActiveColor;
+
+    [ShimField]
+    public float ShakeRadius;
+
+    [ShimField]
+    public float ShakeTime;
+
+    [ShimField]
+    public float AfterShakeDelay;
+
+    [ShimField]
+    public float MoveDuration;
+
+    [ShimField]
+    public Vector3 MoveOffset;
+
+    [ShimField]
+    public float ResetDelay;
+
+    [ShimField]
+    public float ResetDuration;
 
     // Used by decoration master
     private int? _gateNumber;
@@ -300,7 +375,8 @@ internal class CoinDoor : MonoBehaviour
         {
             var singleton = NumberedCoinGroups.Get();
 
-            if (_gateNumber.HasValue) singleton.RemoveCoinDoor(this);
+            if (_gateNumber.HasValue)
+                singleton.RemoveCoinDoor(this);
             _gateNumber = value;
             singleton.AddCoinDoor(this);
         }
@@ -308,10 +384,12 @@ internal class CoinDoor : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_gateNumber.HasValue) NumberedCoinGroups.Get().RemoveCoinDoor(this);
+        if (_gateNumber.HasValue)
+            NumberedCoinGroups.Get().RemoveCoinDoor(this);
     }
 
     private Vector3? _decoMasterPos;
+
     internal void DecoMasterSetPos(Vector3 newPos)
     {
         if (!_decoMasterPos.HasValue)
@@ -333,7 +411,10 @@ internal class CoinDoor : MonoBehaviour
 
     internal void DecoMasterSetMoveOffset(Vector3 offset)
     {
-        var dist = MoveOffset.sqrMagnitude >= 0.0001f ? (transform.position - srcPos).magnitude / MoveOffset.magnitude : 0;
+        var dist =
+            MoveOffset.sqrMagnitude >= 0.0001f
+                ? (transform.position - srcPos).magnitude / MoveOffset.magnitude
+                : 0;
 
         MoveOffset = offset;
         destPos = srcPos + offset;
@@ -362,25 +443,32 @@ internal class CoinDoor : MonoBehaviour
 
             yield return Coroutines.OneOf(
                 Coroutines.SleepUntil(() => !opened),
-                Coroutines.Sequence(OpenDoor()));
+                Coroutines.Sequence(OpenDoor())
+            );
             yield return Coroutines.SleepUntil(() => !opened);
             ShakeBase!.transform.localPosition = Vector2.zero;
 
             var prevColor = currentColor;
             var prevPos = transform.position;
-            yield return Coroutines.SleepSecondsUpdatePercent(ResetDelay, pct =>
-            {
-                currentColor = prevColor.Interpolate(pct, IdleColor);
-                return false;
-            });
+            yield return Coroutines.SleepSecondsUpdatePercent(
+                ResetDelay,
+                pct =>
+                {
+                    currentColor = prevColor.Interpolate(pct, IdleColor);
+                    return false;
+                }
+            );
 
             MarkerAnimator!.runtimeAnimatorController = null;
             MarkerRenderer!.sprite = InactiveMarkerSprite!;
-            yield return Coroutines.SleepSecondsUpdatePercent(ResetDuration, pct =>
-            {
-                transform.position = prevPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), srcPos);
-                return false;
-            });
+            yield return Coroutines.SleepSecondsUpdatePercent(
+                ResetDuration,
+                pct =>
+                {
+                    transform.position = prevPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), srcPos);
+                    return false;
+                }
+            );
         }
     }
 
@@ -391,7 +479,7 @@ internal class CoinDoor : MonoBehaviour
     private Color _currentColor;
     private Color currentColor
     {
-        get {  return _currentColor; }
+        get { return _currentColor; }
         set
         {
             _currentColor = value;
@@ -402,21 +490,30 @@ internal class CoinDoor : MonoBehaviour
     private IEnumerator<CoroutineElement> OpenDoor()
     {
         MarkerAnimator!.runtimeAnimatorController = ActiveMarkerController;
-        yield return Coroutines.SleepSecondsUpdatePercent(ShakeTime, pct =>
-        {
-            currentColor = IdleColor.Interpolate(pct, ActiveColor);
-            ShakeBase!.transform.localPosition = MathExt.RandomInCircle(Vector2.zero, ShakeRadius);
-            return false;
-        });
+        yield return Coroutines.SleepSecondsUpdatePercent(
+            ShakeTime,
+            pct =>
+            {
+                currentColor = IdleColor.Interpolate(pct, ActiveColor);
+                ShakeBase!.transform.localPosition = MathExt.RandomInCircle(
+                    Vector2.zero,
+                    ShakeRadius
+                );
+                return false;
+            }
+        );
         ShakeBase!.transform.localPosition = Vector2.zero;
 
         yield return Coroutines.SleepSeconds(AfterShakeDelay);
 
-        yield return Coroutines.SleepSecondsUpdatePercent(MoveDuration, pct =>
-        {
-            transform.position = srcPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), destPos);
-            return false;
-        });
+        yield return Coroutines.SleepSecondsUpdatePercent(
+            MoveDuration,
+            pct =>
+            {
+                transform.position = srcPos.Interpolate(Mathf.Sin(pct * Mathf.PI / 2), destPos);
+                return false;
+            }
+        );
     }
 }
 
@@ -435,10 +532,12 @@ internal class CoinDecorationItem : Item
 [Decoration("scattered_and_lost_switch")]
 internal class CoinDecoration : CustomDecoration
 {
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<CoinDecoration, CoinDecorationItem>(
-        "scattered_and_lost_switch",
-        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Switch"),
-        "switch");
+    public static void Register() =>
+        DecorationMasterUtil.RegisterDecoration<CoinDecoration, CoinDecorationItem>(
+            "scattered_and_lost_switch",
+            ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("Switch"),
+            "switch"
+        );
 
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 
@@ -450,9 +549,20 @@ internal class CoinDecoration : CustomDecoration
 
 public static class CoinArchitectObject
 {
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "Switch", "Switch", "switch", ConfigGroup.Generic,
-        (new IntConfigType("Group", (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()).WithDefaultValue(1), "sal_switch_group"));
+    public static AbstractPackElement Create() =>
+        ArchitectUtil.MakeArchitectObject(
+            "Switch",
+            "Switch",
+            "switch",
+            ConfigGroup.Generic,
+            (
+                new IntConfigType(
+                    "Group",
+                    (o, value) => o.GetComponent<Coin>().GateNumber = value.GetValue()
+                ).WithDefaultValue(1),
+                "sal_switch_group"
+            )
+        );
 }
 
 [Serializable]
@@ -484,14 +594,19 @@ internal class CoinDoorDecorationItem : Item
     public float YOpen { get; set; } = 2;
 }
 
-[Description("Celeste Switch Door\nSet gate number to match switches\nSet XOpen and YOpen for gate direction\nWill not open without switches", "en-us")]
+[Description(
+    "Celeste Switch Door\nSet gate number to match switches\nSet XOpen and YOpen for gate direction\nWill not open without switches",
+    "en-us"
+)]
 [Decoration("scattered_and_lost_switch_door")]
 internal class CoinDoorDecoration : CustomDecoration
 {
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<CoinDoorDecoration, CoinDoorDecorationItem>(
-        "scattered_and_lost_switch_door",
-        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("SSwitchDoor"),
-        "switchdoor");
+    public static void Register() =>
+        DecorationMasterUtil.RegisterDecoration<CoinDoorDecoration, CoinDoorDecorationItem>(
+            "scattered_and_lost_switch_door",
+            ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("SSwitchDoor"),
+            "switchdoor"
+        );
 
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 
@@ -513,11 +628,15 @@ internal class CoinDoorDecoration : CustomDecoration
         coinDoor.DecoMasterSetMoveOffset(new(itemTyped.XOpen, itemTyped.YOpen));
 
         var (block, terrain) = GetBlockAndTerrain();
-        block.transform.localScale = new(itemTyped.XScale * SCALE_MULTIPLIER, itemTyped.YScale * SCALE_MULTIPLIER);
+        block.transform.localScale = new(
+            itemTyped.XScale * SCALE_MULTIPLIER,
+            itemTyped.YScale * SCALE_MULTIPLIER
+        );
         terrain.size = new(itemTyped.XScale, itemTyped.YScale);
     }
 
-    public override void HandlePos(Vector2 val) => gameObject.GetComponent<CoinDoor>().DecoMasterSetPos(val);
+    public override void HandlePos(Vector2 val) =>
+        gameObject.GetComponent<CoinDoor>().DecoMasterSetPos(val);
 
     [Handle(Operation.SetGate)]
     public void SetGate(int gate) => gameObject.GetComponent<CoinDoor>().GateNumber = gate;
@@ -561,11 +680,39 @@ internal class CoinDoorDecoration : CustomDecoration
 
 public static class CoinDoorArchitectObject
 {
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "SSwitchDoor", "Switch Door", "switchdoor", ConfigGroup.Stretchable,
-        (new IntConfigType("Group", (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()).WithDefaultValue(1), "sal_door_group"),
-        (new FloatConfigType("X Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { x = value.GetValue() })).WithDefaultValue(4), "sal_door_x_move"),
-        (new FloatConfigType("Y Move Distance", (o, value) => o.GetComponent<CoinDoor>().UpdateMoveOffset(m => m with { y = value.GetValue() })).WithDefaultValue(2), "sal_door_y_move"));
+    public static AbstractPackElement Create() =>
+        ArchitectUtil.MakeArchitectObject(
+            "SSwitchDoor",
+            "Switch Door",
+            "switchdoor",
+            ConfigGroup.Stretchable,
+            (
+                new IntConfigType(
+                    "Group",
+                    (o, value) => o.GetComponent<CoinDoor>().GateNumber = value.GetValue()
+                ).WithDefaultValue(1),
+                "sal_door_group"
+            ),
+            (
+                new FloatConfigType(
+                    "X Move Distance",
+                    (o, value) =>
+                        o.GetComponent<CoinDoor>()
+                            .UpdateMoveOffset(m => m with { x = value.GetValue() })
+                ).WithDefaultValue(4),
+                "sal_door_x_move"
+            ),
+            (
+                new FloatConfigType(
+                    "Y Move Distance",
+                    (o, value) =>
+                        o.GetComponent<CoinDoor>()
+                            .UpdateMoveOffset(m => m with { y = value.GetValue() })
+                ).WithDefaultValue(2),
+                "sal_door_y_move"
+            )
+        );
 
-    private static void UpdateMoveOffset(this CoinDoor self, Func<Vector3, Vector3> func) => self.DecoMasterSetMoveOffset(func(self.MoveOffset));
+    private static void UpdateMoveOffset(this CoinDoor self, Func<Vector3, Vector3> func) =>
+        self.DecoMasterSetMoveOffset(func(self.MoveOffset));
 }

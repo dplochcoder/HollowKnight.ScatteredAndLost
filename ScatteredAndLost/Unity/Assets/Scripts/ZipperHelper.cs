@@ -21,7 +21,15 @@ public class ZipperHelper : SceneDataOptimizer
 #if UNITY_EDITOR
     [ContextMenu("Apply")]
 #endif
-    public bool Apply() => ZipperLib.UpdateZipperAssets(gameObject, TopSpikes, RightSpikes, BotSpikes, LeftSpikes, UnityEditorShims.MarkDirty);
+    public bool Apply() =>
+        ZipperLib.UpdateZipperAssets(
+            gameObject,
+            TopSpikes,
+            RightSpikes,
+            BotSpikes,
+            LeftSpikes,
+            UnityEditorShims.MarkDirty
+        );
 
     public override bool OptimizeScene() => Apply();
 }

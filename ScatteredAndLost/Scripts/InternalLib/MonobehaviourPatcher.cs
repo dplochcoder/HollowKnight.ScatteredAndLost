@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace HK8YPlando.Scripts.InternalLib;
 
-public class MonobehaviourPatcher<M> where M : MonoBehaviour
+public class MonobehaviourPatcher<M>
+    where M : MonoBehaviour
 {
     private record Field
     {
@@ -25,12 +26,11 @@ public class MonobehaviourPatcher<M> where M : MonoBehaviour
             var type = obj.GetType();
             foreach (var name in fieldNames)
             {
-                var fi = type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                list.Add(new()
-                {
-                    fi = fi,
-                    value = fi.GetValue(obj)
-                });
+                var fi = type.GetField(
+                    name,
+                    BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+                );
+                list.Add(new() { fi = fi, value = fi.GetValue(obj) });
             }
             return list;
         });

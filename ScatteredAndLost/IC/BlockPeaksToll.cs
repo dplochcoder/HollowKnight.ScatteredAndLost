@@ -20,7 +20,9 @@ internal class BlockPeaksToll : ItemChanger.Modules.Module
         {
             X = 30,
             Y = 12.65f,
-            Text = new BoxedString("The Peaks Geo Toll is out of service.<br>Please use EZPass in the other lane."),
+            Text = new BoxedString(
+                "The Peaks Geo Toll is out of service.<br>Please use EZPass in the other lane."
+            ),
         };
         d.Deploy();
     }

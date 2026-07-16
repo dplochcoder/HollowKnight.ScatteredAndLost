@@ -1,7 +1,7 @@
-﻿using HutongGames.PlayMaker;
+﻿using System.Collections.Generic;
+using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
-using System.Collections.Generic;
 
 namespace HK8YPlando.Util;
 
@@ -13,16 +13,18 @@ internal static class FSMExtensions
         self.timeMax.Value = max;
     }
 
-    internal static void InsertBefore<T>(this FsmState self, FsmStateAction action) where T : FsmStateAction
+    internal static void InsertBefore<T>(this FsmState self, FsmStateAction action)
+        where T : FsmStateAction
     {
         List<FsmStateAction> actions = [.. self.Actions];
 
-        for (int i = 0; i < actions.Count; i++) if (actions[i] is T)
-        {
-            actions.Insert(i + 1, action);
-            self.Actions = [.. actions];
-            return;
-        }
+        for (int i = 0; i < actions.Count; i++)
+            if (actions[i] is T)
+            {
+                actions.Insert(i + 1, action);
+                self.Actions = [.. actions];
+                return;
+            }
 
         self.AddLastAction(action);
     }

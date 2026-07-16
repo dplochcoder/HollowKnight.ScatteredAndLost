@@ -41,9 +41,11 @@ internal class SleepSeconds : CoroutineElement
         this.remaining = remaining;
     }
 
-    public SleepSeconds(float remaining, CoroutinePercentUpdate percentUpdate) : this(remaining) => this.percentUpdate = percentUpdate;
+    public SleepSeconds(float remaining, CoroutinePercentUpdate percentUpdate)
+        : this(remaining) => this.percentUpdate = percentUpdate;
 
-    public SleepSeconds(float remaining, CoroutineTimeUpdate timeUpdate) : this(remaining) => this.timeUpdate = timeUpdate;
+    public SleepSeconds(float remaining, CoroutineTimeUpdate timeUpdate)
+        : this(remaining) => this.timeUpdate = timeUpdate;
 
     public override CoroutineUpdate Update(float deltaTime)
     {
@@ -56,8 +58,10 @@ internal class SleepSeconds : CoroutineElement
         remaining -= deltaTime;
 
         bool done = false;
-        if (percentUpdate != null) done = percentUpdate.Invoke(1.0f - (remaining / orig));
-        if (timeUpdate != null) done = timeUpdate.Invoke(deltaTime);
+        if (percentUpdate != null)
+            done = percentUpdate.Invoke(1.0f - (remaining / orig));
+        if (timeUpdate != null)
+            done = timeUpdate.Invoke(deltaTime);
         return new(done, 0);
     }
 }
@@ -73,7 +77,8 @@ internal class SleepFrames : CoroutineElement
 
     public override CoroutineUpdate Update(float deltaTime)
     {
-        if (remaining <= 0) return new(true, deltaTime);
+        if (remaining <= 0)
+            return new(true, deltaTime);
 
         --remaining;
         return new(false, 0);
@@ -99,7 +104,8 @@ internal class SleepUntilTimeout : CoroutineElement
 
     public bool TimedOut { get; private set; }
 
-    public SleepUntilTimeout(SleepUntil sleepUntil, SleepSeconds timeout) => choice = new([sleepUntil, timeout]);
+    public SleepUntilTimeout(SleepUntil sleepUntil, SleepSeconds timeout) =>
+        choice = new([sleepUntil, timeout]);
 
     public override CoroutineUpdate Update(float deltaTime)
     {
@@ -143,22 +149,30 @@ internal class CoroutineSequence : CoroutineElement
     private readonly StopCondition? stopCondition;
     private CoroutineElement? current;
 
-    public CoroutineSequence(IEnumerator<CoroutineElement> coroutine, StopCondition? stopCondition = null)
+    public CoroutineSequence(
+        IEnumerator<CoroutineElement> coroutine,
+        StopCondition? stopCondition = null
+    )
     {
         this.coroutine = coroutine;
         this.stopCondition = stopCondition;
     }
 
-    public static CoroutineSequence Create(IEnumerator<CoroutineElement> coroutine, StopCondition? stopCondition = null) => new(coroutine, stopCondition);
+    public static CoroutineSequence Create(
+        IEnumerator<CoroutineElement> coroutine,
+        StopCondition? stopCondition = null
+    ) => new(coroutine, stopCondition);
 
     public override CoroutineUpdate Update(float deltaTime)
     {
-        if (stopCondition?.Invoke() ?? false) return new(true, deltaTime);
+        if (stopCondition?.Invoke() ?? false)
+            return new(true, deltaTime);
 
         if (current == null)
         {
             current = coroutine.MaybeMoveNext();
-            if (current == null) return new(true, deltaTime);
+            if (current == null)
+                return new(true, deltaTime);
         }
 
         while (current != null && deltaTime > 0)
@@ -169,11 +183,14 @@ internal class CoroutineSequence : CoroutineElement
                 current = coroutine.MaybeMoveNext();
                 deltaTime = update.extraTime;
             }
-            else break;
+            else
+                break;
         }
 
-        if (current == null) return new(true, deltaTime);
-        else return new(false, 0);
+        if (current == null)
+            return new(true, deltaTime);
+        else
+            return new(false, 0);
     }
 }
 
@@ -185,7 +202,8 @@ internal class CoroutineOneOf : CoroutineElement
 
     public CoroutineOneOf(List<CoroutineElement> choices) => this.choices = choices;
 
-    public override CoroutineUpdate Update(float deltaTime) => choices.Select(c => c.Update(deltaTime)).OrderBy(c => c.done ? -c.extraTime : 1).First();
+    public override CoroutineUpdate Update(float deltaTime) =>
+        choices.Select(c => c.Update(deltaTime)).OrderBy(c => c.done ? -c.extraTime : 1).First();
 }
 
 internal class CoroutineAllOf : CoroutineElement
@@ -202,8 +220,10 @@ internal class CoroutineAllOf : CoroutineElement
         foreach (var requirement in requirements)
         {
             var update = requirement.Update(deltaTime);
-            if (update.done) minRemaining = Mathf.Min(minRemaining, update.extraTime);
-            else remaining.Add(requirement);
+            if (update.done)
+                minRemaining = Mathf.Min(minRemaining, update.extraTime);
+            else
+                remaining.Add(requirement);
         }
 
         if (remaining.Count == 0)
@@ -223,8 +243,10 @@ internal class CoroutineAllOf : CoroutineElement
 
 internal static class Coroutines
 {
-    public static CoroutineSequence Sequence(IEnumerator<CoroutineElement> enumerator, CoroutineSequence.StopCondition? stopCondition = null)
-        => new(enumerator, stopCondition);
+    public static CoroutineSequence Sequence(
+        IEnumerator<CoroutineElement> enumerator,
+        CoroutineSequence.StopCondition? stopCondition = null
+    ) => new(enumerator, stopCondition);
 
     public static CoroutineOneOf OneOf(params CoroutineElement[] choices) => new([.. choices]);
 
@@ -242,14 +264,20 @@ internal static class Coroutines
     // Sleep until condition() holds
     public static SleepUntil SleepUntil(Func<bool> condition) => new(condition);
 
-    // Sleep until condition(), or 
-    public static SleepUntilTimeout SleepUntilTimeout(Func<bool> condition, float seconds) => new(new(condition), new(seconds));
+    // Sleep until condition(), or
+    public static SleepUntilTimeout SleepUntilTimeout(Func<bool> condition, float seconds) =>
+        new(new(condition), new(seconds));
 
-    public static SleepUntilCondHolds SleepUntilCondHolds(Func<bool> condition, float seconds) => new(condition, seconds);
+    public static SleepUntilCondHolds SleepUntilCondHolds(Func<bool> condition, float seconds) =>
+        new(condition, seconds);
 
     public static SleepSeconds Noop() => SleepSeconds(0);
 
-    public static SleepSeconds SleepSecondsUpdatePercent(float seconds, CoroutinePercentUpdate update) => new(seconds, update);
+    public static SleepSeconds SleepSecondsUpdatePercent(
+        float seconds,
+        CoroutinePercentUpdate update
+    ) => new(seconds, update);
 
-    public static SleepSeconds SleepSecondsUpdateDelta(float seconds, CoroutineTimeUpdate update) => new(seconds, update);
+    public static SleepSeconds SleepSecondsUpdateDelta(float seconds, CoroutineTimeUpdate update) =>
+        new(seconds, update);
 }

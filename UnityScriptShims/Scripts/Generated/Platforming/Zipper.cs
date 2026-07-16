@@ -24,6 +24,5 @@ namespace HK8YPlando.Scripts.Platforming
         public float PauseTime;
         public float RewindSpeed;
         public float RewindCooldown;
-        
     }
 }

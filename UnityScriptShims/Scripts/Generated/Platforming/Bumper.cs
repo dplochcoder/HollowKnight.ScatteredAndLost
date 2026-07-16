@@ -13,6 +13,5 @@ namespace HK8YPlando.Scripts.Platforming
         public System.Collections.Generic.List<UnityEngine.AudioClip> HitClips;
         public float OscillateRadius;
         public float OscillatePeriod;
-        
     }
 }

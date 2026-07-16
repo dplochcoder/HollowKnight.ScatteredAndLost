@@ -8,7 +8,8 @@ namespace HK8YPlando.Scripts.Framework;
 [Shim]
 internal class BrettaCheckpoint : MonoBehaviour
 {
-    [ShimField] public CheckpointLevel Level;
+    [ShimField]
+    public CheckpointLevel Level;
 
     private void Awake() => BrettasHouse.Get().LoadCheckpoint(this);
 

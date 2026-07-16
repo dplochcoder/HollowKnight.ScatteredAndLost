@@ -25,27 +25,52 @@
       <OutputFiles Include="$(TargetPath)" />
       <OutputFiles Include="$(TargetDir)/$(TargetName).pdb" />
     </ItemGroup>
-    <Copy SourceFiles="$(PkgFmod5Sharp)/lib/net6.0/Fmod5Sharp.dll" DestinationFolder="$(TargetDir)/" />
+    <Copy
+      SourceFiles="$(PkgFmod5Sharp)/lib/net6.0/Fmod5Sharp.dll"
+      DestinationFolder="$(TargetDir)/"
+    />
     <RemoveDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/" />
     <MakeDir Directories="$(ExportDir)/zip/" />
-    <MakeDir Condition="!Exists('$(HollowKnightRefs)/Mods/Scattered and Lost/')" Directories="$(HollowKnightRefs)/Mods/Scattered and Lost/" />
-    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(HollowKnightRefs)/Mods/Scattered and Lost/" />
+    <MakeDir
+      Condition="!Exists('$(HollowKnightRefs)/Mods/Scattered and Lost/')"
+      Directories="$(HollowKnightRefs)/Mods/Scattered and Lost/"
+    />
+    <Copy
+      SourceFiles="@(OutputFiles)"
+      DestinationFolder="$(HollowKnightRefs)/Mods/Scattered and Lost/"
+    />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportDir)/" />
-    <Copy SourceFiles="$(SolutionDir)/README.md;@(OutputFiles)" DestinationFolder="$(ExportDir)/zip/" />
-    <ZipDirectory SourceDirectory="$(ExportDir)/zip/" DestinationFile="$(ExportDir)/$(TargetName).zip" />
+    <Copy
+      SourceFiles="$(SolutionDir)/README.md;@(OutputFiles)"
+      DestinationFolder="$(ExportDir)/zip/"
+    />
+    <ZipDirectory
+      SourceDirectory="$(ExportDir)/zip/"
+      DestinationFile="$(ExportDir)/$(TargetName).zip"
+    />
     <RemoveDir Directories="$(ExportDir)/zip/" />
     <GetFileHash Files="$(ExportDir)/$(TargetName).zip" Algorithm="SHA256">
       <Output TaskParameter="Items" ItemName="FilesWithHashes" />
     </GetFileHash>
-    <WriteLinesToFile File="$(ExportDir)/SHA.txt" Lines="@(FilesWithHashes->'%(FileHash)')" Overwrite="true" Encoding="UTF-8" />
+    <WriteLinesToFile
+      File="$(ExportDir)/SHA.txt"
+      Lines="@(FilesWithHashes->'%(FileHash)')"
+      Overwrite="true"
+      Encoding="UTF-8"
+    />
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
     <ItemGroup>
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
-    <WriteLinesToFile File="$(ExportDir)/VERSION.txt" Lines="@(VersionNumber)" Overwrite="true" Encoding="UTF-8" />
+    <WriteLinesToFile
+      File="$(ExportDir)/VERSION.txt"
+      Lines="@(VersionNumber)"
+      Overwrite="true"
+      Encoding="UTF-8"
+    />
   </Target>
   <ItemGroup>
     <Compile Remove="Unity\**" />

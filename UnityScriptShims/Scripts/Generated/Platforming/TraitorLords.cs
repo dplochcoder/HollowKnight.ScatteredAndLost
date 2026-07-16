@@ -45,6 +45,5 @@ namespace HK8YPlando.Scripts.Platforming
         public float RageTurnSpeedup;
         public float RageWalkSpeedup;
         public float RageWavesSpeedup;
-        
     }
 }

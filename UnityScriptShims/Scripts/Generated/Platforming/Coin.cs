@@ -15,6 +15,5 @@ namespace HK8YPlando.Scripts.Platforming
         public float FlashHangTime;
         public float FlashAnimationSpeed;
         public float ActiveTransitionTime;
-        
     }
 }

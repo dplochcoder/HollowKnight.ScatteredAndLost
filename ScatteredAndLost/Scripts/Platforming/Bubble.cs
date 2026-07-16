@@ -1,4 +1,6 @@
-﻿using Architect.Attributes.Config;
+﻿using System;
+using System.Collections.Generic;
+using Architect.Attributes.Config;
 using Architect.Content.Elements;
 using Architect.Content.Groups;
 using DecorationMaster;
@@ -10,8 +12,6 @@ using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using Modding;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -19,28 +19,62 @@ namespace HK8YPlando.Scripts.Platforming;
 [Shim]
 internal class BubbleController : MonoBehaviour
 {
-    [ShimField] public Animator? BubbleAnimator;
-    [ShimField] public RuntimeAnimatorController? IdleController;
-    [ShimField] public RuntimeAnimatorController? FillController;
-    [ShimField] public RuntimeAnimatorController? ActiveController;
-    [ShimField] public RuntimeAnimatorController? DissolveController;
-    [ShimField] public RuntimeAnimatorController? RespawnController;
+    [ShimField]
+    public Animator? BubbleAnimator;
 
-    [ShimField] public AudioClip? EntryClip;
-    [ShimField] public AudioClip? LoopClip;
-    [ShimField] public AudioClip? WallClip;
-    [ShimField] public AudioClip? DashClip;
-    [ShimField] public AudioClip? RespawnClip;
+    [ShimField]
+    public RuntimeAnimatorController? IdleController;
 
-    [ShimField] public GameObject? Bubble;
-    [ShimField] public Rigidbody2D? RigidBody;
-    [ShimField] public HeroDetectorProxy? Trigger;
+    [ShimField]
+    public RuntimeAnimatorController? FillController;
 
-    [ShimField] public float StallTime;
-    [ShimField] public float Speed;
-    [ShimField] public float RespawnDelay;
-    [ShimField] public float RespawnCooldown;
-    [ShimField] public Vector3 KnightOffset;
+    [ShimField]
+    public RuntimeAnimatorController? ActiveController;
+
+    [ShimField]
+    public RuntimeAnimatorController? DissolveController;
+
+    [ShimField]
+    public RuntimeAnimatorController? RespawnController;
+
+    [ShimField]
+    public AudioClip? EntryClip;
+
+    [ShimField]
+    public AudioClip? LoopClip;
+
+    [ShimField]
+    public AudioClip? WallClip;
+
+    [ShimField]
+    public AudioClip? DashClip;
+
+    [ShimField]
+    public AudioClip? RespawnClip;
+
+    [ShimField]
+    public GameObject? Bubble;
+
+    [ShimField]
+    public Rigidbody2D? RigidBody;
+
+    [ShimField]
+    public HeroDetectorProxy? Trigger;
+
+    [ShimField]
+    public float StallTime;
+
+    [ShimField]
+    public float Speed;
+
+    [ShimField]
+    public float RespawnDelay;
+
+    [ShimField]
+    public float RespawnCooldown;
+
+    [ShimField]
+    public Vector3 KnightOffset;
 
     private void Awake()
     {
@@ -49,10 +83,12 @@ internal class BubbleController : MonoBehaviour
         var self = Bubble!.GetComponent<Collider2D>();
         Trigger!.Ignore(c =>
         {
-            if (c == self) return true;
+            if (c == self)
+                return true;
 
             var b = c.GetComponent<Bubble>();
-            if (b == null) return false;
+            if (b == null)
+                return false;
 
             // Ignore the collider if it doesn't own the player currently.
             var controller = b.BubbleController!;
@@ -78,7 +114,8 @@ internal class BubbleController : MonoBehaviour
     {
         var vec = InputHandler.Instance.inputActions.moveVector;
         Vector2 dir = new(vec.X, vec.Y);
-        if (dir.sqrMagnitude <= 0.25f) return facingRight ? new(Speed, 0) : new(-Speed, 0);
+        if (dir.sqrMagnitude <= 0.25f)
+            return facingRight ? new(Speed, 0) : new(-Speed, 0);
 
         var angle = Mathf.Round(Mathf.Atan2(dir.y, dir.x) * 4 / Mathf.PI) * Mathf.PI / 4;
         return new(Mathf.Cos(angle) * Speed, Mathf.Sin(angle) * Speed);
@@ -86,7 +123,8 @@ internal class BubbleController : MonoBehaviour
 
     private int OnTakeDamage(ref int hazardType, int damage)
     {
-        if (hazardType > 1 && damage > 0 && owningBubbleController == this) damageHeroEvent = true;
+        if (hazardType > 1 && damage > 0 && owningBubbleController == this)
+            damageHeroEvent = true;
         return damage;
     }
 
@@ -110,7 +148,7 @@ internal class BubbleController : MonoBehaviour
             hc.RegainControl();
         }
     }
-    
+
     private IEnumerator<CoroutineElement> Run()
     {
         var hc = HeroController.instance;
@@ -162,11 +200,13 @@ internal class BubbleController : MonoBehaviour
             Bubble.gameObject.LoopSound(LoopClip!, 0.6f);
             yield return Coroutines.SleepUntil(() =>
             {
-                if (damageHeroEvent || owningBubbleController != this || finishedMoving) return true;
+                if (damageHeroEvent || owningBubbleController != this || finishedMoving)
+                    return true;
 
                 if (!dashReleased.Value)
                 {
-                    if (!input.inputActions.dash) dashReleased.Value = true;
+                    if (!input.inputActions.dash)
+                        dashReleased.Value = true;
                 }
                 else if (input.inputActions.dash)
                 {
@@ -192,8 +232,10 @@ internal class BubbleController : MonoBehaviour
                     knight.transform.position = basePos + KnightOffset;
 
                     renderer.enabled = true;
-                    if (dashed) hc.SetStartWithDash();
-                    else if (wallCling) hc.SetStartWithWallslide();
+                    if (dashed)
+                        hc.SetStartWithDash();
+                    else if (wallCling)
+                        hc.SetStartWithWallslide();
                     hc.RegainControl();
                     hc.SetAirDashed(dashed);
                     hc.SetDoubleJumped(false);
@@ -229,19 +271,24 @@ internal class BubbleController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (owningBubbleController == this) HeroController.instance.gameObject.transform.position = Bubble!.transform.position + KnightOffset;
-        if (RigidBody!.simulated) RigidBody.velocity = RigidBody.velocity.normalized * Speed;
+        if (owningBubbleController == this)
+            HeroController.instance.gameObject.transform.position =
+                Bubble!.transform.position + KnightOffset;
+        if (RigidBody!.simulated)
+            RigidBody.velocity = RigidBody.velocity.normalized * Speed;
     }
 }
 
 [Shim]
 internal class Bubble : MonoBehaviour
 {
-    [ShimField] public BubbleController? BubbleController;
+    [ShimField]
+    public BubbleController? BubbleController;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.gameObject.layer != 8) return;
+        if (collision.collider.gameObject.layer != 8)
+            return;
 
         Vector3 pos;
         bool wallCling = false;
@@ -251,11 +298,15 @@ internal class Bubble : MonoBehaviour
         if (Mathf.Abs(normal.y) < 0.1f)
         {
             wallCling = true;
-            if (normal.x > 0) pos = new(contact.Point.x + KnightUtil.WIDTH / 2, transform.position.y);
-            else pos = new(contact.Point.x - KnightUtil.WIDTH / 2, transform.position.y);
+            if (normal.x > 0)
+                pos = new(contact.Point.x + KnightUtil.WIDTH / 2, transform.position.y);
+            else
+                pos = new(contact.Point.x - KnightUtil.WIDTH / 2, transform.position.y);
         }
-        else if (normal.y > 0) pos = new(transform.position.x, contact.Point.y + KnightUtil.HEIGHT / 2);
-        else pos = new(transform.position.x, contact.Point.y - KnightUtil.HEIGHT / 2);
+        else if (normal.y > 0)
+            pos = new(transform.position.x, contact.Point.y + KnightUtil.HEIGHT / 2);
+        else
+            pos = new(transform.position.x, contact.Point.y - KnightUtil.HEIGHT / 2);
 
         BubbleController!.FinishMoving(pos, wallCling);
     }
@@ -274,10 +325,12 @@ internal class BubbleDecorationItem : Item
 [Decoration("scattered_and_lost_bubble")]
 internal class BubbleDecoration : CustomDecoration
 {
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<BubbleDecoration, BubbleDecorationItem>(
-        "scattered_and_lost_bubble",
-        ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("BubbleController"),
-        "bubble");
+    public static void Register() =>
+        DecorationMasterUtil.RegisterDecoration<BubbleDecoration, BubbleDecorationItem>(
+            "scattered_and_lost_bubble",
+            ScatteredAndLostSceneManagerAPI.LoadPrefab<GameObject>("BubbleController"),
+            "bubble"
+        );
 
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 
@@ -289,8 +342,25 @@ internal class BubbleDecoration : CustomDecoration
 
 public static class BubbleArchitectObject
 {
-    internal static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(
-        "BubbleController", "Bubble", null, ConfigGroup.Generic,
-        (new FloatConfigType("Bubble Speed", (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()).WithDefaultValue(24), "sal_bubble_speed"),
-        (new FloatConfigType("Bubble Respawn Delay", (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()).WithDefaultValue(2.5f), "sal_bubble_respawn_delay"));
+    internal static AbstractPackElement Create() =>
+        ArchitectUtil.MakeArchitectObject(
+            "BubbleController",
+            "Bubble",
+            null,
+            ConfigGroup.Generic,
+            (
+                new FloatConfigType(
+                    "Bubble Speed",
+                    (o, value) => o.GetComponent<BubbleController>().Speed = value.GetValue()
+                ).WithDefaultValue(24),
+                "sal_bubble_speed"
+            ),
+            (
+                new FloatConfigType(
+                    "Bubble Respawn Delay",
+                    (o, value) => o.GetComponent<BubbleController>().RespawnDelay = value.GetValue()
+                ).WithDefaultValue(2.5f),
+                "sal_bubble_respawn_delay"
+            )
+        );
 }

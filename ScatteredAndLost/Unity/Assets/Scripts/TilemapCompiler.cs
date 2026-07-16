@@ -1,9 +1,9 @@
-﻿using UnityEngine.Tilemaps;
-using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.Lib;
 using HK8YPlando.Scripts.SharedLib;
+using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace HK8YPlando.Scripts
 {
@@ -21,16 +21,18 @@ namespace HK8YPlando.Scripts
             {
                 var rect = zone.GetComponent<BoxCollider2D>().ToRect();
                 for (int i = 0; i < rect.W; i++)
-                    for (int j = 0; j < rect.H; j++)
-                    {
-                        var x = i + rect.X;
-                        var y = j + rect.Y;
-                        if (x >= 0 && x <= Width() && y >= 0 && y <= Height()) noTerrain[x, y] = true;
-                    }
+                for (int j = 0; j < rect.H; j++)
+                {
+                    var x = i + rect.X;
+                    var y = j + rect.Y;
+                    if (x >= 0 && x <= Width() && y >= 0 && y <= Height())
+                        noTerrain[x, y] = true;
+                }
             }
         }
 
-        public bool Filled(int x, int y) => tilemap.GetTile(new Vector3Int(x, y, 0)) != null && !noTerrain[x, y];
+        public bool Filled(int x, int y) =>
+            tilemap.GetTile(new Vector3Int(x, y, 0)) != null && !noTerrain[x, y];
 
         public int Height() => tilemap.size.y;
 
@@ -42,8 +44,8 @@ namespace HK8YPlando.Scripts
             Hash.Update(ref hash, Width());
             Hash.Update(ref hash, Height());
             for (int x = 0; x < Width(); x++)
-                for (int y = 0; y < Height(); y++)
-                    Hash.Update(ref hash, Filled(x, y));
+            for (int y = 0; y < Height(); y++)
+                Hash.Update(ref hash, Filled(x, y));
 
             return hash;
         }
@@ -51,9 +53,18 @@ namespace HK8YPlando.Scripts
 
     static class RectExtensions
     {
-        public static List<Vector2> Points(this SharedLib.Rect r) => new List<Vector2>() { new Vector2(-r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, -r.H / 2f), new Vector2(r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, r.H / 2f), new Vector2(-r.W / 2f, -r.H / 2f) };
+        public static List<Vector2> Points(this SharedLib.Rect r) =>
+            new List<Vector2>()
+            {
+                new Vector2(-r.W / 2f, -r.H / 2f),
+                new Vector2(r.W / 2f, -r.H / 2f),
+                new Vector2(r.W / 2f, r.H / 2f),
+                new Vector2(-r.W / 2f, r.H / 2f),
+                new Vector2(-r.W / 2f, -r.H / 2f),
+            };
 
-        public static Vector3 Center(this SharedLib.Rect r) => new Vector3(r.X + r.W / 2.0f, r.Y + r.H / 2.0f);
+        public static Vector3 Center(this SharedLib.Rect r) =>
+            new Vector3(r.X + r.W / 2.0f, r.Y + r.H / 2.0f);
 
         public static SharedLib.Rect ToRect(this BoxCollider2D self)
         {
@@ -102,7 +113,7 @@ namespace HK8YPlando.Scripts
 
             var tilemap = gameObject.GetComponent<Tilemap>();
             tilemap.CompressBounds();
-            tilemap.color = new Color(1, 1, 1);  // Always set to white
+            tilemap.color = new Color(1, 1, 1); // Always set to white
 
             var grid = new TilemapGrid(tilemap);
             var newHash = grid.ComputeHash();
@@ -112,10 +123,13 @@ namespace HK8YPlando.Scripts
                 changed = true;
             }
 
-            if (!changed) return false;
-            if (prevCompiled != null) DestroyImmediate(prevCompiled, true);
+            if (!changed)
+                return false;
+            if (prevCompiled != null)
+                DestroyImmediate(prevCompiled, true);
 
-            if (gameObject.GetComponent<TilemapPatcher>() == null) gameObject.AddComponent<TilemapPatcher>();
+            if (gameObject.GetComponent<TilemapPatcher>() == null)
+                gameObject.AddComponent<TilemapPatcher>();
 
             GameObject compiled = new GameObject("Compiled");
             compiled.transform.SetParent(gameObject.transform);
@@ -129,7 +143,7 @@ namespace HK8YPlando.Scripts
             {
                 GameObject go = new GameObject();
                 go.name = $"Collider {++i}";
-                go.layer = 8;  // Terrain
+                go.layer = 8; // Terrain
                 go.transform.SetParent(colliders.transform);
 
                 var ec2d = go.AddComponent<EdgeCollider2D>();
@@ -151,15 +165,15 @@ namespace HK8YPlando.Scripts
             var h = tilemap.size.y;
             TileBase firstTile = null;
             for (int x = 0; x < w; x++)
-                for (int y = 0; y < h; y++)
+            for (int y = 0; y < h; y++)
+            {
+                var tile = tilemap.GetTile(new Vector3Int(x, y, 0));
+                if (tile != null)
                 {
-                    var tile = tilemap.GetTile(new Vector3Int(x, y, 0));
-                    if (tile != null)
-                    {
-                        firstTile = (firstTile ?? tile);
-                        tilemap.SetTile(new Vector3Int(x, y, 0), firstTile);
-                    }
+                    firstTile = (firstTile ?? tile);
+                    tilemap.SetTile(new Vector3Int(x, y, 0), firstTile);
                 }
+            }
 
             UnityEditorShims.MarkActiveSceneDirty();
         }

@@ -1,10 +1,10 @@
-﻿using Fmod5Sharp;
-using Fmod5Sharp.FmodTypes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Fmod5Sharp;
+using Fmod5Sharp.FmodTypes;
 
 namespace HK8YPlando.Util;
 
@@ -14,7 +14,8 @@ internal static class FmodRipper
     {
         string basePath;
         var settingsPath = ScatteredAndLostMod.Settings.CelesteInstallation;
-        if (settingsPath.Length > 0) basePath = settingsPath;
+        if (settingsPath.Length > 0)
+            basePath = settingsPath;
         else
         {
             // Hacky best-effort path guesser.
@@ -23,24 +24,33 @@ internal static class FmodRipper
             var steamPath = typeof(ScatteredAndLostMod).Assembly.Location;
             // Hollow Knight/hollow_knight_Data/Managed/Mods/Scattered and Lost/file
             int numDirs = 6;
-            if (isMacOS) numDirs += 3;  // hollow_knight.app/Contents/Resources
+            if (isMacOS)
+                numDirs += 3; // hollow_knight.app/Contents/Resources
 
-            for (int i = 0; i < numDirs; i++) steamPath = Path.GetDirectoryName(steamPath);
+            for (int i = 0; i < numDirs; i++)
+                steamPath = Path.GetDirectoryName(steamPath);
 
             basePath = Path.Combine(steamPath, "Celeste");
-            if (isMacOS) basePath = Path.Combine(basePath, "Celeste.app", "Contents", "Resources");
+            if (isMacOS)
+                basePath = Path.Combine(basePath, "Celeste.app", "Contents", "Resources");
         }
 
         return Path.Combine(basePath, "Content", "FMOD", "Desktop", "music.bank");
     }
 
-    public static Dictionary<string, string> CelesteFmodMapping() => new() {
-        { "mus_rmx_01_forsakencity_intro", "music1intro" },
-        { "mus_rmx_01_forsakencity_loop", "music1loop" },
-        { "mus_rmx_05_mirrortemple", "music2" }
-    };
+    public static Dictionary<string, string> CelesteFmodMapping() =>
+        new()
+        {
+            { "mus_rmx_01_forsakencity_intro", "music1intro" },
+            { "mus_rmx_01_forsakencity_loop", "music1loop" },
+            { "mus_rmx_05_mirrortemple", "music2" },
+        };
 
-    public static async Task<string> ExtractMusic(string fmodBankPath, Dictionary<string, string> sampleNameMapping, string outputFolderPath)
+    public static async Task<string> ExtractMusic(
+        string fmodBankPath,
+        Dictionary<string, string> sampleNameMapping,
+        string outputFolderPath
+    )
     {
         byte[]? bankData = await TryReadFsb(fmodBankPath);
         if (bankData == null)
@@ -50,10 +60,13 @@ internal static class FmodRipper
 
         if (FsbLoader.TryLoadFsbFromByteArray(bankData, out FmodSoundBank? bank))
         {
-            foreach (FmodSample sample in bank!.Samples) 
+            foreach (FmodSample sample in bank!.Samples)
             {
-                if (sample.Name != null && sampleNameMapping.TryGetValue(sample.Name, out string mappedName) 
-                    && sample.RebuildAsStandardFileFormat(out byte[]? data, out string? ext))
+                if (
+                    sample.Name != null
+                    && sampleNameMapping.TryGetValue(sample.Name, out string mappedName)
+                    && sample.RebuildAsStandardFileFormat(out byte[]? data, out string? ext)
+                )
                 {
                     string fileName = $"{mappedName}.{ext}";
                     string filePath = Path.Combine(outputFolderPath, fileName);

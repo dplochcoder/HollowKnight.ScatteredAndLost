@@ -1,5 +1,5 @@
-﻿using HK8YPlando.Scripts.Platforming;
-using System;
+﻿using System;
+using HK8YPlando.Scripts.Platforming;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.SharedLib
@@ -18,7 +18,14 @@ namespace HK8YPlando.Scripts.SharedLib
             return (topSpikes, rightSpikes, botSpikes, leftSpikes);
         }
 
-        public static bool UpdateZipperAssets(GameObject zipper, bool topSpikes, bool rightSpikes, bool botSpikes, bool leftSpikes, Action<GameObject> markDirty)
+        public static bool UpdateZipperAssets(
+            GameObject zipper,
+            bool topSpikes,
+            bool rightSpikes,
+            bool botSpikes,
+            bool leftSpikes,
+            Action<GameObject> markDirty
+        )
         {
             bool changed = false;
 
@@ -69,7 +76,12 @@ namespace HK8YPlando.Scripts.SharedLib
             return changed;
         }
 
-        private static bool UpdateChild(bool setting, GameObject parent, string name, Action<GameObject> markDirty)
+        private static bool UpdateChild(
+            bool setting,
+            GameObject parent,
+            string name,
+            Action<GameObject> markDirty
+        )
         {
             var child = parent.FindChild(name);
             if (child.activeSelf != setting)

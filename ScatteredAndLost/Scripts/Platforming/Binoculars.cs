@@ -1,12 +1,12 @@
-﻿using HK8YPlando.Scripts.InternalLib;
+﻿using System;
+using System.Collections.Generic;
+using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using PurenailCore.ModUtil;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -14,12 +14,20 @@ namespace HK8YPlando.Scripts.Platforming;
 [Shim]
 internal class Binoculars : MonoBehaviour
 {
-    [ShimField] public GameObject? HudPrefab;
+    [ShimField]
+    public GameObject? HudPrefab;
 
-    [ShimField] public HeroDetectorProxy? Detector;
-    [ShimField] public GameObject? CollidersParent;
-    [ShimField] public Transform? CameraStart;
-    [ShimField] public float CameraSpeed;
+    [ShimField]
+    public HeroDetectorProxy? Detector;
+
+    [ShimField]
+    public GameObject? CollidersParent;
+
+    [ShimField]
+    public Transform? CameraStart;
+
+    [ShimField]
+    public float CameraSpeed;
 
     private List<BoxCollider2D> validRanges = [];
     private PlayMakerFSM? promptMarker;
@@ -28,7 +36,13 @@ internal class Binoculars : MonoBehaviour
     {
         validRanges = [.. CollidersParent!.FindComponentsRecursive<BoxCollider2D>()];
 
-        var promptMarkerObj = Instantiate(ScatteredAndLostPreloader.Instance.KingsPassLoreTablet.LocateMyFSM("Inspection").GetState("Init").GetFirstActionOfType<SpawnObjectFromGlobalPool>().gameObject.Value);
+        var promptMarkerObj = Instantiate(
+            ScatteredAndLostPreloader
+                .Instance.KingsPassLoreTablet.LocateMyFSM("Inspection")
+                .GetState("Init")
+                .GetFirstActionOfType<SpawnObjectFromGlobalPool>()
+                .gameObject.Value
+        );
         promptMarkerObj.transform.SetParent(transform);
         promptMarkerObj.transform.localPosition = new(0, 1.5f, 0);
         promptMarker = promptMarkerObj.LocateMyFSM("Prompt Control");
@@ -39,11 +53,14 @@ internal class Binoculars : MonoBehaviour
 
     private bool CanInspect()
     {
-        if (!Detector!.Detected()) return false;
+        if (!Detector!.Detected())
+            return false;
 
         var cState = HeroController.instance.cState;
-        if (cState.attacking || cState.downAttacking || cState.upAttacking || cState.dashing) return false;
-        if (!cState.onGround) return false;
+        if (cState.attacking || cState.downAttacking || cState.upAttacking || cState.dashing)
+            return false;
+        if (!cState.onGround)
+            return false;
 
         return true;
     }
@@ -58,7 +75,9 @@ internal class Binoculars : MonoBehaviour
 
         while (true)
         {
-            yield return Coroutines.SleepUntil(() => CanInspect() && inputHandler.inputActions.up.WasPressed);
+            yield return Coroutines.SleepUntil(() =>
+                CanInspect() && inputHandler.inputActions.up.WasPressed
+            );
 
             inspectable = false;
             heroController.RelinquishControl();
@@ -73,7 +92,8 @@ internal class Binoculars : MonoBehaviour
             var hudObj = Instantiate(HudPrefab!);
             hudObj.transform.parent = canvas.transform;
             hudObj.layer = canvas.layer;
-            foreach (var child in hudObj.Children()) child.layer = canvas.layer;
+            foreach (var child in hudObj.Children())
+                child.layer = canvas.layer;
             hudObj.transform.localPosition = new(8.71f, -6.6f);
             var hud = hudObj.GetComponent<BinocularHud>();
 
@@ -125,8 +145,10 @@ internal class Binoculars : MonoBehaviour
             animator.Play("Turn");
             yield return Coroutines.SleepUntil(() => !animator.Playing);
 
-            if (facingRight) heroController.FaceLeft();
-            else heroController.FaceRight();
+            if (facingRight)
+                heroController.FaceLeft();
+            else
+                heroController.FaceRight();
         }
 
         animator.Play("Walk");
@@ -134,7 +156,9 @@ internal class Binoculars : MonoBehaviour
         var origSign = Mathf.Sign(transform.position.x - kx);
         rigidbody.velocity = new(origSign * 6, 0);
 
-        yield return Coroutines.SleepUntil(() => Mathf.Sign(transform.position.x - knight.transform.position.x) != origSign);
+        yield return Coroutines.SleepUntil(() =>
+            Mathf.Sign(transform.position.x - knight.transform.position.x) != origSign
+        );
         rigidbody.velocity = Vector2.zero;
         knight.transform.SetPositionX(transform.position.x);
     }
@@ -192,10 +216,14 @@ internal class Binoculars : MonoBehaviour
         var minY = min.y + GameConstants.CAMERA_HALF_HEIGHT;
         var maxY = max.y - GameConstants.CAMERA_HALF_HEIGHT;
 
-        if (minX < maxX) pos.x = Mathf.Clamp(pos.x, minX, maxX);
-        else pos.x = (minX + maxX) / 2;
-        if (minY < maxY) pos.y = Mathf.Clamp(pos.y, minY, maxY);
-        else pos.y = (minY + maxY) / 2;
+        if (minX < maxX)
+            pos.x = Mathf.Clamp(pos.x, minX, maxX);
+        else
+            pos.x = (minX + maxX) / 2;
+        if (minY < maxY)
+            pos.y = Mathf.Clamp(pos.y, minY, maxY);
+        else
+            pos.y = (minY + maxY) / 2;
 
         return pos;
     }
@@ -205,7 +233,8 @@ internal class Binoculars : MonoBehaviour
     private static bool ApplyBinoculars(Vector3 pos, out Vector3 newPos)
     {
         newPos = pos;
-        if (ActiveBinoculars == null) return false;
+        if (ActiveBinoculars == null)
+            return false;
 
         newPos.x = ActiveBinoculars.activeCameraPos.x;
         newPos.y = ActiveBinoculars.activeCameraPos.y;
@@ -216,7 +245,8 @@ internal class Binoculars : MonoBehaviour
 
     internal static void Load()
     {
-        if (loaded) return;
+        if (loaded)
+            return;
         loaded = true;
 
         CameraPositionModifier.AddModifier(CameraModifierPhase.FINAL_POSITON, 1f, ApplyBinoculars);
@@ -228,10 +258,14 @@ internal class Binoculars : MonoBehaviour
 [Shim]
 internal class BinocularHud : MonoBehaviour
 {
-    [ShimField] public RuntimeAnimatorController? FadeIn;
-    [ShimField] public RuntimeAnimatorController? FadeOut;
+    [ShimField]
+    public RuntimeAnimatorController? FadeIn;
+
+    [ShimField]
+    public RuntimeAnimatorController? FadeOut;
 
     internal Action? OnRelocateCamera;
 
-    [ShimMethod] public void RelocateCamera() => OnRelocateCamera?.Invoke();
+    [ShimMethod]
+    public void RelocateCamera() => OnRelocateCamera?.Invoke();
 }

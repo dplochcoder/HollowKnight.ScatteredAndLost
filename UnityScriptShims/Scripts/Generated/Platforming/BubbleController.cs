@@ -21,6 +21,5 @@ namespace HK8YPlando.Scripts.Platforming
         public float RespawnDelay;
         public float RespawnCooldown;
         public UnityEngine.Vector3 KnightOffset;
-        
     }
 }

@@ -7,7 +7,10 @@ internal class Lazy<T>
     private Func<T> supplier;
     private T? value;
 
-    public Lazy(Func<T> supplier) { this.supplier = supplier; }
+    public Lazy(Func<T> supplier)
+    {
+        this.supplier = supplier;
+    }
 
     public T Get()
     {

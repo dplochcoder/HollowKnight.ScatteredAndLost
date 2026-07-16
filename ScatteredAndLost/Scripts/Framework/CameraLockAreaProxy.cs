@@ -1,7 +1,7 @@
-﻿using GlobalEnums;
+﻿using System.Linq;
+using GlobalEnums;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.SharedLib;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,9 +11,14 @@ namespace HK8YPlando.Scripts.Framework;
 [Shim]
 internal class CameraLockAreaProxy : MonoBehaviour
 {
-    [ShimField] public bool preventLookUp;
-    [ShimField] public bool preventLookDown;
-    [ShimField] public bool maxPriority;
+    [ShimField]
+    public bool preventLookUp;
+
+    [ShimField]
+    public bool preventLookDown;
+
+    [ShimField]
+    public bool maxPriority;
 
     private void Start()
     {
@@ -33,7 +38,8 @@ internal class CameraLockAreaProxy : MonoBehaviour
         var siblings = transform.parent.gameObject.Children().ToList();
         foreach (var go in siblings)
         {
-            if (go == gameObject) continue;
+            if (go == gameObject)
+                continue;
 
             GameObject triggerObj = new($"{parentName}.Trigger{++i}");
             triggerObj.SetActive(false);

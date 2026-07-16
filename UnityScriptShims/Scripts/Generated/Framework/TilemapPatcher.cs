@@ -1,7 +1,4 @@
 namespace HK8YPlando.Scripts.Framework
 {
-    public class TilemapPatcher : UnityEngine.MonoBehaviour
-    {
-        
-    }
+    public class TilemapPatcher : UnityEngine.MonoBehaviour { }
 }

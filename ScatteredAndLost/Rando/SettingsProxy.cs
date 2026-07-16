@@ -7,7 +7,8 @@ public class SettingsProxy : RandoSettingsProxy<RandomizerSettings, string>
 {
     public override string ModKey => nameof(ScatteredAndLostMod);
 
-    public override VersioningPolicy<string> VersioningPolicy => new StrictModVersioningPolicy(ScatteredAndLostMod.Instance!);
+    public override VersioningPolicy<string> VersioningPolicy =>
+        new StrictModVersioningPolicy(ScatteredAndLostMod.Instance!);
 
     public override bool TryProvideSettings(out RandomizerSettings? settings)
     {
@@ -15,5 +16,6 @@ public class SettingsProxy : RandoSettingsProxy<RandomizerSettings, string>
         return settings.Enabled;
     }
 
-    public override void ReceiveSettings(RandomizerSettings? settings) => ConnectionMenu.Instance!.ApplySettings(settings ?? new());
+    public override void ReceiveSettings(RandomizerSettings? settings) =>
+        ConnectionMenu.Instance!.ApplySettings(settings ?? new());
 }

@@ -1,4 +1,10 @@
-﻿using HK8YPlando.Data;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using HK8YPlando.Data;
 using HK8YPlando.Scripts.Framework;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
@@ -9,12 +15,6 @@ using ItemChanger.FsmStateActions;
 using ItemChanger.Modules;
 using Modding;
 using PurenailCore.ICUtil;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -71,9 +71,11 @@ internal class BrettasHouse : Module
     {
         foreach (var str in typeof(ScatteredAndLostMod).Assembly.GetManifestResourceNames())
         {
-            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith("meta")) continue;
+            if (!str.StartsWith(PREFIX) || str.EndsWith(".manifest") || str.EndsWith("meta"))
+                continue;
             string name = str[PREFIX.Length..];
-            if (name == "AssetBundles" || name == "scenes") continue;
+            if (name == "AssetBundles" || name == "scenes")
+                continue;
 
             sceneBundles[name] = null;
         }
@@ -82,7 +84,8 @@ internal class BrettasHouse : Module
         coreModule.AddOnBeforeSceneLoad(OnBeforeSceneLoad);
         coreModule.AddOnUnloadScene(OnUnloadScene);
 
-        if (GetTracker(out var t)) t.OnGenerateFocusDesc += ShowHeartsInInventory;
+        if (GetTracker(out var t))
+            t.OnGenerateFocusDesc += ShowHeartsInInventory;
         Events.AddSceneChangeEdit("BrettaHouseEntry", MaybePreviewTablet);
         Events.AddSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.AddSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
@@ -96,7 +99,8 @@ internal class BrettasHouse : Module
 
     public override void Unload()
     {
-        if (GetTracker(out var t)) t.OnGenerateFocusDesc -= ShowHeartsInInventory;
+        if (GetTracker(out var t))
+            t.OnGenerateFocusDesc -= ShowHeartsInInventory;
         Events.RemoveSceneChangeEdit("BrettaHouseEntry", MaybePreviewTablet);
         Events.RemoveSceneChangeEdit("BrettaHouseZippers", MaybeSkipEntrance);
         Events.RemoveSceneChangeEdit("Room_Bretta", RedirectBrettaDoorInside);
@@ -124,7 +128,8 @@ internal class BrettasHouse : Module
 
     private void OnUnloadScene(string prevSceneName, string nextSceneName)
     {
-        if (nextSceneName == prevSceneName) return;
+        if (nextSceneName == prevSceneName)
+            return;
 
         var assetBundleName = AssetBundleName(prevSceneName);
         if (sceneBundles.TryGetValue(assetBundleName, out var assetBundle))
@@ -142,7 +147,11 @@ internal class BrettasHouse : Module
             yield break;
         }
 
-        StreamReader sr = new(typeof(ScatteredAndLostMod).Assembly.GetManifestResourceStream($"{PREFIX}{assetBundleName}"));
+        StreamReader sr = new(
+            typeof(ScatteredAndLostMod).Assembly.GetManifestResourceStream(
+                $"{PREFIX}{assetBundleName}"
+            )
+        );
         var request = AssetBundle.LoadFromStreamAsync(sr.BaseStream);
         yield return request;
 
@@ -161,7 +170,8 @@ internal class BrettasHouse : Module
 
     private void MaybePreviewTablet(Scene scene)
     {
-        if (!EnablePreviews || !EnableHeartDoors) return;
+        if (!EnablePreviews || !EnableHeartDoors)
+            return;
 
         TabletDeployer tablet = new()
         {
@@ -175,9 +185,13 @@ internal class BrettasHouse : Module
 
     private void MaybeSkipEntrance(Scene scene)
     {
-        if (EnableHeartDoors) return;
+        if (EnableHeartDoors)
+            return;
 
-        var gate = GameObjectExtensions.FindChild(scene.FindGameObject("_Transition Gates")!, "right1");
+        var gate = GameObjectExtensions.FindChild(
+            scene.FindGameObject("_Transition Gates")!,
+            "right1"
+        );
         var tp = gate.GetComponent<TransitionPoint>();
         tp.targetScene = "Town";
         tp.entryPoint = "door_bretta";
@@ -185,17 +199,24 @@ internal class BrettasHouse : Module
 
     private (string, string) GetBrettaDoorTarget()
     {
-        if (Checkpoint == null) return (EnableHeartDoors ? "BrettaHouseEntry" : "BrettaHouseZippers", "right1");
-        else return Checkpoint.Value.SceneAndGate();
+        if (Checkpoint == null)
+            return (EnableHeartDoors ? "BrettaHouseEntry" : "BrettaHouseZippers", "right1");
+        else
+            return Checkpoint.Value.SceneAndGate();
     }
 
     // Hook for debug mod.
     private event Action<(string, string)>? RedirectBrettaDoor;
-    internal void BrettaDoorRedirected((string, string) target) => RedirectBrettaDoor?.Invoke(target);
+
+    internal void BrettaDoorRedirected((string, string) target) =>
+        RedirectBrettaDoor?.Invoke(target);
 
     private void RedirectBrettaDoorOutside(Scene scene)
     {
-        var obj = GameObjectExtensions.FindChild(GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!, "door_bretta")!;
+        var obj = GameObjectExtensions.FindChild(
+            GameObjectExtensions.FindChild(scene.FindGameObject("bretta_house")!, "open")!,
+            "door_bretta"
+        )!;
 
         var fsmVars = obj.LocateMyFSM("Door Control").FsmVariables;
         var targetVars = GetBrettaDoorTarget();
@@ -213,30 +234,37 @@ internal class BrettasHouse : Module
 
         // ItemChanger infers the bretta gate from Room_Bretta as the target scene, so we spawn a fake transition to teach it otherwise.
         GameObject spawner = new("fake_transition_spawner");
-        spawner.AddComponent<Dummy>().DoAfter(0.25f, () =>
-        {
-            GameObject t = new("door_bretta");
-            t.transform.parent = spawner.transform;
-            t.transform.position = new(-1000, -1000);
+        spawner
+            .AddComponent<Dummy>()
+            .DoAfter(
+                0.25f,
+                () =>
+                {
+                    GameObject t = new("door_bretta");
+                    t.transform.parent = spawner.transform;
+                    t.transform.position = new(-1000, -1000);
 
-            var tp = t.AddComponent<TransitionPoint>();
+                    var tp = t.AddComponent<TransitionPoint>();
 
-            void RedirectCallback2((string, string) vars)
-            {
-                var (sceneName, gateName) = vars;
-                tp.targetScene = sceneName;
-                tp.entryPoint = gateName;
-            }
-            RedirectCallback2(targetVars);
+                    void RedirectCallback2((string, string) vars)
+                    {
+                        var (sceneName, gateName) = vars;
+                        tp.targetScene = sceneName;
+                        tp.entryPoint = gateName;
+                    }
+                    RedirectCallback2(targetVars);
 
-            RedirectBrettaDoor += RedirectCallback2;
-            obj.AddComponent<OnDestroyHook>().Action = () => RedirectBrettaDoor -= RedirectCallback2;
-        });
+                    RedirectBrettaDoor += RedirectCallback2;
+                    obj.AddComponent<OnDestroyHook>().Action = () =>
+                        RedirectBrettaDoor -= RedirectCallback2;
+                }
+            );
     }
 
     private void RedirectBrettaDoorInside(Scene scene)
     {
-        if (Checkpoint != null) return;
+        if (Checkpoint != null)
+            return;
 
         var tp = scene.FindGameObject("right1")!.GetComponent<TransitionPoint>();
         tp.targetScene = "BrettaHouseBubbles";
@@ -247,13 +275,19 @@ internal class BrettasHouse : Module
 
     internal void UpdateCheckpoint(CheckpointLevel level)
     {
-        if (Checkpoint == null || Checkpoint >= level) return;
+        if (Checkpoint == null || Checkpoint >= level)
+            return;
 
         // Only update if all prior placements are obtained.
         foreach (var loc in RandomizerData.Locations)
         {
-            if (loc.Value.Checkpoint >= level) continue;
-            if (ItemChanger.Internal.Ref.Settings.Placements.TryGetValue(loc.Key, out var placement) && !placement.Items.All(i => i.WasEverObtained())) return;
+            if (loc.Value.Checkpoint >= level)
+                continue;
+            if (
+                ItemChanger.Internal.Ref.Settings.Placements.TryGetValue(loc.Key, out var placement)
+                && !placement.Items.All(i => i.WasEverObtained())
+            )
+                return;
         }
 
         Checkpoint = level;
@@ -265,42 +299,58 @@ internal class BrettasHouse : Module
         UpdateCheckpoint(checkpointObj.Level);
     }
 
-    internal void UnloadCheckpoint(BrettaCheckpoint checkpoint) => activeCheckpoints.Remove(checkpoint);
+    internal void UnloadCheckpoint(BrettaCheckpoint checkpoint) =>
+        activeCheckpoints.Remove(checkpoint);
 
     internal ShadeSpawnTrigger? lastShadeTrigger;
 
     internal void ForceShadeSpawn(PlayMakerFSM fsm)
     {
-        fsm.GetState("Set Shade").AddFirstAction(new Lambda(() =>
-        {
-            var marker = lastShadeTrigger?.ShadeMarker;
-            if (marker != null)
-            {
-                var pd = PlayerData.instance;
-                pd.SetString(nameof(PlayerData.shadeScene), marker.gameObject.scene.name);
-                pd.SetFloat(nameof(PlayerData.shadePositionX), marker.transform.position.x);
-                pd.SetFloat(nameof(PlayerData.shadePositionY), marker.transform.position.y);
+        fsm.GetState("Set Shade")
+            .AddFirstAction(
+                new Lambda(() =>
+                {
+                    var marker = lastShadeTrigger?.ShadeMarker;
+                    if (marker != null)
+                    {
+                        var pd = PlayerData.instance;
+                        pd.SetString(nameof(PlayerData.shadeScene), marker.gameObject.scene.name);
+                        pd.SetFloat(nameof(PlayerData.shadePositionX), marker.transform.position.x);
+                        pd.SetFloat(nameof(PlayerData.shadePositionY), marker.transform.position.y);
 
-                fsm.SetState("Check MP");
-            }
-        }));
+                        fsm.SetState("Check MP");
+                    }
+                })
+            );
     }
 
     internal void SetShadeSpawnTrigger(ShadeSpawnTrigger trigger) => lastShadeTrigger = trigger;
+
     internal void ForgetShadeSpawnTrigger(ShadeSpawnTrigger trigger)
     {
-        if (lastShadeTrigger == trigger) lastShadeTrigger = null;
+        if (lastShadeTrigger == trigger)
+            lastShadeTrigger = null;
     }
 
     private readonly HashSet<DreamgateFilter> dreamgateFilters = [];
 
     internal void RegisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Add(filter);
-    internal void UnregisterDreamgateFilter(DreamgateFilter filter) => dreamgateFilters.Remove(filter);
 
-    internal void EditDreamNail(PlayMakerFSM fsm) => fsm.GetState("Can Set?")?.AddFirstAction(new Lambda(() =>
-    {
-        if (dreamgateFilters.Count > 0 && dreamgateFilters.Any(f => !f.AllowDreamgate())) fsm.SendEvent("FAIL");
-    }));
+    internal void UnregisterDreamgateFilter(DreamgateFilter filter) =>
+        dreamgateFilters.Remove(filter);
+
+    internal void EditDreamNail(PlayMakerFSM fsm) =>
+        fsm.GetState("Can Set?")
+            ?.AddFirstAction(
+                new Lambda(() =>
+                {
+                    if (
+                        dreamgateFilters.Count > 0
+                        && dreamgateFilters.Any(f => !f.AllowDreamgate())
+                    )
+                        fsm.SendEvent("FAIL");
+                })
+            );
 
     private string LanguageGetHook(string key, string sheetTitle, string orig)
     {
@@ -312,7 +362,7 @@ internal class BrettasHouse : Module
             $"{BrettaHouseAreaTitleController.AREA_NAME}_SUPER" => "",
             $"{BrettaHouseAreaTitleController.AREA_NAME}_MAIN" => "Bretta's House",
             $"{BrettaHouseAreaTitleController.AREA_NAME}_SUB" => "C-Side",
-            _ => orig
+            _ => orig,
         };
     }
 
@@ -321,7 +371,7 @@ internal class BrettasHouse : Module
         return name switch
         {
             nameof(SeenBrettasHouseAreaTitle) => SeenBrettasHouseAreaTitle,
-            _ => orig
+            _ => orig,
         };
     }
 

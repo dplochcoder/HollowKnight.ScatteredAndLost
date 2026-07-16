@@ -6,7 +6,7 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.Sprite EmptySprite;
         public UnityEngine.Sprite FullSprite;
         public UnityEngine.RuntimeAnimatorController HeartAnim;
+
         public void AnimDone() { }
-        
     }
 }

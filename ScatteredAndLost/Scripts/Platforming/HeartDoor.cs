@@ -1,10 +1,10 @@
-﻿using HK8YPlando.IC;
+﻿using System;
+using System.Collections.Generic;
+using HK8YPlando.IC;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Scripts.Proxy;
 using HK8YPlando.Scripts.SharedLib;
 using HK8YPlando.Util;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Platforming;
@@ -21,11 +21,12 @@ internal record HeartSpacing
         NumHearts = numHearts;
 
         int? rowSize = null;
-        for (int i = 1; i <= 4; i++) if (numHearts <= i * i)
-        {
-            rowSize = i;
-            break;
-        }
+        for (int i = 1; i <= 4; i++)
+            if (numHearts <= i * i)
+            {
+                rowSize = i;
+                break;
+            }
         rowSize ??= 5;
 
         NumPerRow = rowSize.Value;
@@ -38,7 +39,10 @@ internal record HeartSpacing
         var row = idx / NumPerRow;
         var col = idx % NumPerRow;
         var numRows = (NumHearts + (NumPerRow - 1)) / NumPerRow;
-        var numCols = (row == numRows - 1 && NumHearts % NumPerRow != 0) ? (NumHearts % NumPerRow) : NumPerRow;
+        var numCols =
+            (row == numRows - 1 && NumHearts % NumPerRow != 0)
+                ? (NumHearts % NumPerRow)
+                : NumPerRow;
 
         return new(HSpace * (col - (numCols - 1) / 2f), VSpace * ((numRows - 1) / 2f - row));
     }
@@ -47,25 +51,50 @@ internal record HeartSpacing
 [Shim]
 internal class HeartDoor : MonoBehaviour
 {
-    [ShimField] public int DoorIndex;
+    [ShimField]
+    public int DoorIndex;
 
-    [ShimField] public float FallHeight;
-    [ShimField] public float FallSpeed;
-    [ShimField] public float FallBuffer;
-    [ShimField] public float FallDelay;
-    [ShimField] public float HeartActivationDelay;
-    [ShimField] public RuntimeAnimatorController? OpenController;
-    [ShimField] public List<ParticleSystem> ClosedParticleSystems = [];
-    [ShimField] public List<ParticleSystem> OpenParticleSystems = [];
+    [ShimField]
+    public float FallHeight;
 
-    [ShimField] public List<AudioClip> HeartSounds = [];
-    [ShimField] public AudioClip? OpenSound;
+    [ShimField]
+    public float FallSpeed;
 
-    [ShimField] public GameObject? Terrain;
-    [ShimField] public GameObject? MainRender;
-    [ShimField] public HeroDetectorProxy? ActivationTrigger;
+    [ShimField]
+    public float FallBuffer;
 
-    [ShimField] public GameObject? HeartPrefab;
+    [ShimField]
+    public float FallDelay;
+
+    [ShimField]
+    public float HeartActivationDelay;
+
+    [ShimField]
+    public RuntimeAnimatorController? OpenController;
+
+    [ShimField]
+    public List<ParticleSystem> ClosedParticleSystems = [];
+
+    [ShimField]
+    public List<ParticleSystem> OpenParticleSystems = [];
+
+    [ShimField]
+    public List<AudioClip> HeartSounds = [];
+
+    [ShimField]
+    public AudioClip? OpenSound;
+
+    [ShimField]
+    public GameObject? Terrain;
+
+    [ShimField]
+    public GameObject? MainRender;
+
+    [ShimField]
+    public HeroDetectorProxy? ActivationTrigger;
+
+    [ShimField]
+    public GameObject? HeartPrefab;
 
     private BrettasHouse? mod;
     private HeartSpacing? spacing;
@@ -101,7 +130,8 @@ internal class HeartDoor : MonoBehaviour
         }
 
         List<HeartDoorHeart> hearts = [];
-        for (int i = 0; i < data.Total; i++) hearts.Add(CreateHeart(i, data.NumUnlocked > i));
+        for (int i = 0; i < data.Total; i++)
+            hearts.Add(CreateHeart(i, data.NumUnlocked > i));
 
         var knight = HeroController.instance.gameObject;
         if (!data.Closed)
@@ -110,20 +140,28 @@ internal class HeartDoor : MonoBehaviour
 
             var cdashSpeed = 30;
             var wakeRange = FallBuffer + FallHeight / FallSpeed * cdashSpeed;
-            yield return Coroutines.SleepUntil(() => Mathf.Abs(knight.transform.position.x - transform.position.x) <= wakeRange);
+            yield return Coroutines.SleepUntil(() =>
+                Mathf.Abs(knight.transform.position.x - transform.position.x) <= wakeRange
+            );
 
-            yield return Coroutines.SleepSecondsUpdatePercent(FallHeight / FallSpeed, pct =>
-            {
-                MainRender!.transform.SetPositionY(transform.position.y + FallHeight * (1 - pct));
-                return false;
-            });
+            yield return Coroutines.SleepSecondsUpdatePercent(
+                FallHeight / FallSpeed,
+                pct =>
+                {
+                    MainRender!.transform.SetPositionY(
+                        transform.position.y + FallHeight * (1 - pct)
+                    );
+                    return false;
+                }
+            );
 
             data.Closed = true;
             ClosedParticleSystems.ForEach(p => p.Play());
 
             yield return Coroutines.SleepSeconds(FallDelay);
         }
-        else ClosedParticleSystems.ForEach(p => p.Play());
+        else
+            ClosedParticleSystems.ForEach(p => p.Play());
 
         yield return Coroutines.SleepUntil(() => ActivationTrigger!.Detected());
         while (data.NumUnlocked < data.Total)
@@ -151,7 +189,8 @@ internal class HeartDoor : MonoBehaviour
     private bool doorAnimFinished = false;
 
     [ShimMethod]
-    public void StopDoorParticles() => ClosedParticleSystems.ForEach(p => p.Stop(true, ParticleSystemStopBehavior.StopEmitting));
+    public void StopDoorParticles() =>
+        ClosedParticleSystems.ForEach(p => p.Stop(true, ParticleSystemStopBehavior.StopEmitting));
 
     [ShimMethod]
     public void DoorOpened()
@@ -165,9 +204,14 @@ internal class HeartDoor : MonoBehaviour
 [RequireComponent(typeof(SpriteRenderer))]
 internal class HeartDoorHeart : MonoBehaviour
 {
-    [ShimField] public Sprite? EmptySprite;
-    [ShimField] public Sprite? FullSprite;
-    [ShimField] public RuntimeAnimatorController? HeartAnim;
+    [ShimField]
+    public Sprite? EmptySprite;
+
+    [ShimField]
+    public Sprite? FullSprite;
+
+    [ShimField]
+    public RuntimeAnimatorController? HeartAnim;
 
     private event Action? OnAnimDone;
 
@@ -184,5 +228,6 @@ internal class HeartDoorHeart : MonoBehaviour
         GetComponent<Animator>().runtimeAnimatorController = HeartAnim;
     }
 
-    [ShimMethod] public void AnimDone() => OnAnimDone?.Invoke();
+    [ShimMethod]
+    public void AnimDone() => OnAnimDone?.Invoke();
 }

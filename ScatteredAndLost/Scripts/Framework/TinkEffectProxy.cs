@@ -11,11 +11,15 @@ public class TinkEffectProxy : TinkEffect
 {
     private static readonly MonobehaviourPatcher<TinkEffect> Patcher = new(
         () => ScatteredAndLostPreloader.Instance.Goam.GetComponent<TinkEffect>(),
-        "blockEffect");
+        "blockEffect"
+    );
 
     private void Awake()
     {
         Patcher.Patch(this);
-        this.SetAttr<TinkEffect, BoxCollider2D>("boxCollider", gameObject.GetComponent<BoxCollider2D>());
+        this.SetAttr<TinkEffect, BoxCollider2D>(
+            "boxCollider",
+            gameObject.GetComponent<BoxCollider2D>()
+        );
     }
 }

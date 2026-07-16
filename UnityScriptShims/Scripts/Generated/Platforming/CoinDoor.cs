@@ -16,6 +16,5 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.Vector3 MoveOffset;
         public float ResetDelay;
         public float ResetDuration;
-        
     }
 }

@@ -17,8 +17,9 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.GameObject MainRender;
         public HK8YPlando.Scripts.Proxy.HeroDetectorProxy ActivationTrigger;
         public UnityEngine.GameObject HeartPrefab;
+
         public void StopDoorParticles() { }
+
         public void DoorOpened() { }
-        
     }
 }

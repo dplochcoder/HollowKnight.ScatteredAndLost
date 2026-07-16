@@ -9,7 +9,8 @@ internal class InfiniteHealth : MonoBehaviour
     private void Update()
     {
         healthManager ??= GetComponent<HealthManager>();
-        if (healthManager == null) return;
+        if (healthManager == null)
+            return;
 
         healthManager.hp = 1000;
     }

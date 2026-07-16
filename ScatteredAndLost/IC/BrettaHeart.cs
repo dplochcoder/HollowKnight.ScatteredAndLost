@@ -1,7 +1,7 @@
-﻿using ItemChanger;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ItemChanger;
 using UnityEngine;
 
 namespace HK8YPlando.IC;
@@ -15,14 +15,22 @@ internal enum HeartType
 
 internal static class HeartTypeExtensions
 {
-    internal static string ItemName(this HeartType type) => type switch { HeartType.Blue => "BrettaHeart-Blue", HeartType.Red => "BrettaHeart-Red", HeartType.Yellow => "BrettaHeart-Yellow", _ => "" };
+    internal static string ItemName(this HeartType type) =>
+        type switch
+        {
+            HeartType.Blue => "BrettaHeart-Blue",
+            HeartType.Red => "BrettaHeart-Red",
+            HeartType.Yellow => "BrettaHeart-Yellow",
+            _ => "",
+        };
 
     internal static List<HeartType> All() => [HeartType.Blue, HeartType.Red, HeartType.Yellow];
 }
 
 internal class BrettaHeart : AbstractItem
 {
-    public static List<BrettaHeart> All() => [.. HeartTypeExtensions.All().Select(t => new BrettaHeart(t))];
+    public static List<BrettaHeart> All() =>
+        [.. HeartTypeExtensions.All().Select(t => new BrettaHeart(t))];
 
     public const string TermName = "BRETTA_HEART";
 
@@ -39,7 +47,8 @@ internal class BrettaHeart : AbstractItem
 
     public BrettaHeart() { }
 
-    public override void GiveImmediate(GiveInfo info) => ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts++;
+    public override void GiveImmediate(GiveInfo info) =>
+        ItemChangerMod.Modules.Get<BrettasHouse>()!.Hearts++;
 
     public override bool Redundant() => false;
 
@@ -66,20 +75,32 @@ internal class HeartUIDef : UIDef
     public override string GetPreviewName()
     {
         var mod = ItemChangerMod.Modules.Get<BrettasHouse>()!;
-        if (FlavorName.Length == 0) return $"Heart #{mod.Hearts + 1}";
-        else return $"{FlavorName} #{mod.Hearts + 1}";
+        if (FlavorName.Length == 0)
+            return $"Heart #{mod.Hearts + 1}";
+        else
+            return $"{FlavorName} #{mod.Hearts + 1}";
     }
 
     public override string GetPostviewName()
     {
         var mod = ItemChangerMod.Modules.Get<BrettasHouse>()!;
-        if (FlavorName.Length == 0) return $"Heart #{mod.Hearts}";
-        else return $"{FlavorName} #{mod.Hearts}";
+        if (FlavorName.Length == 0)
+            return $"Heart #{mod.Hearts}";
+        else
+            return $"{FlavorName} #{mod.Hearts}";
     }
 
-    public override string? GetShopDesc() => "A relic of challenge and dedication. I think Bretta collects these?";
+    public override string? GetShopDesc() =>
+        "A relic of challenge and dedication. I think Bretta collects these?";
 
-    public override Sprite GetSprite() => HeartType switch { HeartType.Blue => BlueSprite.Value, HeartType.Red => RedSprite.Value, HeartType.Yellow => YellowSprite.Value, _ => BlueSprite.Value };
+    public override Sprite GetSprite() =>
+        HeartType switch
+        {
+            HeartType.Blue => BlueSprite.Value,
+            HeartType.Red => RedSprite.Value,
+            HeartType.Yellow => YellowSprite.Value,
+            _ => BlueSprite.Value,
+        };
 
     public override void SendMessage(MessageType type, Action? callback)
     {

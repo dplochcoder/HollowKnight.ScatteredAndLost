@@ -1,36 +1,50 @@
-﻿using HK8YPlando.Scripts.SharedLib;
-using HK8YPlando.Util;
-using PurenailCore.GOUtil;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using HK8YPlando.Scripts.SharedLib;
+using HK8YPlando.Util;
+using PurenailCore.GOUtil;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace HK8YPlando.Scripts.Framework;
 
-internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, M> where B : MonoBehaviour, IPersistentBehaviour<B, M> where M : PersistentBehaviourManager<B, M>
+internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, M>
+    where B : MonoBehaviour, IPersistentBehaviour<B, M>
+    where M : PersistentBehaviourManager<B, M>
 {
-    [ShimField] public string? BaseFileName;
+    [ShimField]
+    public string? BaseFileName;
 
     private AudioSource? audioSource;
 
     public void AwakeWithManager(M initManager) => this.StartCoroutine(Run());
 
-    private static List<(string, AudioType)> extensions = [("mp3", AudioType.MPEG), ("ogg", AudioType.OGGVORBIS), ("wav", AudioType.WAV)];
+    private static List<(string, AudioType)> extensions =
+    [
+        ("mp3", AudioType.MPEG),
+        ("ogg", AudioType.OGGVORBIS),
+        ("wav", AudioType.WAV),
+    ];
 
     private (string, AudioType)? GetPath(string suffix)
     {
-        var path = Path.Combine(Path.GetDirectoryName(typeof(M).Assembly.Location), "Music", $"{BaseFileName}{suffix}");
+        var path = Path.Combine(
+            Path.GetDirectoryName(typeof(M).Assembly.Location),
+            "Music",
+            $"{BaseFileName}{suffix}"
+        );
         foreach (var (ext, type) in extensions)
         {
             var realPath = $"{path}.{ext}";
-            if (File.Exists(realPath)) return (realPath, type);
+            if (File.Exists(realPath))
+                return (realPath, type);
         }
         return null;
     }
 
-    private UnityWebRequest GetReq(string path, AudioType type) => UnityWebRequestMultimedia.GetAudioClip($"file://{path}", type);
+    private UnityWebRequest GetReq(string path, AudioType type) =>
+        UnityWebRequestMultimedia.GetAudioClip($"file://{path}", type);
 
     private IEnumerator Run()
     {
@@ -100,8 +114,10 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
 
     private void Update()
     {
-        if (audioSource == null) return;
-        if (fade < audioSource.volume) audioSource.volume = fade;
+        if (audioSource == null)
+            return;
+        if (fade < audioSource.volume)
+            audioSource.volume = fade;
     }
 
     internal void FadeOut(float duration) => this.StartLibCoroutine(FadeOutImpl(duration));
@@ -110,12 +126,16 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
     {
         yield return Coroutines.OneOf(
             Coroutines.SleepUntil(() => audioSource != null),
-            Coroutines.SleepSeconds(5));
-        yield return Coroutines.SleepSecondsUpdatePercent(duration, pct =>
-        {
-            fade = Mathf.Min(fade, 1 - pct);
-            return false;
-        });
+            Coroutines.SleepSeconds(5)
+        );
+        yield return Coroutines.SleepSecondsUpdatePercent(
+            duration,
+            pct =>
+            {
+                fade = Mathf.Min(fade, 1 - pct);
+                return false;
+            }
+        );
     }
 }
 
@@ -123,7 +143,8 @@ internal abstract class MusicLib<B, M> : MonoBehaviour, IPersistentBehaviour<B, 
 internal class SkylinesMusic : MusicLib<SkylinesMusic, SkylinesMusicManager> { }
 
 [Shim]
-internal class SkylinesMusicManager : PersistentBehaviourManager<SkylinesMusic, SkylinesMusicManager>
+internal class SkylinesMusicManager
+    : PersistentBehaviourManager<SkylinesMusic, SkylinesMusicManager>
 {
     public override SkylinesMusicManager Self() => this;
 }

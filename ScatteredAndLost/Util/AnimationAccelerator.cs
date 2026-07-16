@@ -22,22 +22,30 @@ internal class AnimationAccelerator : MonoBehaviour
 
     private void Update()
     {
-        if (animator == null) return;
+        if (animator == null)
+            return;
 
         if (animator.CurrentClip.name != clip)
         {
             clip = null;
             accel = 1;
         }
-        else if (accel > 1) animator.UpdateAnimation(Time.deltaTime * (accel - 1));
+        else if (accel > 1)
+            animator.UpdateAnimation(Time.deltaTime * (accel - 1));
     }
 }
 
 internal static class AnimationAcceleratorExtensions
 {
-    internal static void AccelerateAnimation(this FsmState self, AnimationAccelerator accelerator, float accel)
+    internal static void AccelerateAnimation(
+        this FsmState self,
+        AnimationAccelerator accelerator,
+        float accel
+    )
     {
-        var clip = self.GetFirstActionOfType<Tk2dPlayAnimationWithEvents>()?.clipName.Value ?? self.GetFirstActionOfType<Tk2dPlayAnimation>().clipName.Value;
+        var clip =
+            self.GetFirstActionOfType<Tk2dPlayAnimationWithEvents>()?.clipName.Value
+            ?? self.GetFirstActionOfType<Tk2dPlayAnimation>().clipName.Value;
         self.AddLastAction(new Lambda(() => accelerator.AccelerateClip(clip, accel)));
     }
 }

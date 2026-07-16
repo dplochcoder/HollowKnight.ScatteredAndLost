@@ -34,7 +34,8 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public ArrayDeque()
         {
-            for (int i = 0; i < 10; i++) elements.Add(default);
+            for (int i = 0; i < 10; i++)
+                elements.Add(default);
         }
 
         public int Count => size;
@@ -47,13 +48,15 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public T Get(int index)
         {
-            if (index < 0 || index >= size) throw new IndexOutOfRangeException($"{index} not in [0, {size})");
+            if (index < 0 || index >= size)
+                throw new IndexOutOfRangeException($"{index} not in [0, {size})");
             return elements[(index + start) % elements.Count];
         }
 
         public void Set(int index, T value)
         {
-            if (index < 0 || index >= size) throw new IndexOutOfRangeException($"{index} not in [0, {size})");
+            if (index < 0 || index >= size)
+                throw new IndexOutOfRangeException($"{index} not in [0, {size})");
             elements[(index + start) % elements.Count] = value;
         }
 
@@ -66,7 +69,8 @@ namespace HK8YPlando.Scripts.SharedLib
             if (elements.Count == size)
             {
                 var newElements = new List<T>(size * 2);
-                for (int i = 0; i < size * 2; i++) newElements.Add(i < size ? Get(i) : default);
+                for (int i = 0; i < size * 2; i++)
+                    newElements.Add(i < size ? Get(i) : default);
                 elements = newElements;
                 start = 0;
             }
@@ -76,8 +80,10 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public void RemoveFirst(int num = 1)
         {
-            if (num < 0) throw new IndexOutOfRangeException($"{num} < 0");
-            if (num > size) throw new IndexOutOfRangeException($"{num} > {size}");
+            if (num < 0)
+                throw new IndexOutOfRangeException($"{num} < 0");
+            if (num > size)
+                throw new IndexOutOfRangeException($"{num} > {size}");
 
             start = (start + num) % elements.Count;
             size -= num;
@@ -110,8 +116,10 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public void RemoveBefore(int idx)
         {
-            if (idx < removed) throw new IndexOutOfRangeException($"{idx} < {removed}");
-            if (idx == removed) return;
+            if (idx < removed)
+                throw new IndexOutOfRangeException($"{idx} < {removed}");
+            if (idx == removed)
+                return;
 
             queue.RemoveFirst(idx - removed);
             removed = idx;
@@ -119,7 +127,8 @@ namespace HK8YPlando.Scripts.SharedLib
     }
 
     // History window with permanently increasing sorted keys, and associated values.
-    internal class IndexedHistoryWindow<K, V> where K : IComparable<K>
+    internal class IndexedHistoryWindow<K, V>
+        where K : IComparable<K>
     {
         private HistoryWindow<(K, V)> tuples = new HistoryWindow<(K, V)>();
 
@@ -130,8 +139,10 @@ namespace HK8YPlando.Scripts.SharedLib
         {
             K k1 = tuples.GetFirstAvailable().Item1;
             K k2 = tuples.Last().Item1;
-            if (key.CompareTo(k2) >= 0) return tuples.Count - 1;
-            if (key.CompareTo(k1) <= 0) return tuples.Removed;
+            if (key.CompareTo(k2) >= 0)
+                return tuples.Count - 1;
+            if (key.CompareTo(k1) <= 0)
+                return tuples.Removed;
 
             int low = tuples.Removed;
             int high = tuples.Count - 1;
@@ -140,9 +151,12 @@ namespace HK8YPlando.Scripts.SharedLib
                 int mid = (low + high) / 2;
                 (K k, V v) = tuples.Get(mid);
                 int compare = key.CompareTo(k);
-                if (compare == 0) return mid;
-                else if (compare < 0) high = mid;
-                else low = mid;
+                if (compare == 0)
+                    return mid;
+                else if (compare < 0)
+                    high = mid;
+                else
+                    low = mid;
             }
 
             return low;
@@ -150,7 +164,10 @@ namespace HK8YPlando.Scripts.SharedLib
 
         public void AddLast(K key, V value)
         {
-            if (tuples.Count > 0 && tuples.Last().Item1.CompareTo(key) > 0) throw new ArgumentException($"Key ({key}) is less than the last ({tuples.Last().Item1})");
+            if (tuples.Count > 0 && tuples.Last().Item1.CompareTo(key) > 0)
+                throw new ArgumentException(
+                    $"Key ({key}) is less than the last ({tuples.Last().Item1})"
+                );
             tuples.AddLast((key, value));
         }
 

@@ -14,24 +14,38 @@ internal class BumperSpeedControl
 
     private void Update(HeroController hc)
     {
-        if (horzVelocity == 0) return;
+        if (horzVelocity == 0)
+            return;
 
         var cState = hc.cState;
         var hState = hc.hero_state;
-        if (hState == GlobalEnums.ActorStates.hard_landing ||
-            cState.onGround || cState.dashing || cState.casting ||
-            cState.castRecoiling || cState.recoilingLeft || cState.recoilingRight || cState.wallSliding ||
-            KnightUtil.IsNailArtActive())
+        if (
+            hState == GlobalEnums.ActorStates.hard_landing
+            || cState.onGround
+            || cState.dashing
+            || cState.casting
+            || cState.castRecoiling
+            || cState.recoilingLeft
+            || cState.recoilingRight
+            || cState.wallSliding
+            || KnightUtil.IsNailArtActive()
+        )
         {
             horzVelocity = 0;
             return;
         }
 
-        if (Mathf.Abs(horzVelocity) < decel * Time.deltaTime) horzVelocity = 0;
-        else horzVelocity = Mathf.Sign(horzVelocity) * (Mathf.Abs(horzVelocity) - decel * Time.deltaTime);
+        if (Mathf.Abs(horzVelocity) < decel * Time.deltaTime)
+            horzVelocity = 0;
+        else
+            horzVelocity =
+                Mathf.Sign(horzVelocity) * (Mathf.Abs(horzVelocity) - decel * Time.deltaTime);
     }
 
-    private static void OnHeroControllerUpdate(On.HeroController.orig_Update orig, HeroController self)
+    private static void OnHeroControllerUpdate(
+        On.HeroController.orig_Update orig,
+        HeroController self
+    )
     {
         orig(self);
 
@@ -73,7 +87,8 @@ internal class BumperSpeedControl
     internal static void BumpDown()
     {
         var hc = HeroController.instance;
-        if (hc.cState.onGround) return;
+        if (hc.cState.onGround)
+            return;
 
         var rb2d = hc.gameObject.GetComponent<Rigidbody2D>();
         var v = rb2d.velocity;
@@ -99,7 +114,8 @@ internal class BumperSpeedControl
 
     internal static void Load()
     {
-        if (loaded) return;
+        if (loaded)
+            return;
         loaded = true;
 
         HeroVelocityModifier.AddModifier(0, ApplyBumperVelocity);

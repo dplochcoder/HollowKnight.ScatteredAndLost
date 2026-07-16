@@ -9,8 +9,13 @@ internal static class MenderbugSpawner
 {
     internal static void SpawnMenderbug(Vector2 pos, bool facingRight)
     {
-        var mender = Object.Instantiate(ScatteredAndLostPreloader.Instance.MenderBug, pos, Quaternion.identity);
-        if (!facingRight) mender.transform.localScale = new(-1, 1, 1);
+        var mender = Object.Instantiate(
+            ScatteredAndLostPreloader.Instance.MenderBug,
+            pos,
+            Quaternion.identity
+        );
+        if (!facingRight)
+            mender.transform.localScale = new(-1, 1, 1);
 
         var fsm = mender.LocateMyFSM("Mender Bug Ctrl");
         var init = fsm.GetState("Init");
@@ -23,12 +28,14 @@ internal static class MenderbugSpawner
         if (!facingRight)
         {
             var flyLeft = fsm.GetState("Fly Left");
-            flyLeft.AddLastAction(new Lambda(() =>
-            {
-                var scale = mender.transform.localScale;
-                scale.x *= -1;
-                mender.transform.localScale = scale;
-            }));
+            flyLeft.AddLastAction(
+                new Lambda(() =>
+                {
+                    var scale = mender.transform.localScale;
+                    scale.x *= -1;
+                    mender.transform.localScale = scale;
+                })
+            );
 
             var flyRight = fsm.GetState("Fly Right");
             flyRight.RemoveActionsOfType<SetScale>();

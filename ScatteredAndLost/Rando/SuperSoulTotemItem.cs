@@ -35,7 +35,8 @@ internal class SuperSoulTotemItem : SoulTotemItem
 
     public override string GetPreferredContainer() => SuperSoulTotemContainer.ContainerName;
 
-    public override bool GiveEarly(string containerType) => base.GiveEarly(containerType) || containerType == SuperSoulTotemContainer.ContainerName;
+    public override bool GiveEarly(string containerType) =>
+        base.GiveEarly(containerType) || containerType == SuperSoulTotemContainer.ContainerName;
 
     public override void GiveImmediate(GiveInfo info)
     {
@@ -44,7 +45,13 @@ internal class SuperSoulTotemItem : SoulTotemItem
             PlayerData.instance.AddMPCharge(FULL_SOUL);
             PlayerData.instance.AddHealth(FULL_HEAL);
         }
-        else if (info.FlingType == FlingType.DirectDeposit || (info.Container != SuperSoulTotemContainer.ContainerName && info.Container != Container.Totem))
+        else if (
+            info.FlingType == FlingType.DirectDeposit
+            || (
+                info.Container != SuperSoulTotemContainer.ContainerName
+                && info.Container != Container.Totem
+            )
+        )
         {
             HeroController.SilentInstance.AddMPCharge(FULL_SOUL);
             HeroController.SilentInstance.AddHealth(FULL_HEAL);
@@ -66,8 +73,14 @@ internal class SuperSoulTotemItem : SoulTotemItem
                 AngleMax = 360,
             };
 
-            var objects = FlingUtils.SpawnAndFling(config, info.Transform ?? HeroController.SilentInstance.transform, Vector3.zero);
-            foreach (var obj in objects) if (obj.TryGetComponent<SoulOrb>(out var soulOrb)) SuperSoulTotem.BuffSoulOrb(soulOrb);
+            var objects = FlingUtils.SpawnAndFling(
+                config,
+                info.Transform ?? HeroController.SilentInstance.transform,
+                Vector3.zero
+            );
+            foreach (var obj in objects)
+                if (obj.TryGetComponent<SoulOrb>(out var soulOrb))
+                    SuperSoulTotem.BuffSoulOrb(soulOrb);
 
             prefab.SetActive(false);
         }

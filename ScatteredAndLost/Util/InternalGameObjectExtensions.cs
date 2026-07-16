@@ -1,8 +1,8 @@
-﻿using HK8YPlando.Scripts.SharedLib;
-using PurenailCore.GOUtil;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using HK8YPlando.Scripts.SharedLib;
+using PurenailCore.GOUtil;
 using UnityEngine;
 
 namespace HK8YPlando.Util;
@@ -14,16 +14,20 @@ internal class OnDestroyHelper : MonoBehaviour
     {
         add
         {
-            if (destroyed) value();
-            else actions.Add(value);
+            if (destroyed)
+                value();
+            else
+                actions.Add(value);
         }
         remove => actions.Remove(value);
     }
 
     private bool destroyed = false;
+
     private void OnDestroy()
     {
-        if (destroyed) return;
+        if (destroyed)
+            return;
 
         destroyed = true;
         actions.ForEach(a => a());
@@ -33,18 +37,25 @@ internal class OnDestroyHelper : MonoBehaviour
 
 internal static class InternalGameObjectExtensions
 {
-    internal static void StartLibCoroutine(this MonoBehaviour self, CoroutineElement co) => self.StartCoroutine(EvaluateLibCoroutine(co));
+    internal static void StartLibCoroutine(this MonoBehaviour self, CoroutineElement co) =>
+        self.StartCoroutine(EvaluateLibCoroutine(co));
 
-    internal static void StartLibCoroutine(this MonoBehaviour self, IEnumerator<CoroutineElement> enumerator) => self.StartCoroutine(EvaluateLibCoroutine(CoroutineSequence.Create(enumerator)));
+    internal static void StartLibCoroutine(
+        this MonoBehaviour self,
+        IEnumerator<CoroutineElement> enumerator
+    ) => self.StartCoroutine(EvaluateLibCoroutine(CoroutineSequence.Create(enumerator)));
 
     private static IEnumerator EvaluateLibCoroutine(CoroutineElement co)
     {
-        while (!co.Update(Time.deltaTime).done) yield return 0;
+        while (!co.Update(Time.deltaTime).done)
+            yield return 0;
     }
 
-    public static void DoAfter(this MonoBehaviour self, float seconds, Action action) => self.StartLibCoroutine(DoAfterImpl(seconds, action));
+    public static void DoAfter(this MonoBehaviour self, float seconds, Action action) =>
+        self.StartLibCoroutine(DoAfterImpl(seconds, action));
 
-    public static void DoOnDestroy(this GameObject self, Action action) => self.GetOrAddComponent<OnDestroyHelper>().Action += action;
+    public static void DoOnDestroy(this GameObject self, Action action) =>
+        self.GetOrAddComponent<OnDestroyHelper>().Action += action;
 
     private static IEnumerator<CoroutineElement> DoAfterImpl(float seconds, Action action)
     {
@@ -52,13 +63,29 @@ internal static class InternalGameObjectExtensions
         action();
     }
 
-    public static void PlaySound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, false);
+    public static void PlaySound(
+        this GameObject self,
+        AudioClip clip,
+        float volume = 1,
+        bool global = true
+    ) => PlaySoundImpl(self, clip, volume, global, false);
 
     public static void StopSound(this GameObject self) => self.GetComponent<AudioSource>()?.Stop();
 
-    public static void LoopSound(this GameObject self, AudioClip clip, float volume = 1, bool global = true) => PlaySoundImpl(self, clip, volume, global, true);
+    public static void LoopSound(
+        this GameObject self,
+        AudioClip clip,
+        float volume = 1,
+        bool global = true
+    ) => PlaySoundImpl(self, clip, volume, global, true);
 
-    private static void PlaySoundImpl(this GameObject self, AudioClip clip, float volume, bool global, bool loop)
+    private static void PlaySoundImpl(
+        this GameObject self,
+        AudioClip clip,
+        float volume,
+        bool global,
+        bool loop
+    )
     {
         var source = self.GetOrAddComponent<AudioSource>();
         source.outputAudioMixerGroup = AudioMixerGroups.Actors();

@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>HK8YPlando</AssemblyName>
@@ -28,5 +27,4 @@
       <HintPath>$(HollowKnightRefs)\UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>

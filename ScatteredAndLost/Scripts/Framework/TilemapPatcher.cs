@@ -20,7 +20,8 @@ public class TilemapPatcher : MonoBehaviour
 
         // Patch terrain material.
         var terrainMaterial = ScatteredAndLostPreloader.Instance.TerrainMaterial;
-        foreach (var collider in gameObject.FindComponentsRecursive<Collider2D>()) collider.sharedMaterial = terrainMaterial;
+        foreach (var collider in gameObject.FindComponentsRecursive<Collider2D>())
+            collider.sharedMaterial = terrainMaterial;
 
         GameManager.instance.RefreshTilemapInfo(gameObject.scene.name);
 

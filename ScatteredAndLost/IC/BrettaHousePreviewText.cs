@@ -1,5 +1,5 @@
-﻿using ItemChanger;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ItemChanger;
 
 namespace HK8YPlando.IC;
 
@@ -19,28 +19,40 @@ internal class BrettaHousePreviewText : IString
         MaybePreview("Mask_Shard-Bretta", "Bretta's Mask Shard", false, lines);
         MaybePreview("Boss_Essence-Grey_Prince_Zote", "Grey Prince Zote", false, lines);
 
-        if (lines.Count == 0) lines.Add("You know what's in this house");
+        if (lines.Count == 0)
+            lines.Add("You know what's in this house");
 
         return string.Join("<br>", lines);
     }
 
-    private static void MaybePreview(string location, string label, bool isCostLabel, List<string> lines)
+    private static void MaybePreview(
+        string location,
+        string label,
+        bool isCostLabel,
+        List<string> lines
+    )
     {
-        if (!ItemChanger.Internal.Ref.Settings.Placements.TryGetValue(location, out var placement)) return;
+        if (!ItemChanger.Internal.Ref.Settings.Placements.TryGetValue(location, out var placement))
+            return;
 
         List<string> itemStrings = [];
         foreach (var item in placement.Items)
         {
-            if (item.IsObtained()) itemStrings.Add(Language.Language.Get("OBTAINED", "IC"));
-            else itemStrings.Add(item.GetPreviewName());
+            if (item.IsObtained())
+                itemStrings.Add(Language.Language.Get("OBTAINED", "IC"));
+            else
+                itemStrings.Add(item.GetPreviewName());
         }
-        if (itemStrings.Count == 0) itemStrings.Add("Nothing?");
+        if (itemStrings.Count == 0)
+            itemStrings.Add("Nothing?");
 
         string itemText = string.Join(", ", itemStrings);
         string line = $"{label}: {itemText}";
         lines.Add(line);
 
-        placement.GetOrAddTag<ItemChanger.Tags.PreviewRecordTag>().previewText = isCostLabel ? $"{itemText}  -  {label}" : itemText;
+        placement.GetOrAddTag<ItemChanger.Tags.PreviewRecordTag>().previewText = isCostLabel
+            ? $"{itemText}  -  {label}"
+            : itemText;
         placement.AddVisitFlag(VisitState.Previewed);
     }
 

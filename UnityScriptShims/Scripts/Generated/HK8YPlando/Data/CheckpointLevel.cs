@@ -9,6 +9,5 @@ namespace HK8YPlando.Data
         Bubbles,
         Boss,
         Bretta,
-        
     }
 }

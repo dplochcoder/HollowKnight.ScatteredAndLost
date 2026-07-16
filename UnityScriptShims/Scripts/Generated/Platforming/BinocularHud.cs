@@ -4,7 +4,7 @@ namespace HK8YPlando.Scripts.Platforming
     {
         public UnityEngine.RuntimeAnimatorController FadeIn;
         public UnityEngine.RuntimeAnimatorController FadeOut;
+
         public void RelocateCamera() { }
-        
     }
 }

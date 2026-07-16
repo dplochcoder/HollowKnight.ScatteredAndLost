@@ -7,6 +7,5 @@ namespace HK8YPlando.Scripts.Platforming
         public UnityEngine.GameObject CollidersParent;
         public UnityEngine.Transform CameraStart;
         public float CameraSpeed;
-        
     }
 }

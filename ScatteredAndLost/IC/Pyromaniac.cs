@@ -18,9 +18,12 @@ internal class Pyromaniac : ItemChanger.Modules.Module
         var attackChoice = fsm.GetState("Attack Choice");
 
         Wrapped<int> consecutiveAttacks = new(0);
-        attackChoice.AddFirstAction(new Lambda(() =>
-        {
-            if (consecutiveAttacks.Value < 3) fsm.SendEvent(++consecutiveAttacks.Value == 3 ? "FIREBALL" : "SLASH");
-        }));
+        attackChoice.AddFirstAction(
+            new Lambda(() =>
+            {
+                if (consecutiveAttacks.Value < 3)
+                    fsm.SendEvent(++consecutiveAttacks.Value == 3 ? "FIREBALL" : "SLASH");
+            })
+        );
     }
 }

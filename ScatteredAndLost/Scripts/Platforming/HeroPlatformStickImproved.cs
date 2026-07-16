@@ -1,6 +1,6 @@
-﻿using HK8YPlando.Scripts.SharedLib;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using HK8YPlando.Scripts.SharedLib;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Environment;
@@ -34,13 +34,15 @@ internal class HeroPlatformStickImproved : MonoBehaviour
         if (cooldown > 0)
         {
             cooldown -= Time.deltaTime;
-            if (cooldown < 0) cooldown = 0;
+            if (cooldown < 0)
+                cooldown = 0;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (cooldown > 0) return;
+        if (cooldown > 0)
+            return;
 
         GameObject collider = collision.gameObject;
         if (collider.name == "Knight")
@@ -49,7 +51,8 @@ internal class HeroPlatformStickImproved : MonoBehaviour
             children.Add(collider);
 
             Rigidbody2D rigidbody = collider.GetComponent<Rigidbody2D>();
-            if (rigidbody != null) rigidbody.interpolation = RigidbodyInterpolation2D.None;
+            if (rigidbody != null)
+                rigidbody.interpolation = RigidbodyInterpolation2D.None;
         }
     }
 
@@ -59,13 +62,15 @@ internal class HeroPlatformStickImproved : MonoBehaviour
         DontDestroyOnLoad(collider);
 
         Rigidbody2D rigidbody = collider.GetComponent<Rigidbody2D>();
-        if (rigidbody != null) rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
+        if (rigidbody != null)
+            rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         GameObject collider = collision.gameObject;
-        if (children.Remove(collider)) ExitImpl(collider);
+        if (children.Remove(collider))
+            ExitImpl(collider);
     }
 
     private void OnDestroy()

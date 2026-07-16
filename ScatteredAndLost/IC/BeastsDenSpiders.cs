@@ -18,7 +18,8 @@ internal class BeastsDenSpiders : ItemChanger.Modules.Module
     {
         foreach (var obj in Object.FindObjectsOfType<PlayMakerFSM>())
         {
-            if (obj.name.Contains("Spider Mini")) obj.gameObject.GetOrAddComponent<InfiniteHealth>();
+            if (obj.name.Contains("Spider Mini"))
+                obj.gameObject.GetOrAddComponent<InfiniteHealth>();
         }
     }
 }

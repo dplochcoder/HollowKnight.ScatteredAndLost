@@ -6,7 +6,9 @@ using UnityEngine.SceneManagement;
 
 namespace HK8YPlando.Scripts.Framework;
 
-interface IPersistentBehaviour<B, M> where B : MonoBehaviour, IPersistentBehaviour<B, M> where M : PersistentBehaviourManager<B, M>
+interface IPersistentBehaviour<B, M>
+    where B : MonoBehaviour, IPersistentBehaviour<B, M>
+    where M : PersistentBehaviourManager<B, M>
 {
     void AwakeWithManager(M initManager);
 
@@ -15,9 +17,12 @@ interface IPersistentBehaviour<B, M> where B : MonoBehaviour, IPersistentBehavio
     void Stop();
 }
 
-internal abstract class PersistentBehaviourManager<B, M> : MonoBehaviour where B : MonoBehaviour, IPersistentBehaviour<B, M> where M : PersistentBehaviourManager<B, M>
+internal abstract class PersistentBehaviourManager<B, M> : MonoBehaviour
+    where B : MonoBehaviour, IPersistentBehaviour<B, M>
+    where M : PersistentBehaviourManager<B, M>
 {
-    [ShimField] public GameObject? prefab;
+    [ShimField]
+    public GameObject? prefab;
 
     private static string mgrName = "";
     private static UnityEngine.Events.UnityAction<Scene, LoadSceneMode>? sceneChangeHandler;
@@ -31,7 +36,8 @@ internal abstract class PersistentBehaviourManager<B, M> : MonoBehaviour where B
     {
         current.Stop();
         current.DoAfter(10f, () => Destroy(current.gameObject));
-        if (existing?.gameObject != current.gameObject) return;
+        if (existing?.gameObject != current.gameObject)
+            return;
 
         existing = null;
         mgrName = "";
@@ -56,7 +62,8 @@ internal abstract class PersistentBehaviourManager<B, M> : MonoBehaviour where B
 
         sceneChangeHandler = (scene, mode) =>
         {
-            if (scene.Find(mgrName) != null) return;
+            if (scene.Find(mgrName) != null)
+                return;
             Drop(existing.GetComponent<B>());
         };
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += sceneChangeHandler;

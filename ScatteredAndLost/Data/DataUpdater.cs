@@ -1,10 +1,10 @@
-﻿using HK8YPlando.Scripts.SharedLib;
-using PurenailCore.SystemUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using HK8YPlando.Scripts.SharedLib;
+using PurenailCore.SystemUtil;
 using UnityEngine;
 
 namespace HK8YPlando.Data;
@@ -38,17 +38,35 @@ public static class DataUpdater
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
         // Debug data
-        DebugData debugData = new() { LocalAssetBundlesPath = $"{root}/ScatteredAndLost/Unity/Assets/AssetBundles" };
-        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(debugData, $"{root}/ScatteredAndLost/Resources/Data/debug.json");
+        DebugData debugData = new()
+        {
+            LocalAssetBundlesPath = $"{root}/ScatteredAndLost/Unity/Assets/AssetBundles",
+        };
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(
+            debugData,
+            $"{root}/ScatteredAndLost/Resources/Data/debug.json"
+        );
 
         FixLocations(RandomizerData.Locations);
-        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Locations, $"{root}/ScatteredAndLost/Resources/Data/locations.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(
+            RandomizerData.Locations,
+            $"{root}/ScatteredAndLost/Resources/Data/locations.json"
+        );
 
-        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Logic, $"{root}/ScatteredAndLost/Resources/Data/logic.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(
+            RandomizerData.Logic,
+            $"{root}/ScatteredAndLost/Resources/Data/logic.json"
+        );
 
-        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Transitions, $"{root}/ScatteredAndLost/Resources/Data/transitions.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(
+            RandomizerData.Transitions,
+            $"{root}/ScatteredAndLost/Resources/Data/transitions.json"
+        );
 
-        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(RandomizerData.Waypoints, $"{root}/ScatteredAndLost/Resources/Data/waypoints.json");
+        JsonUtil<ScatteredAndLostMod>.RewriteJsonFile(
+            RandomizerData.Waypoints,
+            $"{root}/ScatteredAndLost/Resources/Data/waypoints.json"
+        );
 
         // Code generation.
         var deferredShimsDir = DeferredGenerateUnityShims(root);
@@ -63,14 +81,19 @@ public static class DataUpdater
     {
         var root = InferGitRoot(Directory.GetCurrentDirectory());
 
-        CopyDll(root, "UnityScriptShims/bin/Debug/net472/HK8YPlando.dll", "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll");
+        CopyDll(
+            root,
+            "UnityScriptShims/bin/Debug/net472/HK8YPlando.dll",
+            "ScatteredAndLost/Unity/Assets/Assemblies/HK8YPlando.dll"
+        );
     }
 
     private static void CopyDll(string root, string src, string dst)
     {
         var inputDll = Path.Combine(root, src);
         var outputDll = Path.Combine(root, dst);
-        if (File.Exists(outputDll)) File.Delete(outputDll);
+        if (File.Exists(outputDll))
+            File.Delete(outputDll);
         File.Copy(inputDll, outputDll);
     }
 
@@ -78,7 +101,8 @@ public static class DataUpdater
     {
         string gen = dir;
         string gen2 = $"{dir}.tmp";
-        if (Directory.Exists(gen2)) Directory.Delete(gen2, true);
+        if (Directory.Exists(gen2))
+            Directory.Delete(gen2, true);
         Directory.CreateDirectory(gen2);
 
         generator(gen2);
@@ -86,7 +110,8 @@ public static class DataUpdater
         // On success, swap the dirs.
         return () =>
         {
-            if (Directory.Exists(gen)) Directory.Delete(gen, true);
+            if (Directory.Exists(gen))
+                Directory.Delete(gen, true);
             Directory.Move(gen2, gen);
             return gen;
         };
@@ -94,10 +119,20 @@ public static class DataUpdater
 
     private static void GenerateUnityShimsImpl(string root)
     {
-        foreach (var type in typeof(DataUpdater).Assembly.GetTypes().Where(t => t.IsDefined(typeof(Shim), false)))
+        foreach (
+            var type in typeof(DataUpdater)
+                .Assembly.GetTypes()
+                .Where(t => t.IsDefined(typeof(Shim), false))
+        )
         {
-            try { GenerateShimFile(type, root); }
-            catch (Exception ex) { throw new Exception($"Failed to generate {type.Name}", ex); }
+            try
+            {
+                GenerateShimFile(type, root);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to generate {type.Name}", ex);
+            }
         }
     }
 
@@ -111,10 +146,15 @@ public static class DataUpdater
 
     private static void ValidateType(Type type)
     {
-        if (validTypes.Contains(type)) return;
+        if (validTypes.Contains(type))
+            return;
 
-        if (type.Assembly.GetName().Name == "Assembly-CSharp") throw new ArgumentException($"Cannot reference Assembly-CSharp type {type.Name} directly");
-        foreach (var gType in type.GenericTypeArguments) ValidateType(gType);
+        if (type.Assembly.GetName().Name == "Assembly-CSharp")
+            throw new ArgumentException(
+                $"Cannot reference Assembly-CSharp type {type.Name} directly"
+            );
+        foreach (var gType in type.GenericTypeArguments)
+            ValidateType(gType);
         validTypes.Add(type);
     }
 
@@ -122,8 +162,10 @@ public static class DataUpdater
     {
         string ns = type.Namespace;
         string origNs = ns;
-        if (ns == "HK8YPlando.Scripts") ns = "";
-        else if (ns.ConsumePrefix("HK8YPlando.Scripts.", out var trimmed)) ns = trimmed;
+        if (ns == "HK8YPlando.Scripts")
+            ns = "";
+        else if (ns.ConsumePrefix("HK8YPlando.Scripts.", out var trimmed))
+            ns = trimmed;
 
         string pathDir = ns.Length == 0 ? $"{dir}" : $"{dir}/{ns.Replace('.', '/')}";
         string path = $"{pathDir}/{type.Name}.cs";
@@ -137,39 +179,51 @@ public static class DataUpdater
         if (type.IsEnum)
         {
             header = $"enum {type.Name}";
-            foreach (var v in type.GetEnumValues()) fieldStrs.Add($"{v},");
+            foreach (var v in type.GetEnumValues())
+                fieldStrs.Add($"{v},");
         }
         else
         {
             foreach (var rc in type.GetCustomAttributes<RequireComponent>())
             {
-                if (rc.m_Type0 != null) attrStrs.Add(RequireComponentStr(origNs, rc.m_Type0));
-                if (rc.m_Type1 != null) attrStrs.Add(RequireComponentStr(origNs, rc.m_Type1));
-                if (rc.m_Type2 != null) attrStrs.Add(RequireComponentStr(origNs, rc.m_Type2));
+                if (rc.m_Type0 != null)
+                    attrStrs.Add(RequireComponentStr(origNs, rc.m_Type0));
+                if (rc.m_Type1 != null)
+                    attrStrs.Add(RequireComponentStr(origNs, rc.m_Type1));
+                if (rc.m_Type2 != null)
+                    attrStrs.Add(RequireComponentStr(origNs, rc.m_Type2));
             }
 
             header = $"class {type.Name} : {PrintType(origNs, baseType)}";
             foreach (var f in type.GetFields().Where(f => f.IsDefined(typeof(ShimField), true)))
             {
                 List<string> fattrStrs = [];
-                foreach (var h in f.GetCustomAttributes<HeaderAttribute>()) fattrStrs.Add($"[UnityEngine.Header(\"{h.header}\")]");
+                foreach (var h in f.GetCustomAttributes<HeaderAttribute>())
+                    fattrStrs.Add($"[UnityEngine.Header(\"{h.header}\")]");
 
                 var fAttr = f.GetCustomAttribute<ShimField>();
                 var defaultValue = fAttr.DefaultValue;
                 string dv = defaultValue != null ? $" = {defaultValue}" : "";
-                fieldStrs.Add($"{JoinIndented(fattrStrs, 8)}public {PrintType(origNs, f.FieldType)} {f.Name}{dv};");
+                fieldStrs.Add(
+                    $"{JoinIndented(fattrStrs, 8)}public {PrintType(origNs, f.FieldType)} {f.Name}{dv};"
+                );
             }
 
             foreach (var m in type.GetMethods().Where(m => m.IsDefined(typeof(ShimMethod), true)))
             {
-                if (m.ReturnType != typeof(void)) throw new ArgumentException($"Method {m.Name} must return void");
+                if (m.ReturnType != typeof(void))
+                    throw new ArgumentException($"Method {m.Name} must return void");
 
-                var paramsStr = string.Join(", ", m.GetParameters().Select(p => $"{PrintType(origNs, p.ParameterType)} {p.Name}"));
+                var paramsStr = string.Join(
+                    ", ",
+                    m.GetParameters().Select(p => $"{PrintType(origNs, p.ParameterType)} {p.Name}")
+                );
                 fieldStrs.Add($"public void {m.Name}({paramsStr}) {{ }}");
             }
         }
 
-        var content = $@"namespace {origNs}
+        var content =
+            $@"namespace {origNs}
 {{
     {JoinIndented(attrStrs, 4)}public {header}
     {{
@@ -189,7 +243,8 @@ public static class DataUpdater
     private static void WriteSourceCode(string path, string content)
     {
         string dir = Path.GetDirectoryName(path);
-        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
 
         File.WriteAllText(path, content.Replace("\r\n", "\n").Replace("\n", "\r\n"));
     }
@@ -197,19 +252,23 @@ public static class DataUpdater
     private static string Pad(string src, int indent)
     {
         var splits = src.Split('\n');
-        for (int i = 1; i < splits.Length; i++) splits[i] = $"{new string(' ', indent)}{splits[i]}";
+        for (int i = 1; i < splits.Length; i++)
+            splits[i] = $"{new string(' ', indent)}{splits[i]}";
         return string.Join("", splits);
     }
 
-    private static string JoinIndented(List<string> list, int indent) => string.Join("", list.Select(s => $"{Pad(s, indent)}\n{new string(' ', indent)}"));
+    private static string JoinIndented(List<string> list, int indent) =>
+        string.Join("", list.Select(s => $"{Pad(s, indent)}\n{new string(' ', indent)}"));
 
     private static string PrintType(string ns, Type t)
     {
         ValidateType(t);
         string s = PrintTypeImpl(ns, t);
 
-        if (s.ConsumePrefix($"{ns}.", out string trimmed)) return trimmed;
-        else return s;
+        if (s.ConsumePrefix($"{ns}.", out string trimmed))
+            return trimmed;
+        else
+            return s;
     }
 
     private static string PrintTypeImpl(string ns, Type t)
@@ -217,10 +276,14 @@ public static class DataUpdater
         ValidateType(t);
         if (!t.IsGenericType)
         {
-            if (t == typeof(bool)) return "bool";
-            if (t == typeof(int)) return "int";
-            if (t == typeof(float)) return "float";
-            if (t == typeof(string)) return "string";
+            if (t == typeof(bool))
+                return "bool";
+            if (t == typeof(int))
+                return "int";
+            if (t == typeof(float))
+                return "float";
+            if (t == typeof(string))
+                return "string";
 
             return t.FullName;
         }
@@ -233,6 +296,7 @@ public static class DataUpdater
 
     private static void FixLocations(SortedDictionary<string, LocationData> locations)
     {
-        foreach (var e in locations) e.Value.Location!.name = e.Key;
+        foreach (var e in locations)
+            e.Value.Location!.name = e.Key;
     }
 }

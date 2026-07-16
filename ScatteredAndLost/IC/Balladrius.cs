@@ -1,4 +1,5 @@
-﻿using HK8YPlando.Scripts;
+﻿using System.Collections.Generic;
+using HK8YPlando.Scripts;
 using HK8YPlando.Scripts.InternalLib;
 using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
@@ -9,7 +10,6 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.IC;
@@ -34,7 +34,16 @@ internal class Balladrius : ItemChanger.Modules.Module
     {
         Events.AddFsmEdit(blockerId, BuffBaldur);
         On.HealthManager.IsBlockingByDirection += OverrideIsBlockingByDirection;
-        bulletHook = new(typeof(EnemyBullet).GetMethod("Collision", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetStateMachineTarget(), OverrideEnemyBulletCollision);
+        bulletHook = new(
+            typeof(EnemyBullet)
+                .GetMethod(
+                    "Collision",
+                    System.Reflection.BindingFlags.NonPublic
+                        | System.Reflection.BindingFlags.Instance
+                )
+                .GetStateMachineTarget(),
+            OverrideEnemyBulletCollision
+        );
     }
 
     public override void Unload()
@@ -49,10 +58,14 @@ internal class Balladrius : ItemChanger.Modules.Module
         var obj = fsm.gameObject;
 
         List<int> numFires = [0];
-        fsm.GetState("Fire").AddFirstAction(new Lambda(() =>
-        {
-            if (++numFires[0] == 2) ReallyBuffBaldur(fsm);
-        }));
+        fsm.GetState("Fire")
+            .AddFirstAction(
+                new Lambda(() =>
+                {
+                    if (++numFires[0] == 2)
+                        ReallyBuffBaldur(fsm);
+                })
+            );
 
         obj.AddComponent<InfiniteHealth>();
 
@@ -76,18 +89,21 @@ internal class Balladrius : ItemChanger.Modules.Module
         fire.AccelerateAnimation(accel, 3.5f);
 
         Wrapped<int> bullets = new(0);
-        fire.AddLastAction(new Lambda(() =>
-        {
-            var shot = fsm.FsmVariables.GetFsmGameObject("Shot Instance").Value;
-            var bullet = shot.GetComponent<EnemyBullet>();
-            if (bullet != null && ++bullets.Value == 3)
+        fire.AddLastAction(
+            new Lambda(() =>
             {
-                bullets.Value = 0;
+                var shot = fsm.FsmVariables.GetFsmGameObject("Shot Instance").Value;
+                var bullet = shot.GetComponent<EnemyBullet>();
+                if (bullet != null && ++bullets.Value == 3)
+                {
+                    bullets.Value = 0;
 
-                explodeOnImpact.Add(bullet);
-                bullet.gameObject.GetOrAddComponent<OnDestroyHook>().Action ??= () => explodeOnImpact.Remove(bullet);
-            }
-        }));
+                    explodeOnImpact.Add(bullet);
+                    bullet.gameObject.GetOrAddComponent<OnDestroyHook>().Action ??= () =>
+                        explodeOnImpact.Remove(bullet);
+                }
+            })
+        );
 
         fsm.GetState("Hit").AccelerateAnimation(accel, 3f);
 
@@ -106,9 +122,15 @@ internal class Balladrius : ItemChanger.Modules.Module
         fsm.GetState("Sleep 2").AccelerateAnimation(accel, 3.5f);
     }
 
-    private bool OverrideIsBlockingByDirection(On.HealthManager.orig_IsBlockingByDirection orig, HealthManager self, int cardinalDirection, AttackTypes attackTypes)
+    private bool OverrideIsBlockingByDirection(
+        On.HealthManager.orig_IsBlockingByDirection orig,
+        HealthManager self,
+        int cardinalDirection,
+        AttackTypes attackTypes
+    )
     {
-        if (baldurs.Contains(self)) return true;
+        if (baldurs.Contains(self))
+            return true;
         return orig(self, cardinalDirection, attackTypes);
     }
 
@@ -124,9 +146,16 @@ internal class Balladrius : ItemChanger.Modules.Module
 
     private void MaybeExplode(EnemyBullet bullet)
     {
-        if (!explodeOnImpact.Contains(bullet)) return;
+        if (!explodeOnImpact.Contains(bullet))
+            return;
 
         explodeOnImpact.Remove(bullet);
-        Object.Instantiate(ScatteredAndLostPreloader.Instance.BelflyExplosion, bullet.gameObject.transform.position, Quaternion.identity).SetActive(true);
+        Object
+            .Instantiate(
+                ScatteredAndLostPreloader.Instance.BelflyExplosion,
+                bullet.gameObject.transform.position,
+                Quaternion.identity
+            )
+            .SetActive(true);
     }
 }

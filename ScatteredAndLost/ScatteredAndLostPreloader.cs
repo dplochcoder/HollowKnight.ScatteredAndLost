@@ -33,7 +33,13 @@ internal class ScatteredAndLostPreloader : Preloader
     [Preload("Room_Colosseum_Silver", "Colosseum Manager/Waves/Wave 30 Obble/Mega Fat Bee")]
     public GameObject Oblobble { get; private set; }
 
-    public AudioClip OblobbleRoar => (AudioClip)Oblobble.LocateMyFSM("Set Rage").GetState("Roar").GetFirstActionOfType<AudioPlayerOneShotSingle>().audioClip.Value;
+    public AudioClip OblobbleRoar =>
+        (AudioClip)
+            Oblobble
+                .LocateMyFSM("Set Rage")
+                .GetState("Roar")
+                .GetFirstActionOfType<AudioPlayerOneShotSingle>()
+                .audioClip.Value;
 
     [Preload("Town", "_Managers/PlayMaker Unity 2D")]
     public GameObject PlayMaker { get; private set; }
@@ -47,9 +53,9 @@ internal class ScatteredAndLostPreloader : Preloader
     [Preload("Fungus2_10", "Soul Totem mini_horned")]
     public GameObject SoulTotem { get; private set; }
 
-    public PhysicsMaterial2D TerrainMaterial => SmallPlatform.GetComponent<Collider2D>().sharedMaterial;
+    public PhysicsMaterial2D TerrainMaterial =>
+        SmallPlatform.GetComponent<Collider2D>().sharedMaterial;
 
     [Preload("Fungus3_23_boss", "Battle Scene/Wave 3/Mantis Traitor Lord")]
     public GameObject TraitorLord { get; private set; }
 }
-

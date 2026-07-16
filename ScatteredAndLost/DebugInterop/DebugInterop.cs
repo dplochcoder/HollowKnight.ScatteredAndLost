@@ -26,9 +26,12 @@ internal static class DebugInterop
         pd.SetBool(nameof(PlayerData.brettaRescued), true);
         BindableFunctions.GiveAllSkills();
         BindableFunctions.GiveAllCharms();
-        while (pd.GetInt(nameof(pd.maxHealthBase)) < 8) BindableFunctions.GiveMask();
-        while (pd.GetInt(nameof(pd.MPReserveMax)) < 66) BindableFunctions.GiveVessel();
-        while (pd.GetInt(nameof(pd.nailSmithUpgrades)) < 3) GiveNailUpgrade();
+        while (pd.GetInt(nameof(pd.maxHealthBase)) < 8)
+            BindableFunctions.GiveMask();
+        while (pd.GetInt(nameof(pd.MPReserveMax)) < 66)
+            BindableFunctions.GiveVessel();
+        while (pd.GetInt(nameof(pd.nailSmithUpgrades)) < 3)
+            GiveNailUpgrade();
         PlayerData.instance.charmSlots = 9;
     }
 
@@ -59,7 +62,9 @@ internal static class DebugInterop
         mod.SeenBrettasHouseAreaTitle = false;
         if (mod.Checkpoint != null)
         {
-            mod.Checkpoint = mod.EnableHeartDoors ? Data.CheckpointLevel.Entrance : Data.CheckpointLevel.Zippers;
+            mod.Checkpoint = mod.EnableHeartDoors
+                ? Data.CheckpointLevel.Entrance
+                : Data.CheckpointLevel.Zippers;
             mod.BrettaDoorRedirected(mod.Checkpoint.Value.SceneAndGate());
         }
         mod.DefeatedBrettorLords = false;

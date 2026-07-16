@@ -14,8 +14,8 @@ internal static class RoslynDirectoryCreator
             return;
 
         const string pattern =
-                    @"^DirectoryNotFoundException: Could not find " +
-                    @"a part of the path ('|"")Temp(\\|/)RoslynAnalysisRunner";
+            @"^DirectoryNotFoundException: Could not find "
+            + @"a part of the path ('|"")Temp(\\|/)RoslynAnalysisRunner";
 
         if (Regex.IsMatch(message, pattern))
         {

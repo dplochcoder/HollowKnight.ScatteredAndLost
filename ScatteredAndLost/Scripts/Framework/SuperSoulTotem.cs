@@ -1,4 +1,5 @@
-﻿using Architect.Content.Elements;
+﻿using System.Collections.Generic;
+using Architect.Content.Elements;
 using Architect.Content.Groups;
 using DecorationMaster;
 using DecorationMaster.Attr;
@@ -9,7 +10,6 @@ using HK8YPlando.Util;
 using HutongGames.PlayMaker.Actions;
 using ItemChanger.Extensions;
 using ItemChanger.FsmStateActions;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Framework;
@@ -68,7 +68,8 @@ internal class SuperSoulTotem : MonoBehaviour
         data.sceneName = "BrettasHouse";
 
         var fsm = totem.LocateMyFSM("soul_totem");
-        fsm.GetState("Close").AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
+        fsm.GetState("Close")
+            .AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
         var hit = fsm.GetState("Hit");
         hit.AddFirstAction(new Lambda(() => fsm.FsmVariables.GetFsmInt("Value").Value = 3));
     }
@@ -84,7 +85,9 @@ internal class SuperSoulTotem : MonoBehaviour
         flingers.Add(flinger);
         totem.DoOnDestroy(() => flingers.Remove(flinger));
 
-        var particles = GameObjectExtensions.FindChild(totem, "Soul Particles").GetComponent<ParticleSystem>();
+        var particles = GameObjectExtensions
+            .FindChild(totem, "Soul Particles")
+            .GetComponent<ParticleSystem>();
         var emission = particles.emission;
         emission.rateOverTime = EMISSION_RATE;
         var main = particles.main;
@@ -103,21 +106,24 @@ internal class SuperSoulTotem : MonoBehaviour
     }
 
     private static bool loaded = false;
+
     internal static void Load()
     {
-        if (loaded) return;
+        if (loaded)
+            return;
         loaded = true;
 
         PurenailCore.ModUtil.SoulOrbModifier.OnFlingSoulOrb += (flinger, orb) =>
         {
-            if (flingers.Contains(flinger)) BuffSoulOrb(orb);
+            if (flingers.Contains(flinger))
+                BuffSoulOrb(orb);
         };
         PurenailCore.ModUtil.SoulOrbModifier.OnGiveSoul += orb =>
         {
             if (orbs.Remove(orb))
             {
-                HeroController.instance.AddMPCharge(16);  // (16 + 2) * 11 = 198 = max MP
-                HeroController.instance.AddHealth(1);  // 1 * 11 = max health
+                HeroController.instance.AddMPCharge(16); // (16 + 2) * 11 = 198 = max MP
+                HeroController.instance.AddHealth(1); // 1 * 11 = max health
             }
         };
     }
@@ -136,8 +142,11 @@ internal class SuperSoulTotemDecoration : CustomDecoration
         return obj;
     }
 
-    public static void Register() => DecorationMasterUtil.RegisterDecoration<SuperSoulTotemDecoration, ItemDef.DefatulResizeItem>(
-        "scattered_and_lost_soul_totem", MakePrefab(), "super_soul_totem");
+    public static void Register() =>
+        DecorationMasterUtil.RegisterDecoration<
+            SuperSoulTotemDecoration,
+            ItemDef.DefatulResizeItem
+        >("scattered_and_lost_soul_totem", MakePrefab(), "super_soul_totem");
 
     private void Awake() => UnVisableBehaviour.AttackReact.Create(gameObject);
 }
@@ -151,5 +160,11 @@ public static class SuperSoulTotemArchitectObject
         return obj;
     }
 
-    public static AbstractPackElement Create() => ArchitectUtil.MakeArchitectObject(MakePrefab(), "SuperSoulTotem", null, ConfigGroup.Generic);
+    public static AbstractPackElement Create() =>
+        ArchitectUtil.MakeArchitectObject(
+            MakePrefab(),
+            "SuperSoulTotem",
+            null,
+            ConfigGroup.Generic
+        );
 }

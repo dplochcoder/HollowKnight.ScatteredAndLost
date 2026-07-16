@@ -1,7 +1,7 @@
-﻿using HK8YPlando.Scripts.SharedLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HK8YPlando.Scripts.SharedLib;
 using UnityEngine;
 
 namespace HK8YPlando.Scripts.Proxy;
@@ -23,13 +23,15 @@ internal class HeroDetectorProxy : MonoBehaviour
         ignores.Add(filter);
         detected.RemoveWhere(ShouldIgnore);
     }
+
     public void Ignore(Collider2D collider) => Ignore(c => c == collider);
 
     public bool Detected() => detected.Count > 0;
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (ShouldIgnore(collider)) return;
+        if (ShouldIgnore(collider))
+            return;
         detected.Add(collider);
     }
 
@@ -37,14 +39,17 @@ internal class HeroDetectorProxy : MonoBehaviour
 
     public void OnDetected(Action action)
     {
-        if (Detected()) action();
+        if (Detected())
+            action();
         OnDetectedEvent += action;
     }
 
     public void Listen(Action detect, Action undetect)
     {
-        if (Detected()) detect.Invoke();
-        else undetect.Invoke();
+        if (Detected())
+            detect.Invoke();
+        else
+            undetect.Invoke();
 
         OnDetectedEvent += detect;
         OnUndetectedEvent += undetect;
@@ -55,8 +60,10 @@ internal class HeroDetectorProxy : MonoBehaviour
         bool newDetected = Detected();
         if (newDetected != prevDetected)
         {
-            if (newDetected) OnDetectedEvent?.Invoke();
-            else OnUndetectedEvent?.Invoke();
+            if (newDetected)
+                OnDetectedEvent?.Invoke();
+            else
+                OnUndetectedEvent?.Invoke();
 
             prevDetected = newDetected;
         }

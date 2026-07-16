@@ -4,6 +4,5 @@ namespace HK8YPlando.Scripts.Framework
     public class ShadeSpawnTrigger : UnityEngine.MonoBehaviour
     {
         public ShadeMarker ShadeMarker;
-        
     }
 }

@@ -1,7 +1,4 @@
 namespace HK8YPlando.Scripts.Framework
 {
-    public class BrettaHouseAreaTitleController : UnityEngine.MonoBehaviour
-    {
-        
-    }
+    public class BrettaHouseAreaTitleController : UnityEngine.MonoBehaviour { }
 }

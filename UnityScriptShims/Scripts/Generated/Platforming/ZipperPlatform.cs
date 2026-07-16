@@ -6,6 +6,5 @@ namespace HK8YPlando.Scripts.Platforming
     {
         public UnityEngine.GameObject SpriteShaker;
         public UnityEngine.SpriteRenderer Light;
-        
     }
 }

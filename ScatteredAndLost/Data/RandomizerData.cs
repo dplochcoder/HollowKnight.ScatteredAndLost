@@ -1,9 +1,9 @@
-﻿using HK8YPlando.Scripts.SharedLib;
+﻿using System;
+using System.Collections.Generic;
+using HK8YPlando.Scripts.SharedLib;
 using ItemChanger;
 using Newtonsoft.Json;
 using RandomizerMod.RandomizerData;
-using System;
-using System.Collections.Generic;
 using JsonUtil = PurenailCore.SystemUtil.JsonUtil<HK8YPlando.ScatteredAndLostMod>;
 
 namespace HK8YPlando.Data;
@@ -17,22 +17,23 @@ public enum CheckpointLevel
     Bumpers,
     Bubbles,
     Boss,
-    Bretta
+    Bretta,
 }
 
 public static class CheckpointLevelExtensions
 {
-    public static (string, string) SceneAndGate(this CheckpointLevel self) => self switch
-    {
-        CheckpointLevel.Entrance => ("BrettaHouseEntry", "right1"),
-        CheckpointLevel.Zippers => ("BrettaHouseZippers", "right1"),
-        CheckpointLevel.Switches => ("BrettaHouseSwitches", "right1"),
-        CheckpointLevel.Bumpers => ("BrettaHouseBumpers", "right1"),
-        CheckpointLevel.Bubbles => ("BrettaHouseBubbles", "bot1"),
-        CheckpointLevel.Boss => ("BrettaHouseBubbles", "top1"),
-        CheckpointLevel.Bretta => ("Room_Bretta", "right1"),
-        _ => throw new ArgumentException($"Unknown checkpoint level: {self}")
-    };
+    public static (string, string) SceneAndGate(this CheckpointLevel self) =>
+        self switch
+        {
+            CheckpointLevel.Entrance => ("BrettaHouseEntry", "right1"),
+            CheckpointLevel.Zippers => ("BrettaHouseZippers", "right1"),
+            CheckpointLevel.Switches => ("BrettaHouseSwitches", "right1"),
+            CheckpointLevel.Bumpers => ("BrettaHouseBumpers", "right1"),
+            CheckpointLevel.Bubbles => ("BrettaHouseBubbles", "bot1"),
+            CheckpointLevel.Boss => ("BrettaHouseBubbles", "top1"),
+            CheckpointLevel.Bretta => ("Room_Bretta", "right1"),
+            _ => throw new ArgumentException($"Unknown checkpoint level: {self}"),
+        };
 }
 
 public record LocationData
@@ -63,19 +64,35 @@ public record BrettaHouseLocationDef : LocationDef
         AdditionalProgressionPenalty = false;
     }
 
-    public override string TitledArea { get => "Bretta's House"; }
-    public override string MapArea { get => "Dirtmouth"; }
+    public override string TitledArea
+    {
+        get => "Bretta's House";
+    }
+    public override string MapArea
+    {
+        get => "Dirtmouth";
+    }
 }
 
 public static class RandomizerData
 {
-    private static T LoadEmbedded<T>(string name) where T : class => JsonUtil.DeserializeEmbedded<T>($"HK8YPlando.Resources.Data.{name}.json");
+    private static T LoadEmbedded<T>(string name)
+        where T : class =>
+        JsonUtil.DeserializeEmbedded<T>($"HK8YPlando.Resources.Data.{name}.json");
 
-    public static readonly SortedDictionary<string, TransitionData> Transitions = LoadEmbedded<SortedDictionary<string, TransitionData>>("transitions");
+    public static readonly SortedDictionary<string, TransitionData> Transitions = LoadEmbedded<
+        SortedDictionary<string, TransitionData>
+    >("transitions");
 
-    public static readonly SortedDictionary<string, LocationData> Locations = LoadEmbedded<SortedDictionary<string, LocationData>>("locations");
+    public static readonly SortedDictionary<string, LocationData> Locations = LoadEmbedded<
+        SortedDictionary<string, LocationData>
+    >("locations");
 
-    public static readonly SortedDictionary<string, string> Logic = LoadEmbedded<SortedDictionary<string, string>>("logic");
+    public static readonly SortedDictionary<string, string> Logic = LoadEmbedded<
+        SortedDictionary<string, string>
+    >("logic");
 
-    public static readonly SortedDictionary<string, string> Waypoints = LoadEmbedded<SortedDictionary<string, string>>("waypoints");
+    public static readonly SortedDictionary<string, string> Waypoints = LoadEmbedded<
+        SortedDictionary<string, string>
+    >("waypoints");
 }

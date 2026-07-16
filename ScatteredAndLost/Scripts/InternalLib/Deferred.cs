@@ -12,6 +12,7 @@ public class Deferred<T>
     private T? target;
 
     public Deferred() { }
+
     public Deferred(T target) => this.target = target;
 
     public void Set(T target)
@@ -26,8 +27,10 @@ public class Deferred<T>
 
     public void Do(Action<T> action)
     {
-        if (target == null) actions.Add(action);
-        else action(target);
+        if (target == null)
+            actions.Add(action);
+        else
+            action(target);
     }
 
     public Deferred<U> Map<U>(Func<T, U> transformer)

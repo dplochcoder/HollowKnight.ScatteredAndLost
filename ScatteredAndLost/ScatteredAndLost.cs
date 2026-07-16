@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using Architect.Content;
 using HK8YPlando.IC;
 using HK8YPlando.Rando;
@@ -12,12 +18,6 @@ using MenuChanger;
 using Modding;
 using Modding.Menu;
 using Modding.Menu.Config;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using UnityEngine.UI;
 
 namespace HK8YPlando;
@@ -26,11 +26,16 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 {
     public static ScatteredAndLostMod? Instance { get; private set; }
 
-    internal static readonly string Version = PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
+    internal static readonly string Version =
+        PurenailCore.ModUtil.VersionUtil.ComputeVersion<ScatteredAndLostMod>();
 
     public override string GetVersion() => Version;
 
-    public ScatteredAndLostMod() : base("ScatteredAndLost") { Instance = this; }
+    public ScatteredAndLostMod()
+        : base("ScatteredAndLost")
+    {
+        Instance = this;
+    }
 
     public static ScatteredAndLostSettings Settings = new();
 
@@ -46,9 +51,11 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public static new void LogError(string msg) => ((ILogger)Instance!).LogError(msg);
 
-    public override List<(string, string)> GetPreloadNames() => ScatteredAndLostPreloader.Instance.GetPreloadNames();
+    public override List<(string, string)> GetPreloadNames() =>
+        ScatteredAndLostPreloader.Instance.GetPreloadNames();
 
-    public override (string, Func<IEnumerator>)[] PreloadSceneHooks() => ScatteredAndLostPreloader.Instance.PreloadSceneHooks();
+    public override (string, Func<IEnumerator>)[] PreloadSceneHooks() =>
+        ScatteredAndLostPreloader.Instance.PreloadSceneHooks();
 
     private static void SetupDebug() => DebugInterop.DebugInterop.Setup();
 
@@ -56,30 +63,42 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     public override int LoadPriority() => -1;
 
-    private static void SetupArchitect() => ContentPacks.RegisterPack(new("Scattered & Lost", "Platforming assets borrowed from Celeste")
-    {
-        BubbleArchitectObject.Create(),
-        BumperArchitectObject.Create(),
-        CoinArchitectObject.Create(),
-        CoinDoorArchitectObject.Create(),
-        SuperSoulTotemArchitectObject.Create(),
-        ZipperArchitectObject.Create()
-    });
+    private static void SetupArchitect() =>
+        ContentPacks.RegisterPack(
+            new("Scattered & Lost", "Platforming assets borrowed from Celeste")
+            {
+                BubbleArchitectObject.Create(),
+                BumperArchitectObject.Create(),
+                CoinArchitectObject.Create(),
+                CoinDoorArchitectObject.Create(),
+                SuperSoulTotemArchitectObject.Create(),
+                ZipperArchitectObject.Create(),
+            }
+        );
 
     private const string SCENES = "Sprites.Scenes.";
 
     private static void SetupBugPrince()
     {
-        foreach (var str in typeof(ScatteredAndLostMod).Assembly.GetManifestResourceNames().Where(n => n.Contains(SCENES)))
+        foreach (
+            var str in typeof(ScatteredAndLostMod)
+                .Assembly.GetManifestResourceNames()
+                .Where(n => n.Contains(SCENES))
+        )
         {
             var sceneName = str[(str.IndexOf(SCENES) + SCENES.Length)..str.LastIndexOf(".")];
-            BugPrince.BugPrinceMod.AddSceneSprite(sceneName, new IC.EmbeddedSprite($"Scenes.{sceneName}"));
+            BugPrince.BugPrinceMod.AddSceneSprite(
+                sceneName,
+                new IC.EmbeddedSprite($"Scenes.{sceneName}")
+            );
         }
     }
 
     private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
 
-    public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
+    public override void Initialize(
+        Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects
+    )
     {
         Binoculars.Load();
         BumperSpeedControl.Load();
@@ -87,20 +106,28 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         ScatteredAndLostSceneManagerAPI.Load();
         SuperSoulTotem.Load();
 
-        if (ModHooks.GetMod("Architect") is Mod) SetupArchitect();
-        if (ModHooks.GetMod("BugPrince") is Mod) SetupBugPrince();
-        if (ModHooks.GetMod("DebugMod") is Mod) SetupDebug();
-        if (ModHooks.GetMod("Randomizer 4") is Mod) SetupRando();
+        if (ModHooks.GetMod("Architect") is Mod)
+            SetupArchitect();
+        if (ModHooks.GetMod("BugPrince") is Mod)
+            SetupBugPrince();
+        if (ModHooks.GetMod("DebugMod") is Mod)
+            SetupDebug();
+        if (ModHooks.GetMod("Randomizer 4") is Mod)
+            SetupRando();
 
         On.UIManager.StartNewGame += (orig, self, pd, br) =>
         {
-            if (Settings.EnableInVanilla && (ModHooks.GetMod("Randomizer 4") == null || !IsRandoSave()))
+            if (
+                Settings.EnableInVanilla
+                && (ModHooks.GetMod("Randomizer 4") == null || !IsRandoSave())
+            )
             {
                 ItemChangerMod.CreateSettingsProfile(false);
                 var mod = ItemChangerMod.Modules.GetOrAdd<BrettasHouse>();
 
                 mod.EnableHeartDoors = false;
-                if (Settings.EnableCheckpoints) mod.Checkpoint = Data.CheckpointLevel.Zippers;
+                if (Settings.EnableCheckpoints)
+                    mod.Checkpoint = Data.CheckpointLevel.Zippers;
             }
 
             orig(self, pd, br);
@@ -115,7 +142,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
 
     private static void ClickExtractButton(MenuButton button, Wrapped<ExtractState> state)
     {
-        if (state.Value == ExtractState.Working) return;
+        if (state.Value == ExtractState.Working)
+            return;
         state.Value = ExtractState.Working;
 
         var text = button.gameObject.FindChild("Label").GetComponent<Text>();
@@ -126,10 +154,17 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
             string msg = "";
             try
             {
-                string outputDir = Path.Combine(Path.GetDirectoryName(typeof(ScatteredAndLostMod).Assembly.Location), "Music");
+                string outputDir = Path.Combine(
+                    Path.GetDirectoryName(typeof(ScatteredAndLostMod).Assembly.Location),
+                    "Music"
+                );
                 Directory.CreateDirectory(outputDir);
 
-                var task = FmodRipper.ExtractMusic(FmodRipper.CelesteFmodPath(), FmodRipper.CelesteFmodMapping(), outputDir);
+                var task = FmodRipper.ExtractMusic(
+                    FmodRipper.CelesteFmodPath(),
+                    FmodRipper.CelesteFmodMapping(),
+                    outputDir
+                );
                 task.Wait();
                 msg = task.Result;
             }
@@ -170,22 +205,27 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
     {
         ModMenuScreenBuilder builder = new("Scattered and Lost", modListMenu);
         builder.buildActions.Add(c => BuildExtractButton(c, modListMenu));
-        builder.AddHorizontalOption(new()
-        {
-            Name = "Enable in Vanilla",
-            Description = "If yes, Bretta's House will be expanded in vanilla saves.",
-            Values = ["No", "Yes"],
-            Saver = i => Settings.EnableInVanilla = i == 1,
-            Loader = () => Settings.EnableInVanilla ? 1 : 0,
-        });
-        builder.AddHorizontalOption(new()
-        {
-            Name = "Enable Checkpoints",
-            Description = "If yes, re-entering Bretta's house will always skip to the furthest accessed room.",
-            Values = ["No", "Yes"],
-            Saver = i => Settings.EnableCheckpoints = i == 1,
-            Loader = () => Settings.EnableCheckpoints ? 1 : 0,
-        });
+        builder.AddHorizontalOption(
+            new()
+            {
+                Name = "Enable in Vanilla",
+                Description = "If yes, Bretta's House will be expanded in vanilla saves.",
+                Values = ["No", "Yes"],
+                Saver = i => Settings.EnableInVanilla = i == 1,
+                Loader = () => Settings.EnableInVanilla ? 1 : 0,
+            }
+        );
+        builder.AddHorizontalOption(
+            new()
+            {
+                Name = "Enable Checkpoints",
+                Description =
+                    "If yes, re-entering Bretta's house will always skip to the furthest accessed room.",
+                Values = ["No", "Yes"],
+                Saver = i => Settings.EnableCheckpoints = i == 1,
+                Loader = () => Settings.EnableCheckpoints ? 1 : 0,
+            }
+        );
         return builder.CreateMenuScreen();
     }
 }
@@ -208,6 +248,7 @@ public class ScatteredAndLostDecorationMasterIntegration : Mod
 
     public override void Initialize()
     {
-        if (ModHooks.GetMod("DecorationMaster") is Mod) SetupDecorationMaster();
+        if (ModHooks.GetMod("DecorationMaster") is Mod)
+            SetupDecorationMaster();
     }
 }

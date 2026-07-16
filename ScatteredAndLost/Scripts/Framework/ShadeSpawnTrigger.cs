@@ -9,9 +9,12 @@ namespace HK8YPlando.Scripts.Framework;
 [RequireComponent(typeof(HeroDetectorProxy))]
 internal class ShadeSpawnTrigger : MonoBehaviour
 {
-    [ShimField] public ShadeMarker? ShadeMarker;
+    [ShimField]
+    public ShadeMarker? ShadeMarker;
 
-    private void Awake() => GetComponent<HeroDetectorProxy>().OnDetected(() => BrettasHouse.Get().SetShadeSpawnTrigger(this));
+    private void Awake() =>
+        GetComponent<HeroDetectorProxy>()
+            .OnDetected(() => BrettasHouse.Get().SetShadeSpawnTrigger(this));
 
     private void OnDestroy() => BrettasHouse.Get().ForgetShadeSpawnTrigger(this);
 }

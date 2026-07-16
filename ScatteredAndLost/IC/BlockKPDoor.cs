@@ -34,7 +34,11 @@ internal class BlockKPDoor : ItemChanger.Modules.Module
 
     private void BlockRight(Scene scene)
     {
-        var door = Object.Instantiate(ScatteredAndLostPreloader.Instance.GreatDoor, new(3.5f, 49f), Quaternion.identity);
+        var door = Object.Instantiate(
+            ScatteredAndLostPreloader.Instance.GreatDoor,
+            new(3.5f, 49f),
+            Quaternion.identity
+        );
         door.transform.localScale = new(-1, 1, 1);
         Object.Destroy(door.LocateMyFSM("Great Door"));
         door.AddComponent<TinkEffectProxy>().useNailPosition = true;
