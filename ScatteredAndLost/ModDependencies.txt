@@ -11,3 +11,4 @@ RandoSettingsManager
 SFCore
 Architect
 BugPrince
+ConnectionSettingsRando

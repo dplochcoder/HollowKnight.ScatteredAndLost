@@ -92,6 +92,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         }
     }
 
+    private static void SetupCSR() => CSRInterop.CSRInterop.Setup();
+
     private static bool IsRandoSave() => RandomizerMod.RandomizerMod.RS?.GenerationSettings != null;
 
     public override void Initialize(
@@ -108,6 +110,8 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
             SetupArchitect();
         if (ModHooks.GetMod("BugPrince") is Mod)
             SetupBugPrince();
+        if (ModHooks.GetMod("ConnectionSettingsRando") is Mod)
+            SetupCSR();
         if (ModHooks.GetMod("DebugMod") is Mod)
             SetupDebug();
         if (ModHooks.GetMod("Randomizer 4") is Mod)

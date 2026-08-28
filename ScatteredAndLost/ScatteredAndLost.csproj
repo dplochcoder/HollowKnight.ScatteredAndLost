@@ -104,6 +104,9 @@
     <Reference Include="CondensedSpoilerLogger">
       <HintPath>$(HollowKnightRefs)/Mods/CondensedSpoilerLogger/CondensedSpoilerLogger.dll</HintPath>
     </Reference>
+    <Reference Include="ConnectionSettingsRando">
+      <HintPath>$(HollowKnightRefs)/Mods/ConnectionSettingsRando/ConnectionSettingsRando.dll</HintPath>
+    </Reference>
     <Reference Include="DebugMod">
       <HintPath>$(HollowKnightRefs)/Mods/DebugMod/DebugMod.dll</HintPath>
     </Reference>

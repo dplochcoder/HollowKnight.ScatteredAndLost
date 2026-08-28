@@ -1,4 +1,5 @@
-﻿using MenuChanger.Attributes;
+﻿using System;
+using MenuChanger.Attributes;
 using RandomizerMod.Settings;
 
 namespace HK8YPlando;
@@ -12,6 +13,8 @@ public class ScatteredAndLostSettings
     public RandomizerSettings RandomizerSettings = new();
 }
 
+file class CSRIgnoreAttribute : Attribute { }
+
 public class RandomizerSettings
 {
     public bool Enabled = false;
@@ -20,15 +23,19 @@ public class RandomizerSettings
     public bool EnablePreviews = true;
     public bool EnableHeartDoors = true;
 
+    internal const int MAX_HEART_REQUIREMENT = 50;
+
     [DynamicBound(nameof(MaxHearts), true)]
-    [MenuRange(1, 50)]
+    [MenuRange(1, MAX_HEART_REQUIREMENT)]
+    [CSRIgnore]
     public int MinHearts = 3;
 
     [DynamicBound(nameof(MinHearts), false)]
-    [MenuRange(1, 50)]
+    [MenuRange(1, MAX_HEART_REQUIREMENT)]
+    [CSRIgnore]
     public int MaxHearts = 10;
 
-    [MenuRange(0, 50)]
+    [MenuRange(0, 10)]
     public int HeartTolerance = 2;
 
     public (int, int) ComputeDoorCosts(GenerationSettings gs)
