@@ -86,8 +86,13 @@ internal class ConnectionMenu
 
     private (bool, bool) prevLockState = (true, true);
 
+    private bool ignoreLocks = false;
+
     private void UpdateLocks()
     {
+        if (ignoreLocks)
+            return;
+
         var lockState = (Settings.Enabled, Settings.EnableHeartDoors);
         if (lockState == prevLockState)
             return;
@@ -119,7 +124,13 @@ internal class ConnectionMenu
 
     internal void ApplySettings(RandomizerSettings settings)
     {
+        ignoreLocks = true;
+        requireEnabled.ForEach(l => l.Unlock());
+        requireHeartDoorsLockables.ForEach(l => l.Unlock());
+
         factory.SetMenuValues(settings);
+
+        ignoreLocks = false;
         UpdateAll();
     }
 }
