@@ -106,7 +106,7 @@ public class ScatteredAndLostMod : Mod, IGlobalSettings<ScatteredAndLostSettings
         ScatteredAndLostSceneManagerAPI.Load();
         SuperSoulTotem.Load();
 
-        if (ModHooks.GetMod("Architect") is Mod)
+        if (ModHooks.GetMod("ArchitectPlugin") is Mod)
             SetupArchitect();
         if (ModHooks.GetMod("BugPrince") is Mod)
             SetupBugPrince();
